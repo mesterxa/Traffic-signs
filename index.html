@@ -4,40 +4,11 @@
   <meta charset="UTF-8">
   <title>DriveLearn</title>
   <link rel="stylesheet" href="style.css">
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-      authDomain: "traffic-signs-fc047.firebaseapp.com",
-      projectId: "traffic-signs-fc047",
-      storageBucket: "traffic-signs-fc047.appspot.com",
-      messagingSenderId: "746457575630",
-      appId: "1:746457575630:web:3219b85b64e2307126609f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    window.logoutUser = () => signOut(auth);
-
-    onAuthStateChanged(auth, user => {
-      const info = document.getElementById("user-info");
-      if (user) {
-        info.innerHTML = `Welcome ${user.email} | <a href="#" onclick="logoutUser()">Logout</a>`;
-      } else {
-        info.innerHTML = "Guest mode";
-      }
-    });
-  </script>
 </head>
-
 <body>
 
 <div class="navbar">
-  <div class="logo">🚦 DriveLearn</div>
+  <div class="logo">DriveLearn</div>
   <div>
     <a href="login.html">Login</a>
     <a href="register.html">Register</a>
@@ -46,34 +17,41 @@
 
 <section class="hero">
   <h1>Learn Traffic Signs Easily</h1>
-  <p>Professional driving education platform</p>
+  <p>Professional platform inspired by international driving schools</p>
 </section>
 
-<section class="container">
+<div class="container">
   <div class="cards">
+
     <div class="card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Stop_sign.svg">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 22h20L12 2z"/>
+      </svg>
       <h3>Traffic Signs</h3>
-      <p>Understand all road signs</p>
+      <p>Understand road signs clearly</p>
     </div>
 
     <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/>
+      </svg>
       <h3>Quizzes</h3>
       <p>Test your driving knowledge</p>
     </div>
 
     <div class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+      <svg viewBox="0 0 24 24">
+        <path d="M5 11h14v2H5z"/>
+      </svg>
       <h3>Practice</h3>
       <p>Prepare for the driving exam</p>
     </div>
+
   </div>
-</section>
+</div>
 
 <footer>
-  <div id="user-info"></div>
-  © 2026 DriveLearn
+  © 2026 DriveLearn – Traffic Education Platform
 </footer>
 
 </body>

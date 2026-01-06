@@ -4,6 +4,85 @@
   <meta charset="UTF-8">
   <title>DriveLearn</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .rtl { direction: rtl; text-align: right; }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e88e5;
+      padding: 12px 20px;
+      color: #fff;
+    }
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: 500;
+    }
+    .lang-switch {
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 20px;
+      padding: 5px 10px;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .lang-switch:hover { background: rgba(255,255,255,0.2); }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px 40px 20px;
+      background: linear-gradient(120deg, #42a5f5, #478ed1);
+      color: #fff;
+      border-bottom-left-radius: 50% 10%;
+      border-bottom-right-radius: 50% 10%;
+    }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 20px; }
+    .hero p { font-size: 1.2rem; }
+
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .card {
+      background: #fff;
+      padding: 30px;
+      flex: 1 1 250px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    .card svg {
+      width: 60px;
+      height: 60px;
+      fill: #1e88e5;
+      margin-bottom: 15px;
+    }
+    .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+    .card p { font-size: 1rem; color: #555; }
+
+    footer {
+      text-align: center;
+      padding: 25px 10px;
+      background: #1e88e5;
+      color: #fff;
+      margin-top: 40px;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
 
@@ -12,7 +91,7 @@
   <div>
     <a href="login.html">Login</a>
     <a href="register.html">Register</a>
-    <span class="lang-switch" onclick="toggleLanguage()"/>عربي/English</span>
+    <span class="lang-switch" onclick="toggleLanguage()">عربي / English</span>
   </div>
 </div>
 
@@ -51,8 +130,8 @@
 let arabic = false;
 function toggleLanguage() {
   arabic = !arabic;
+  document.body.classList.toggle("rtl");
   if(arabic) {
-    document.body.classList.add("rtl");
     document.getElementById("hero-title").innerText = "تعلم علامات المرور بسهولة";
     document.getElementById("hero-sub").innerText = "منصة تعليمية احترافية مستوحاة من مدارس القيادة العالمية";
     document.getElementById("card1-title").innerText = "علامات المرور";
@@ -63,7 +142,6 @@ function toggleLanguage() {
     document.getElementById("card3-desc").innerText = "استعد لامتحان القيادة";
     document.getElementById("footer-text").innerText = "© 2026 DriveLearn – منصة تعليم المرور";
   } else {
-    document.body.classList.remove("rtl");
     document.getElementById("hero-title").innerText = "Learn Traffic Signs Easily";
     document.getElementById("hero-sub").innerText = "Professional platform inspired by international driving schools";
     document.getElementById("card1-title").innerText = "Traffic Signs";

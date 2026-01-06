@@ -1,157 +1,130 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Traffic Signs Learning</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn Traffic Signs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { color: #ff4444; animation: fadeIn 2s; }
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 20px;
+      width: 300px;
+      transition: transform 0.3s;
+    }
+    .card:hover { transform: scale(1.05); }
+    img { width: 100%; height: auto; }
+    button {
+      background-color: #ff4444;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin: 10px;
+      padding: 10px 20px;
+      transition: background-color 0.3s;
+    }
+    button:hover { background-color: #ff9999; }
+    input { padding: 10px; width: 80%; margin: 5px 0; }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+    #user-info { margin-top: 20px; }
+  </style>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-<style>
-:root {
-  --main: #e63946;
-  --dark: #1d3557;
-  --light: #f1faee;
-}
+    const firebaseConfig = {
+      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+      authDomain: "traffic-signs-fc047.firebaseapp.com",
+      projectId: "traffic-signs-fc047",
+      storageBucket: "traffic-signs-fc047.appspot.com",
+      messagingSenderId: "746457575630",
+      appId: "1:746457575630:web:3219b85b64e2307126609f",
+      measurementId: "G-K6W6BPEWM3"
+    };
 
-* {
-  box-sizing: border-box;
-}
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--light);
-  color: var(--dark);
-}
+    // تسجيل مستخدم جديد
+    window.registerUser = function() {
+      const email = document.getElementById("reg-email").value;
+      const password = document.getElementById("reg-pass").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredential => alert("تم التسجيل بنجاح!"))
+        .catch(error => alert(error.message));
+    }
 
-/* ===== HEADER ===== */
-header {
-  background: white;
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,.1);
-}
+    // تسجيل الدخول
+    window.loginUser = function() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-pass").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => alert("تم تسجيل الدخول!"))
+        .catch(error => alert(error.message));
+    }
 
-header h1 {
-  margin: 0;
-  color: var(--main);
-}
+    // تسجيل الخروج
+    window.logoutUser = function() {
+      signOut(auth).then(() => alert("تم تسجيل الخروج!"));
+    }
 
-nav a {
-  margin-left: 15px;
-  text-decoration: none;
-  color: var(--dark);
-  font-weight: bold;
-}
-
-.btn-nav {
-  background: var(--main);
-  color: white;
-  padding: 6px 15px;
-  border-radius: 20px;
-}
-
-/* ===== HERO ===== */
-.hero {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.hero h2 {
-  font-size: 2.2em;
-}
-
-.hero p {
-  max-width: 600px;
-  margin: auto;
-  font-size: 1.1em;
-}
-
-/* ===== CARDS ===== */
-.cards {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 30px;
-}
-
-.card {
-  background: white;
-  width: 260px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,.15);
-  transition: transform .3s;
-}
-
-.card:hover {
-  transform: translateY(-10px);
-}
-
-.card img {
-  width: 100%;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: var(--dark);
-  color: white;
-  text-align: center;
-  padding: 15px;
-  margin-top: 40px;
-}
-</style>
+    // تحديث واجهة المستخدم تلقائيًا
+    onAuthStateChanged(auth, user => {
+      const info = document.getElementById("user-info");
+      if(user) {
+        info.innerHTML = `مرحبًا، ${user.email} <br><button onclick="logoutUser()">تسجيل الخروج</button>`;
+      } else {
+        info.innerHTML = "لم يتم تسجيل الدخول بعد.";
+      }
+    });
+  </script>
 </head>
-
 <body>
 
-<header>
-  <h1>🚦 Traffic Signs</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="learning.html">Learning</a>
-    <a href="quizzes.html">Quizzes</a>
-    <a href="games.html">Games</a>
-    <a href="login.html" class="btn-nav">Login</a>
-  </nav>
-</header>
-
-<section class="hero">
-  <h2>Learn Traffic Signs Easily</h2>
-  <p>
-    A modern educational platform to understand traffic signs, prepare for driving exams,
-    and learn through quizzes and games.
-  </p>
-</section>
-
-<section class="cards">
+  <h1>🚦 Learn Traffic Signs</h1>
+  <p>An educational site to easily understand traffic signs</p>
 
   <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Stop_sign.svg">
-    <h3>Stop Sign</h3>
-    <p>Mandatory stop before proceeding.</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Stop_sign.svg/200px-Stop_sign.svg.png" alt="Stop Sign">
+    <h3>Stop</h3>
+    <p>Come to a complete halt before proceeding</p>
+  </div>
+
+  <button onclick="location.href='learning.html'">Learning</button>
+  <button onclick="location.href='quizzes.html'">Quizzes</button>
+  <button onclick="location.href='resources.html'">Resources</button>
+  <button onclick="location.href='games.html'">Game</button>
+
+  <hr>
+  <h2>تسجيل الدخول / التسجيل</h2>
+
+  <div class="card">
+    <h3>تسجيل</h3>
+    <input type="email" id="reg-email" placeholder="البريد الإلكتروني"><br>
+    <input type="password" id="reg-pass" placeholder="كلمة المرور"><br>
+    <button onclick="registerUser()">تسجيل</button>
   </div>
 
   <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Speed_limit_50_sign.svg/200px-Speed_limit_50_sign.svg.png">
-    <h3>Speed Limit</h3>
-    <p>Maximum allowed speed.</p>
+    <h3>تسجيل الدخول</h3>
+    <input type="email" id="login-email" placeholder="البريد الإلكتروني"><br>
+    <input type="password" id="login-pass" placeholder="كلمة المرور"><br>
+    <button onclick="loginUser()">تسجيل الدخول</button>
   </div>
 
-  <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Warning_sign.svg/200px-Warning_sign.svg.png">
-    <h3>Warning</h3>
-    <p>Be careful of potential hazards.</p>
-  </div>
-
-</section>
-
-<footer>
-  © 2026 Traffic Signs | Learn • Practice • Succeed
-</footer>
+  <div id="user-info"></div>
 
 </body>
 </html>

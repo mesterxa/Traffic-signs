@@ -6,6 +6,80 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f7f8fa;
+  color: #2c2c2c;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: #121212;
+  color: #eee;
+}
+.rtl { direction: rtl; text-align: right; }
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1565c0;
+  padding: 12px 20px;
+  color: #fff;
+  transition: background 0.3s;
+}
+body.dark .navbar { background: #0d47a1; }
+.navbar a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
+.lang-switch, .dark-switch {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 15px;
+  padding: 5px 10px;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+.lang-switch:hover, .dark-switch:hover { background: rgba(255,255,255,0.2); }
+.logo-img { height: 40px; }
+
+.auth-box {
+  max-width: 380px;
+  margin: 80px auto;
+  padding: 35px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark .auth-box { background: #1c1c1c; color: #eee; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+
+.auth-box h2 { margin-bottom: 25px; }
+.auth-box input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark .auth-box input { background: #2a2a2a; color: #eee; border: 1px solid #555; }
+.auth-box button {
+  width: 95%;
+  padding: 12px;
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.auth-box button:hover { background: #0d47a1; }
+.auth-box p { margin-top: 15px; font-size: 14px; }
+.auth-box a { color: #1565c0; text-decoration: none; font-weight: 500; }
+
 .ios-toast {
   position: fixed;
   top: -120px;
@@ -47,16 +121,8 @@ window.loginUser = function () {
   const password = document.getElementById("login-pass").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      showToast(
-        arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋",
-        "success",
-        true
-      );
-    })
-    .catch(error => {
-      showToast(error.message, "error", false);
-    });
+    .then(() => showToast(arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋", "success", true))
+    .catch(error => showToast(error.message, "error", false));
 };
 </script>
 </head>
@@ -66,11 +132,12 @@ window.loginUser = function () {
 <div id="ios-toast" class="ios-toast"></div>
 
 <div class="navbar">
-  <div class="logo">DriveLearn</div>
+  <img src="logo.png" alt="DriveLearn" class="logo-img">
   <div>
     <a href="index.html">Home</a>
     <a href="register.html">Register</a>
     <span class="lang-switch" onclick="toggleLanguage()">AR</span>
+    <span class="dark-switch" onclick="toggleDarkMode()">🌙 / ☀️</span>
   </div>
 </div>
 
@@ -97,16 +164,17 @@ function toggleLanguage() {
     : 'Don\'t have an account? <a href="register.html">Register</a>';
 }
 
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+}
+
 function showToast(message, type = "success", redirect = false) {
   const toast = document.getElementById("ios-toast");
   toast.textContent = message;
   toast.className = `ios-toast show ${type}`;
-
   setTimeout(() => {
     toast.classList.remove("show");
-    if (redirect) {
-      window.location.href = "result.html";
-    }
+    if (redirect) window.location.href = "result.html";
   }, 2000);
 }
 </script>

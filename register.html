@@ -2,46 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Register</title>
+  <title>Register - DriveLearn</title>
   <link rel="stylesheet" href="style.css">
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-      authDomain: "traffic-signs-fc047.firebaseapp.com",
-      projectId: "traffic-signs-fc047",
-      storageBucket: "traffic-signs-fc047.appspot.com",
-      messagingSenderId: "746457575630",
-      appId: "1:746457575630:web:3219b85b64e2307126609f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    window.registerUser = function () {
-      createUserWithEmailAndPassword(
-        auth,
-        regEmail.value,
-        regPass.value
-      ).then(() => location.href = "login.html");
-    }
-  </script>
 </head>
-
 <body>
 
 <div class="navbar">
-  <div class="logo">🚦 DriveLearn</div>
+  <div class="logo">DriveLearn</div>
 </div>
 
-<div class="form-box">
-  <h2>Register</h2>
-  <input type="email" id="regEmail" placeholder="Email">
-  <input type="password" id="regPass" placeholder="Password">
-  <button class="btn" onclick="registerUser()">Register</button>
+<div class="auth-box">
+  <h2>Create Account</h2>
+
+  <input type="text" placeholder="Full Name">
+  <input type="email" placeholder="Email">
+  <input type="password" placeholder="Password">
+  <button>Register</button>
+
+  <p>Already have an account? <a href="login.html">Login</a></p>
 </div>
 
 </body>

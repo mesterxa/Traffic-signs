@@ -32,17 +32,14 @@
       cursor: pointer;
       margin: 10px;
       padding: 10px 20px;
-      transition: background-color 0.3s;
     }
-    button:hover { background-color: #ff9999; }
-    input { padding: 10px; width: 80%; margin: 5px 0; }
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
     #user-info { margin-top: 20px; }
   </style>
-  <!-- Firebase SDK -->
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -50,54 +47,34 @@
       projectId: "traffic-signs-fc047",
       storageBucket: "traffic-signs-fc047.appspot.com",
       messagingSenderId: "746457575630",
-      appId: "1:746457575630:web:3219b85b64e2307126609f",
-      measurementId: "G-K6W6BPEWM3"
+      appId: "1:746457575630:web:3219b85b64e2307126609f"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // تسجيل مستخدم جديد
-    window.registerUser = function() {
-      const email = document.getElementById("reg-email").value;
-      const password = document.getElementById("reg-pass").value;
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => alert("تم التسجيل بنجاح!"))
-        .catch(error => alert(error.message));
-    }
-
-    // تسجيل الدخول
-    window.loginUser = function() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-pass").value;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => alert("تم تسجيل الدخول!"))
-        .catch(error => alert(error.message));
-    }
-
-    // تسجيل الخروج
     window.logoutUser = function() {
-      signOut(auth).then(() => alert("تم تسجيل الخروج!"));
+      signOut(auth);
     }
 
-    // تحديث واجهة المستخدم تلقائيًا
     onAuthStateChanged(auth, user => {
       const info = document.getElementById("user-info");
       if(user) {
-        info.innerHTML = `مرحبًا، ${user.email} <br><button onclick="logoutUser()">تسجيل الخروج</button>`;
+        info.innerHTML = `Welcome, ${user.email}<br><button onclick="logoutUser()">Logout</button>`;
       } else {
-        info.innerHTML = "لم يتم تسجيل الدخول بعد.";
+        info.innerHTML = "Guest mode";
       }
     });
   </script>
 </head>
+
 <body>
 
   <h1>🚦 Learn Traffic Signs</h1>
   <p>An educational site to easily understand traffic signs</p>
 
   <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Stop_sign.svg/200px-Stop_sign.svg.png" alt="Stop Sign">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Stop_sign.svg/200px-Stop_sign.svg.png">
     <h3>Stop</h3>
     <p>Come to a complete halt before proceeding</p>
   </div>
@@ -106,23 +83,8 @@
   <button onclick="location.href='quizzes.html'">Quizzes</button>
   <button onclick="location.href='resources.html'">Resources</button>
   <button onclick="location.href='games.html'">Game</button>
-
-  <hr>
-  <h2>تسجيل الدخول / التسجيل</h2>
-
-  <div class="card">
-    <h3>تسجيل</h3>
-    <input type="email" id="reg-email" placeholder="البريد الإلكتروني"><br>
-    <input type="password" id="reg-pass" placeholder="كلمة المرور"><br>
-    <button onclick="registerUser()">تسجيل</button>
-  </div>
-
-  <div class="card">
-    <h3>تسجيل الدخول</h3>
-    <input type="email" id="login-email" placeholder="البريد الإلكتروني"><br>
-    <input type="password" id="login-pass" placeholder="كلمة المرور"><br>
-    <button onclick="loginUser()">تسجيل الدخول</button>
-  </div>
+  <button onclick="location.href='login.html'">Login</button>
+  <button onclick="location.href='register.html'">Register</button>
 
   <div id="user-info"></div>
 

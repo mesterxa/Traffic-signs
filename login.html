@@ -4,22 +4,87 @@
   <meta charset="UTF-8">
   <title>Login - DriveLearn</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+      authDomain: "traffic-signs-fc047.firebaseapp.com",
+      projectId: "traffic-signs-fc047",
+      storageBucket: "traffic-signs-fc047.appspot.com",
+      messagingSenderId: "746457575630",
+      appId: "1:746457575630:web:3219b85b64e2307126609f",
+      measurementId: "G-K6W6BPEWM3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.loginUser = function() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-pass").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => alert(arabic ? "تم تسجيل الدخول!" : "Login Successful!"))
+        .catch(error => alert(error.message));
+    }
+
+    window.logoutUser = function() {
+      signOut(auth).then(() => alert(arabic ? "تم تسجيل الخروج!" : "Logged out!"));
+    }
+
+    onAuthStateChanged(auth, user => {
+      const info = document.getElementById("user-info");
+      if(user) {
+        info.innerHTML = `${arabic ? 'مرحبًا' : 'Hello'}, ${user.email} <br><button onclick="logoutUser()">${arabic ? 'تسجيل الخروج' : 'Logout'}</button>`;
+      } else {
+        info.innerHTML = arabic ? "لم يتم تسجيل الدخول بعد." : "Not logged in yet.";
+      }
+    });
+  </script>
 </head>
 <body>
 
 <div class="navbar">
   <div class="logo">DriveLearn</div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="register.html">Register</a>
+    <span class="lang-switch" onclick="toggleLanguage()">AR</span>
+  </div>
 </div>
 
 <div class="auth-box">
-  <h2>Login</h2>
-
-  <input type="email" placeholder="Email">
-  <input type="password" placeholder="Password">
-  <button>Login</button>
-
-  <p>Don't have an account? <a href="register.html">Register</a></p>
+  <h2 id="auth-title">Login</h2>
+  <input type="email" id="login-email" placeholder="Email">
+  <input type="password" id="login-pass" placeholder="Password">
+  <button onclick="loginUser()" id="auth-btn">Login</button>
+  <p id="auth-footer">Don't have an account? <a href="register.html">Register</a></p>
 </div>
+
+<div id="user-info"></div>
+
+<script>
+let arabic = false;
+function toggleLanguage() {
+  arabic = !arabic;
+  document.body.classList.toggle("rtl");
+  if(arabic) {
+    document.getElementById("auth-title").innerText = "تسجيل الدخول";
+    document.getElementById("login-email").placeholder = "البريد الإلكتروني";
+    document.getElementById("login-pass").placeholder = "كلمة المرور";
+    document.getElementById("auth-btn").innerText = "تسجيل الدخول";
+    document.getElementById("auth-footer").innerHTML = 'ليس لديك حساب؟ <a href="register.html">سجل الآن</a>';
+  } else {
+    document.getElementById("auth-title").innerText = "Login";
+    document.getElementById("login-email").placeholder = "Email";
+    document.getElementById("login-pass").placeholder = "Password";
+    document.getElementById("auth-btn").innerText = "Login";
+    document.getElementById("auth-footer").innerHTML = 'Don\'t have an account? <a href="register.html">Register</a>';
+  }
+}
+</script>
 
 </body>
 </html>

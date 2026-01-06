@@ -1,50 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - DriveLearn</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+<meta charset="UTF-8">
+<title>Login - DriveLearn</title>
+<link rel="stylesheet" href="style.css">
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-      authDomain: "traffic-signs-fc047.firebaseapp.com",
-      projectId: "traffic-signs-fc047",
-      storageBucket: "traffic-signs-fc047.appspot.com",
-      messagingSenderId: "746457575630",
-      appId: "1:746457575630:web:3219b85b64e2307126609f",
-      measurementId: "G-K6W6BPEWM3"
-    };
+<style>
+.ios-toast {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.96);
+  color: #000;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transition: all 0.45s cubic-bezier(.25,.8,.25,1);
+  z-index: 9999;
+}
+.ios-toast.show { top: 25px; }
+.ios-toast.success { border-left: 5px solid #34c759; }
+.ios-toast.error { border-left: 5px solid #ff3b30; }
+</style>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-    window.loginUser = function() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-pass").value;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => alert(arabic ? "تم تسجيل الدخول!" : "Login Successful!"))
-        .catch(error => alert(error.message));
-    }
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
 
-    window.logoutUser = function() {
-      signOut(auth).then(() => alert(arabic ? "تم تسجيل الخروج!" : "Logged out!"));
-    }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    onAuthStateChanged(auth, user => {
-      const info = document.getElementById("user-info");
-      if(user) {
-        info.innerHTML = `${arabic ? 'مرحبًا' : 'Hello'}, ${user.email} <br><button onclick="logoutUser()">${arabic ? 'تسجيل الخروج' : 'Logout'}</button>`;
-      } else {
-        info.innerHTML = arabic ? "لم يتم تسجيل الدخول بعد." : "Not logged in yet.";
-      }
+window.loginUser = function () {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-pass").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      showToast(
+        arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋",
+        "success",
+        true
+      );
+    })
+    .catch(error => {
+      showToast(error.message, "error", false);
     });
-  </script>
+};
+</script>
 </head>
+
 <body>
+
+<div id="ios-toast" class="ios-toast"></div>
 
 <div class="navbar">
   <div class="logo">DriveLearn</div>
@@ -63,26 +82,32 @@
   <p id="auth-footer">Don't have an account? <a href="register.html">Register</a></p>
 </div>
 
-<div id="user-info"></div>
-
 <script>
 let arabic = false;
+
 function toggleLanguage() {
   arabic = !arabic;
   document.body.classList.toggle("rtl");
-  if(arabic) {
-    document.getElementById("auth-title").innerText = "تسجيل الدخول";
-    document.getElementById("login-email").placeholder = "البريد الإلكتروني";
-    document.getElementById("login-pass").placeholder = "كلمة المرور";
-    document.getElementById("auth-btn").innerText = "تسجيل الدخول";
-    document.getElementById("auth-footer").innerHTML = 'ليس لديك حساب؟ <a href="register.html">سجل الآن</a>';
-  } else {
-    document.getElementById("auth-title").innerText = "Login";
-    document.getElementById("login-email").placeholder = "Email";
-    document.getElementById("login-pass").placeholder = "Password";
-    document.getElementById("auth-btn").innerText = "Login";
-    document.getElementById("auth-footer").innerHTML = 'Don\'t have an account? <a href="register.html">Register</a>';
-  }
+  document.getElementById("auth-title").innerText = arabic ? "تسجيل الدخول" : "Login";
+  document.getElementById("login-email").placeholder = arabic ? "البريد الإلكتروني" : "Email";
+  document.getElementById("login-pass").placeholder = arabic ? "كلمة المرور" : "Password";
+  document.getElementById("auth-btn").innerText = arabic ? "تسجيل الدخول" : "Login";
+  document.getElementById("auth-footer").innerHTML = arabic
+    ? 'ليس لديك حساب؟ <a href="register.html">سجل الآن</a>'
+    : 'Don\'t have an account? <a href="register.html">Register</a>';
+}
+
+function showToast(message, type = "success", redirect = false) {
+  const toast = document.getElementById("ios-toast");
+  toast.textContent = message;
+  toast.className = `ios-toast show ${type}`;
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    if (redirect) {
+      window.location.href = "result.html";
+    }
+  }, 2000);
 }
 </script>
 

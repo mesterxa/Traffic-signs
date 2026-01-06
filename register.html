@@ -5,8 +5,68 @@
 <title>Register - DriveLearn</title>
 <link rel="stylesheet" href="style.css">
 
-<!-- iOS Toast Style -->
 <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f7f8fa;
+  color: #2c2c2c;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: #1a1a1a;
+  color: #eee;
+}
+.rtl { direction: rtl; text-align: right; }
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1565c0;
+  padding: 12px 20px;
+  color: #fff;
+}
+body.dark .navbar { background: #0d47a1; }
+.navbar a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
+.navbar a:hover { text-decoration: underline; }
+.logo-img { height: 40px; }
+
+/* Auth Box */
+.auth-box {
+  max-width: 400px;
+  margin: 80px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark .auth-box { background: #2c2c2c; color: #eee; }
+
+.auth-box input, .auth-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+body.dark .auth-box input { background: #2c2c2c; color: #eee; border: 1px solid #555; }
+
+.auth-box button {
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.auth-box button:hover { background: #0d47a1; }
+
+/* iOS Toast */
 .ios-toast {
   position: fixed;
   top: -120px;
@@ -22,24 +82,15 @@
   transition: all 0.45s cubic-bezier(.25,.8,.25,1);
   z-index: 9999;
 }
-
-.ios-toast.show {
-  top: 25px;
-}
-
-.ios-toast.success {
-  border-left: 5px solid #34c759;
-}
-
-.ios-toast.error {
-  border-left: 5px solid #ff3b30;
-}
+.ios-toast.show { top: 25px; }
+.ios-toast.success { border-left: 5px solid #34c759; }
+.ios-toast.error { border-left: 5px solid #ff3b30; }
 </style>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -52,95 +103,82 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-window.registerUser = function() {
+window.registerUser = async function () {
   const email = document.getElementById("reg-email").value;
   const password = document.getElementById("reg-pass").value;
+  const fullname = document.getElementById("reg-name").value;
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      showToast(
-        arabic ? "تم إنشاء الحساب بنجاح 👋" : "Account created successfully 👋",
-        "success",
-        true
-      );
-    })
-    .catch(error => {
-      showToast(error.message, "error");
-    });
-}
-
-window.logoutUser = function() {
-  signOut(auth).then(() => {
-    showToast(
-      arabic ? "تم تسجيل الخروج" : "Logged out",
-      "success",
-      true
-    );
-  });
-}
-
-onAuthStateChanged(auth, user => {
-  const info = document.getElementById("user-info");
-  if (user) {
-    info.innerHTML = `${arabic ? 'مرحبًا' : 'Hello'}, ${user.email}`;
-  } else {
-    info.innerHTML = "";
+  if (!email || !password || !fullname) {
+    showToast(arabic ? "املأ جميع الحقول" : "Fill all fields", "error");
+    return;
   }
-});
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // حفظ الاسم الكامل في Firestore
+    await setDoc(doc(db, "users", email), { fullname: fullname, email: email });
+    showToast(arabic ? "تم التسجيل بنجاح 👋" : "Registered successfully 👋", "success", true);
+  } catch (error) {
+    showToast(error.message, "error", false);
+  }
+};
 </script>
 </head>
 
 <body>
 
-<!-- iOS Toast -->
 <div id="ios-toast" class="ios-toast"></div>
 
 <div class="navbar">
-  <div class="logo">DriveLearn</div>
+  <img src="logo.png" alt="DriveLearn" class="logo-img">
   <div>
     <a href="index.html">Home</a>
     <a href="login.html">Login</a>
-    <span class="lang-switch" onclick="toggleLanguage()">AR</span>
+    <a href="quizzes.html">Quizzes</a>
+    <span id="lang-switch" style="cursor:pointer;font-weight:bold;">AR</span>
   </div>
 </div>
 
 <div class="auth-box">
   <h2 id="auth-title">Register</h2>
+  <input type="text" id="reg-name" placeholder="Full Name">
   <input type="email" id="reg-email" placeholder="Email">
   <input type="password" id="reg-pass" placeholder="Password">
   <button onclick="registerUser()" id="auth-btn">Register</button>
   <p id="auth-footer">Already have an account? <a href="login.html">Login</a></p>
 </div>
 
-<div id="user-info"></div>
-
 <script>
 let arabic = false;
 
-function toggleLanguage() {
+document.getElementById('lang-switch').addEventListener('click', () => {
   arabic = !arabic;
-  document.body.classList.toggle("rtl");
-
+  document.body.classList.toggle('rtl');
   document.getElementById("auth-title").innerText = arabic ? "تسجيل" : "Register";
+  document.getElementById("reg-name").placeholder = arabic ? "الاسم الكامل" : "Full Name";
   document.getElementById("reg-email").placeholder = arabic ? "البريد الإلكتروني" : "Email";
   document.getElementById("reg-pass").placeholder = arabic ? "كلمة المرور" : "Password";
   document.getElementById("auth-btn").innerText = arabic ? "تسجيل" : "Register";
   document.getElementById("auth-footer").innerHTML = arabic
     ? 'هل لديك حساب؟ <a href="login.html">سجل الدخول</a>'
     : 'Already have an account? <a href="login.html">Login</a>';
+});
+
+// Dark Mode تلقائي حسب الهاتف
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.body.classList.add('dark');
 }
 
-function showToast(message, type = "success", redirect = false) {
+// iOS Toast
+function showToast(message, type="success", redirect=false) {
   const toast = document.getElementById("ios-toast");
   toast.textContent = message;
   toast.className = `ios-toast show ${type}`;
-
   setTimeout(() => {
     toast.classList.remove("show");
-    if (redirect) {
-      window.location.href = "index.html";
-    }
+    if (redirect) window.location.href = "result.html";
   }, 2000);
 }
 </script>

@@ -1,57 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
-<style>
-body {
-  background: #f1faee;
-  font-family: Arial;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-.box {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 320px;
-  box-shadow: 0 5px 20px rgba(0,0,0,.2);
-  text-align: center;
-}
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-button {
-  width: 100%;
-  background: #e63946;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-a {
-  display: block;
-  margin-top: 10px;
-  color: #1d3557;
-  text-decoration: none;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+      authDomain: "traffic-signs-fc047.firebaseapp.com",
+      projectId: "traffic-signs-fc047",
+      storageBucket: "traffic-signs-fc047.appspot.com",
+      messagingSenderId: "746457575630",
+      appId: "1:746457575630:web:3219b85b64e2307126609f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.loginUser = function() {
+      signInWithEmailAndPassword(
+        auth,
+        document.getElementById("login-email").value,
+        document.getElementById("login-pass").value
+      ).then(() => location.href="index.html");
+    }
+  </script>
 </head>
 
 <body>
-<div class="box">
-  <h2>Login</h2>
-  <input type="email" placeholder="Email">
-  <input type="password" placeholder="Password">
-  <button>Login</button>
-  <a href="register.html">Create new account</a>
-</div>
+  <h2>تسجيل الدخول</h2>
+  <input type="email" id="login-email" placeholder="البريد الإلكتروني"><br>
+  <input type="password" id="login-pass" placeholder="كلمة المرور"><br>
+  <button onclick="loginUser()">Login</button>
 </body>
 </html>

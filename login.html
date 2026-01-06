@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+  <link rel="stylesheet" href="style.css">
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
@@ -20,20 +21,28 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    window.loginUser = function() {
+    window.loginUser = function () {
       signInWithEmailAndPassword(
         auth,
-        document.getElementById("login-email").value,
-        document.getElementById("login-pass").value
-      ).then(() => location.href="index.html");
+        loginEmail.value,
+        loginPass.value
+      ).then(() => location.href = "index.html");
     }
   </script>
 </head>
 
 <body>
-  <h2>تسجيل الدخول</h2>
-  <input type="email" id="login-email" placeholder="البريد الإلكتروني"><br>
-  <input type="password" id="login-pass" placeholder="كلمة المرور"><br>
-  <button onclick="loginUser()">Login</button>
+
+<div class="navbar">
+  <div class="logo">🚦 DriveLearn</div>
+</div>
+
+<div class="form-box">
+  <h2>Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPass" placeholder="Password">
+  <button class="btn" onclick="loginUser()">Login</button>
+</div>
+
 </body>
 </html>

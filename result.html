@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Results - DriveLearn</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+.result-box {
+  max-width: 500px;
+  margin: 80px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.result-box h2 {
+  margin-bottom: 15px;
+}
+
+.wait-msg {
+  color: #555;
+  font-size: 16px;
+}
+</style>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
+</script>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="logo">DriveLearn</div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="result.html">Results</a>
+  </div>
+</div>
+
+<div class="result-box">
+  <h2>Exam Results</h2>
+  <p class="wait-msg">
+    Please come back after completing the exam.
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Register</title>
+  <link rel="stylesheet" href="style.css">
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
@@ -20,20 +21,28 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    window.registerUser = function() {
+    window.registerUser = function () {
       createUserWithEmailAndPassword(
         auth,
-        document.getElementById("reg-email").value,
-        document.getElementById("reg-pass").value
-      ).then(() => alert("تم التسجيل بنجاح"));
+        regEmail.value,
+        regPass.value
+      ).then(() => location.href = "login.html");
     }
   </script>
 </head>
 
 <body>
-  <h2>تسجيل</h2>
-  <input type="email" id="reg-email" placeholder="البريد الإلكتروني"><br>
-  <input type="password" id="reg-pass" placeholder="كلمة المرور"><br>
-  <button onclick="registerUser()">Register</button>
+
+<div class="navbar">
+  <div class="logo">🚦 DriveLearn</div>
+</div>
+
+<div class="form-box">
+  <h2>Register</h2>
+  <input type="email" id="regEmail" placeholder="Email">
+  <input type="password" id="regPass" placeholder="Password">
+  <button class="btn" onclick="registerUser()">Register</button>
+</div>
+
 </body>
 </html>

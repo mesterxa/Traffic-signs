@@ -1,83 +1,157 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn Traffic Signs</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traffic Signs Learning</title>
 
-    h1 {
-      color: #ff4444;
-      animation: fadeIn 2s;
-    }
+<style>
+:root {
+  --main: #e63946;
+  --dark: #1d3557;
+  --light: #f1faee;
+}
 
-    .card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin: 20px auto;
-      padding: 20px;
-      width: 300px;
-      transition: transform 0.3s;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .card:hover {
-      transform: scale(1.05);
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--light);
+  color: var(--dark);
+}
 
-    img {
-      width: 100%;
-      height: auto;
-    }
+/* ===== HEADER ===== */
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+}
 
-    button {
-      background-color: #ff4444;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-      margin: 10px;
-      padding: 10px 20px;
-      transition: background-color 0.3s;
-    }
+header h1 {
+  margin: 0;
+  color: var(--main);
+}
 
-    button:hover {
-      background-color: #ff9999;
-    }
+nav a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: var(--dark);
+  font-weight: bold;
+}
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-  </style>
+.btn-nav {
+  background: var(--main);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.hero h2 {
+  font-size: 2.2em;
+}
+
+.hero p {
+  max-width: 600px;
+  margin: auto;
+  font-size: 1.1em;
+}
+
+/* ===== CARDS ===== */
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 30px;
+}
+
+.card {
+  background: white;
+  width: 260px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.15);
+  transition: transform .3s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card img {
+  width: 100%;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--dark);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+}
+</style>
 </head>
+
 <body>
 
-  <h1>🚦 Learn Traffic Signs</h1>
-  <p>An educational site to easily understand traffic signs</p>
+<header>
+  <h1>🚦 Traffic Signs</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="learning.html">Learning</a>
+    <a href="quizzes.html">Quizzes</a>
+    <a href="games.html">Games</a>
+    <a href="login.html" class="btn-nav">Login</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Learn Traffic Signs Easily</h2>
+  <p>
+    A modern educational platform to understand traffic signs, prepare for driving exams,
+    and learn through quizzes and games.
+  </p>
+</section>
+
+<section class="cards">
 
   <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Stop_sign.svg/200px-Stop_sign.svg.png" alt="Stop Sign">
-    <h3>Stop</h3>
-    <p>Come to a complete halt before proceeding</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Stop_sign.svg">
+    <h3>Stop Sign</h3>
+    <p>Mandatory stop before proceeding.</p>
   </div>
 
-  <button onclick="location.href='learning.html'">Learning</button>
-  <button onclick="location.href='quizzes.html'">Quizzes</button>
-  <button onclick="location.href='resources.html'">Resources</button>
-  <button onclick="location.href='games.html'">Game</button>
+  <div class="card">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Speed_limit_50_sign.svg/200px-Speed_limit_50_sign.svg.png">
+    <h3>Speed Limit</h3>
+    <p>Maximum allowed speed.</p>
+  </div>
+
+  <div class="card">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Warning_sign.svg/200px-Warning_sign.svg.png">
+    <h3>Warning</h3>
+    <p>Be careful of potential hazards.</p>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Traffic Signs | Learn • Practice • Succeed
+</footer>
 
 </body>
 </html>

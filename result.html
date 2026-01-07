@@ -2,233 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Results – DriveLearn</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveLearn – Result</title>
 
 <style>
-/* =====================
-   Variables
-===================== */
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
-  --bg-light: #f8fafc;
+  --bg-light: #ffffff;
   --bg-dark: #0f172a;
   --card-light: #ffffff;
   --card-dark: #111827;
+  --text-dark: #111827;
   --text-light: #e5e7eb;
   --success: #16a34a;
   --danger: #dc2626;
-  --radius: 18px;
+  --radius: 16px;
 }
 
-/* =====================
-   Base
-===================== */
+* { box-sizing: border-box; }
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg-light);
-  color: #111827;
-  min-height: 100vh;
+  color: var(--text-dark);
 }
 
-/* =====================
-   Navbar
-===================== */
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  height: 56px;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 14px 24px;
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 6px 20px rgba(0,0,0,.18);
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--card-light);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
+
+body.dark .navbar { background: var(--card-dark); }
 
 .navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.logo {
-  height: 36px;
-}
-
-/* =====================
-   Result Box
-===================== */
-.box {
-  max-width: 900px;
-  margin: 80px auto;
-  background: var(--card-light);
-  padding: 32px;
-  border-radius: var(--radius);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
-  animation: fadeUp .6s ease;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-h2 {
-  margin-top: 0;
-  margin-bottom: 14px;
-}
-
-p {
-  line-height: 1.6;
-  opacity: .9;
-}
-
-/* =====================
-   Status
-===================== */
-.good {
-  color: var(--success);
-  font-weight: 800;
-}
-
-.bad {
-  color: var(--danger);
-  font-weight: 800;
-}
-
-/* =====================
-   Table
-===================== */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 26px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-th {
-  background: #f1f5f9;
+  color: var(--primary);
   font-weight: 600;
+  margin-left: 14px;
+  font-size: 14px;
 }
 
-/* =====================
-   Teacher Controls
-===================== */
-.controls {
+.logo { height: 32px; }
+
+/* Hero */
+.hero {
+  padding: 90px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: .9;
+  max-width: 700px;
+  margin: auto;
+}
+
+/* Cards */
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+.cards {
   display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: -60px;
 }
 
-input, select, button {
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 15px;
+.card {
+  background: var(--card-light);
+  padding: 30px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,.1);
 }
 
-input, select {
-  border: 1px solid #cbd5f5;
-}
+body.dark .card { background: var(--card-dark); }
 
-button {
+.good { color: var(--success); font-weight: 800; }
+.bad { color: var(--danger); font-weight: 800; }
+
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 700;
   background: var(--primary);
   color: white;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: .25s ease;
+  transition: .25s;
 }
 
-button:hover {
-  background: var(--primary-dark);
+.btn:hover {
   transform: translateY(-2px);
+  background: var(--primary-dark);
 }
 
-/* =====================
-   iOS Toast
-===================== */
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,.97);
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: .4s cubic-bezier(.25,.8,.25,1);
-  z-index: 9999;
-  backdrop-filter: blur(10px);
+/* Footer */
+footer {
+  text-align: center;
+  padding: 25px;
+  margin-top: 90px;
+  font-size: 14px;
+  opacity: .8;
 }
 
-.ios-toast.show {
-  top: 25px;
-}
-
-/* =====================
-   Responsive
-===================== */
-@media (max-width: 700px) {
-  .box {
-    margin: 40px 16px;
-    padding: 24px;
-  }
-
-  .controls {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* =====================
-   Dark Mode
-===================== */
+/* Dark auto */
 @media (prefers-color-scheme: dark) {
-  body {
-    background: var(--bg-dark);
-    color: var(--text-light);
-  }
-
-  .box,
-  table {
-    background: var(--card-dark);
-  }
-
-  th {
-    background: #1f2937;
-  }
-
-  th, td {
-    border-bottom: 1px solid #374151;
-  }
-
-  input, select {
-    background: #1f2937;
-    color: var(--text-light);
-    border: 1px solid #374151;
-  }
+  body { background: var(--bg-dark); color: var(--text-light); }
 }
 </style>
 
-<!-- =====================
-     Firebase (UNCHANGED)
-===================== -->
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, collection, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -248,104 +164,75 @@ const db = getFirestore(app);
 onAuthStateChanged(auth, async user => {
   if (!user) return location.href = "login.html";
 
-  const box = document.getElementById("content");
+  const cards = document.getElementById("cards");
 
   /* 👨‍🏫 Teacher */
   if (user.email === TEACHER_EMAIL) {
     const snap = await getDocs(collection(db, "users"));
-    let rows = "";
+    let html = "";
 
     snap.forEach(d => {
       const u = d.data();
-      rows += `
-        <tr>
-          <td>${u.firstName} ${u.lastName}</td>
-          <td>${u.email}</td>
-          <td>${u.result || "—"}</td>
-        </tr>`;
+      html += `
+        <div class="card">
+          <h3>${u.firstName} ${u.lastName}</h3>
+          <p>${u.email}</p>
+          <p class="${u.result === "Passed" ? "good" : "bad"}">
+            ${u.result || "No result yet"}
+          </p>
+        </div>`;
     });
 
-    box.innerHTML = `
-      <h2>Teacher Panel</h2>
-
-      <div class="controls">
-        <input id="email" placeholder="Student Email">
-        <select id="result">
-          <option value="Passed">Passed</option>
-          <option value="Failed">Failed</option>
-        </select>
-        <button onclick="saveResult()">Save</button>
-      </div>
-
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Result</th>
-        </tr>
-        ${rows}
-      </table>
-    `;
+    cards.innerHTML = html;
   }
 
   /* 👨‍🎓 Student */
   else {
     const snap = await getDoc(doc(db, "users", user.uid));
-    const data = snap.data();
+    const d = snap.data();
 
-    if (data.result) {
-      box.innerHTML = `
-        <h2>Welcome ${data.firstName} 👋</h2>
-        <p>Your exam result is:</p>
-        <h3 class="${data.result === "Passed" ? "good" : "bad"}">
-          ${data.result}
-        </h3>
-      `;
-    } else {
-      box.innerHTML = `
-        <h2>Hello ${data.firstName} 👋</h2>
-        <p>
-          Thank you for your interest in DriveLearn.<br>
-          Your exam results are not available yet.<br>
-          Please come back later.
-        </p>
-      `;
-    }
+    cards.innerHTML = `
+      <div class="card">
+        <h3>Welcome ${d.firstName} 👋</h3>
+        <p>Your exam result:</p>
+        <h2 class="${d.result === "Passed" ? "good" : "bad"}">
+          ${d.result || "Pending"}
+        </h2>
+        <a href="signs.html" class="btn">Review Traffic Signs</a>
+      </div>
+    `;
   }
 });
-
-window.saveResult = async () => {
-  const email = document.getElementById("email").value;
-  const result = document.getElementById("result").value;
-  const users = await getDocs(collection(db, "users"));
-
-  users.forEach(async d => {
-    if (d.data().email === email) {
-      await setDoc(doc(db, "users", d.id), { result }, { merge: true });
-      toast("Result saved ✅");
-    }
-  });
-};
-
-function toast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2000);
-}
 </script>
 </head>
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
-  <a href="index.html">Home</a>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="signs.html">Signs</a>
+  </div>
 </div>
 
-<div class="box" id="content">Loading...</div>
+<!-- Hero -->
+<section class="hero">
+  <h1>Exam Results</h1>
+  <p>Track your performance and improve your driving knowledge</p>
+</section>
 
-<div id="toast" class="ios-toast"></div>
+<!-- Cards -->
+<div class="container">
+  <div class="cards" id="cards">
+    Loading...
+  </div>
+</div>
+
+<footer>
+  © 2026 DriveLearn – Traffic Awareness Platform
+</footer>
 
 </body>
 </html>

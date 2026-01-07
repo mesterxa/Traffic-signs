@@ -2,133 +2,143 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Traffic Quiz</title>
+<title>Traffic Quiz – DriveLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#f2f4f8;
-  }
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --radius:16px;
+}
 
-  header{
-    background:#0b2c5d;
-    color:white;
-    padding:15px;
-    text-align:center;
-    font-size:20px;
-    font-weight:bold;
-  }
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui;
+  background:var(--bg);
+}
 
-  .quiz-card{
-    background:white;
-    max-width:420px;
-    margin:40px auto;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-    text-align:center;
-  }
+/* Header */
+header{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
+  padding:16px;
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+}
 
-  .quiz-card img{
-    width:140px;
-    margin-bottom:15px;
-  }
+/* Quiz Card */
+.quiz-card{
+  background:var(--card);
+  max-width:420px;
+  margin:40px auto;
+  padding:26px;
+  border-radius:var(--radius);
+  box-shadow:0 15px 35px rgba(0,0,0,.15);
+  text-align:center;
+}
 
-  .options button{
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border:none;
-    border-radius:10px;
-    background:#163b78;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-  }
+.quiz-card img{
+  width:140px;
+  margin-bottom:15px;
+}
 
-  .options button:hover{
-    background:#0b2c5d;
-  }
+/* Options */
+.options button{
+  width:100%;
+  padding:13px;
+  margin:8px 0;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:.25s;
+}
 
-  .info{
-    margin-top:10px;
-    color:#555;
-    font-size:14px;
-  }
+.options button:hover{
+  background:var(--primary-dark);
+}
 
-  /* Modal */
-  .modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.55);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:10;
-  }
+.info{
+  margin-top:12px;
+  color:#555;
+  font-size:14px;
+}
 
-  .modal.show{
-    display:flex;
-  }
+/* Modal */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
 
-  .modal-card{
-    background:white;
-    width:90%;
-    max-width:350px;
-    padding:25px;
-    border-radius:16px;
-    text-align:center;
-  }
+.modal.show{ display:flex; }
 
-  .icon{
-    font-size:60px;
-    margin-bottom:10px;
-  }
+.modal-card{
+  background:white;
+  width:90%;
+  max-width:360px;
+  padding:26px;
+  border-radius:18px;
+  text-align:center;
+}
 
-  .modal-actions{
-    display:flex;
-    gap:10px;
-    margin-top:20px;
-  }
+.icon{
+  font-size:58px;
+  margin-bottom:10px;
+}
 
-  .modal-actions button{
-    flex:1;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    font-size:15px;
-    cursor:pointer;
-  }
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:22px;
+}
 
-  #retryBtn,#restartExam{
-    background:#e5e7eb;
-  }
+.modal-actions button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-size:15px;
+  cursor:pointer;
+}
 
-  #nextBtn{
-    background:#16a34a;
-    color:white;
-  }
+#retryBtn,#restartExam{
+  background:#e5e7eb;
+}
 
-  #reviewBtn,#reviewSigns{
-    background:#2563eb;
-    color:white;
-  }
+#nextBtn{
+  background:#16a34a;
+  color:white;
+}
+
+#reviewBtn,#reviewSigns{
+  background:var(--primary);
+  color:white;
+}
 </style>
 </head>
 
 <body>
 
-<header>Traffic Quiz</header>
+<header>🚦 Traffic Quiz</header>
 
 <div class="quiz-card">
-  <img id="signImage" src="">
+  <img id="signImage">
   <div class="options" id="options"></div>
   <div class="info" id="info"></div>
 </div>
 
-<!-- Question Result Modal -->
+<!-- Answer Modal -->
 <div id="resultModal" class="modal">
   <div class="modal-card">
     <div class="icon" id="resultIcon"></div>
@@ -142,7 +152,7 @@
   </div>
 </div>
 
-<!-- Final Result Modal -->
+<!-- Final Modal -->
 <div id="finalModal" class="modal">
   <div class="modal-card">
     <div class="icon" id="finalIcon"></div>
@@ -158,16 +168,19 @@
 <script>
 const questions = [
   {
+    id:"stop",
     img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Stop_sign.svg/512px-Stop_sign.svg.png",
     options:["Stop","No entry","Parking"],
     answer:"Stop"
   },
   {
+    id:"no-entry",
     img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/No_entry.svg/512px-No_entry.svg.png",
     options:["Stop","No entry","Danger"],
     answer:"No entry"
   },
   {
+    id:"pedestrians",
     img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Children_crossing.svg/512px-Children_crossing.svg.png",
     options:["School","Pedestrians","Children"],
     answer:"Children"
@@ -202,7 +215,7 @@ function loadQuestion(){
   const q = questions[index];
   signImage.src = q.img;
   optionsBox.innerHTML = "";
-  info.textContent = `Question ${index+1}/${questions.length} | Score: ${score}`;
+  info.textContent = `Question ${index+1}/${questions.length} | Score: ${score}/30`;
 
   q.options.forEach(opt=>{
     const btn = document.createElement("button");
@@ -223,27 +236,21 @@ function checkAnswer(answer){
   } else {
     resultIcon.textContent = "❌";
     resultTitle.textContent = "Wrong!";
-    resultText.textContent = "Try again";
+    resultText.textContent = "راجع الإشارة جيدًا";
   }
 }
 
-retryBtn.onclick = ()=>{
-  resultModal.classList.remove("show");
-};
+retryBtn.onclick = ()=>resultModal.classList.remove("show");
 
 reviewBtn.onclick = ()=>{
-  location.href = "signs.html";
+  location.href = `signs.html?sign=${questions[index].id}`;
 };
 
 nextBtn.onclick = ()=>{
   resultModal.classList.remove("show");
   index++;
-
-  if(index < questions.length){
-    loadQuestion();
-  } else {
-    showFinalResult();
-  }
+  if(index < questions.length) loadQuestion();
+  else showFinalResult();
 };
 
 function showFinalResult(){
@@ -260,7 +267,7 @@ function showFinalResult(){
   }
 
   restartExam.onclick = ()=>location.reload();
-  reviewSigns.onclick = ()=>location.href = "signs.html";
+  reviewSigns.onclick = ()=>location.href="signs.html";
 }
 
 loadQuestion();

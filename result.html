@@ -6,89 +6,61 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  background: #f7f8fa;
-  color: #2c2c2c;
-  transition: background 0.3s, color 0.3s;
+@media (prefers-color-scheme: dark) {
+  body { background:#0f172a; color:#e5e7eb; }
+  .box, table { background:#111827; }
 }
-body.dark {
-  background: #1a1a1a;
-  color: #eee;
-}
-.rtl { direction: rtl; text-align: right; }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1565c0;
-  padding: 12px 20px;
-  color: #fff;
-}
-body.dark .navbar { background: #0d47a1; }
-.navbar a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
-.navbar a:hover { text-decoration: underline; }
-.logo-img { height: 40px; }
 
 .box {
-  max-width: 600px;
+  max-width: 900px;
   margin: 80px auto;
-  background: #fff;
+  background: white;
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  text-align: center;
-  transition: background 0.3s, color 0.3s;
+  box-shadow: 0 15px 40px rgba(0,0,0,.12);
 }
-body.dark .box { background: #2c2c2c; color: #eee; }
 
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
+h2 { margin-bottom: 15px; }
+
+.good { color:#16a34a; font-weight:700; }
+.bad { color:#dc2626; font-weight:700; }
+
+table {
+  width:100%;
+  border-collapse: collapse;
+  margin-top:20px;
 }
-body.dark input { background: #2c2c2c; color: #eee; border: 1px solid #555; }
-
-button {
-  background: #1565c0;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+th, td {
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
 }
-button:hover { background: #0d47a1; }
 
-/* iOS Toast */
+input, select, button {
+  padding:10px;
+  margin-top:8px;
+  width:100%;
+}
+
 .ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.96);
-  color: #000;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  transition: all 0.45s cubic-bezier(.25,.8,.25,1);
-  z-index: 9999;
+  position:fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.96);
+  padding:14px 22px;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  transition:.4s;
+  z-index:9999;
 }
-.ios-toast.show { top: 25px; }
-.ios-toast.success { border-left: 5px solid #34c759; }
-.ios-toast.error { border-left: 5px solid #ff3b30; }
+.ios-toast.show { top:25px; }
 </style>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -106,79 +78,82 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
+  if(!user) return location.href="login.html";
+
+  const box = document.getElementById("content");
+
+  // 👨‍🏫 الأستاذ
+  if(user.email === TEACHER_EMAIL){
+    const snap = await getDocs(collection(db,"users"));
+    let rows = "";
+    snap.forEach(d=>{
+      const u = d.data();
+      rows += `
+        <tr>
+          <td>${u.firstName} ${u.lastName}</td>
+          <td>${u.email}</td>
+          <td>${u.result || "—"}</td>
+        </tr>`;
+    });
+
+    box.innerHTML = `
+      <h2>Teacher Panel</h2>
+
+      <input id="email" placeholder="Student Email">
+      <select id="result">
+        <option value="Passed">Passed</option>
+        <option value="Failed">Failed</option>
+      </select>
+      <button onclick="saveResult()">Save Result</button>
+
+      <table>
+        <tr><th>Name</th><th>Email</th><th>Result</th></tr>
+        ${rows}
+      </table>
+    `;
   }
 
-  const container = document.getElementById("content");
+  // 👨‍🎓 التلميذ
+  else {
+    const snap = await getDoc(doc(db,"users",user.uid));
+    const data = snap.data();
 
-  if (user.email === TEACHER_EMAIL) {
-    // لوحة الأستاذ: إدخال النتائج وعرض ترتيب الطلاب
-    const usersSnapshot = await getDocs(collection(db, "users"));
-    let leaderboard = "<h3>Leaderboard</h3><ul>";
-    usersSnapshot.forEach(doc => {
-      leaderboard += `<li>${doc.data().fullname} (${doc.data().email})</li>`;
-    });
-    leaderboard += "</ul>";
-
-    container.innerHTML = `
-      <h2>Teacher Panel</h2>
-      <input type="email" id="studentEmail" placeholder="Student Email">
-      <input type="text" id="studentResult" placeholder="Result">
-      <button onclick="saveResult()">Save Result</button>
-      <div id="leaderboard">${leaderboard}</div>
-    `;
-  } else {
-    // التلميذ يرى اسمه ونتيجته أو رسالة مهذبة
-    const userDoc = await getDoc(doc(db, "users", user.email));
-    let fullname = userDoc.exists() ? userDoc.data().fullname : user.email;
-
-    const resultDoc = await getDoc(doc(db, "results", user.email));
-    let resultHTML;
-    if (resultDoc.exists()) {
-      resultHTML = `<h2>Hi ${fullname}</h2><p><strong>Result: ${resultDoc.data().result}</strong></p>`;
+    if(data.result){
+      box.innerHTML = `
+        <h2>Welcome ${data.firstName} 👋</h2>
+        <p>Your exam result is:</p>
+        <h3 class="${data.result==='Passed'?'good':'bad'}">${data.result}</h3>
+      `;
     } else {
-      resultHTML = `<h2>Hi ${fullname}</h2><p>Please come back after completing the exam.</p>`;
+      box.innerHTML = `
+        <h2>Hello ${data.firstName} 👋</h2>
+        <p>
+          Thank you for your interest in DriveLearn.<br>
+          Your exam results are not available yet.<br>
+          Please come back later.
+        </p>
+      `;
     }
-
-    container.innerHTML = resultHTML;
   }
 });
 
-// حفظ النتائج (الأستاذ)
-window.saveResult = async function() {
-  const email = document.getElementById("studentEmail").value;
-  const result = document.getElementById("studentResult").value;
-
-  if (!email || !result) {
-    showToast("Fill all fields", "error");
-    return;
-  }
-
-  try {
-    await setDoc(doc(db, "results", email), { result: result });
-    showToast("Result saved successfully ✅", "success");
-    document.getElementById("studentEmail").value = "";
-    document.getElementById("studentResult").value = "";
-  } catch (error) {
-    showToast("Error: " + error.message, "error");
-  }
-};
-
-// iOS Toast
-function showToast(message, type="success") {
-  const toast = document.getElementById("ios-toast");
-  toast.textContent = message;
-  toast.className = `ios-toast show ${type}`;
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
+window.saveResult = async ()=>{
+  const email = email.value;
+  const result = document.getElementById("result").value;
+  const users = await getDocs(collection(db,"users"));
+  users.forEach(async d=>{
+    if(d.data().email===email){
+      await setDoc(doc(db,"users",d.id),{ result },{ merge:true });
+      toast("Result saved ✅");
+    }
+  });
 }
 
-// Dark Mode تلقائي حسب الهاتف
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  document.body.classList.add('dark');
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2000);
 }
 </script>
 </head>
@@ -186,19 +161,12 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
 <body>
 
 <div class="navbar">
-  <img src="logo.png" alt="DriveLearn" class="logo-img">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="result.html">Results</a>
-    <a href="quizzes.html">Quizzes</a>
-  </div>
+  <img src="logo.png" class="logo">
+  <a href="index.html">Home</a>
 </div>
 
-<div class="box" id="content">
-  Loading...
-</div>
-
-<div id="ios-toast" class="ios-toast"></div>
+<div class="box" id="content">Loading...</div>
+<div id="toast" class="ios-toast"></div>
 
 </body>
 </html>

@@ -3,168 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Panel – DriveLearn</title>
+<title>DriveLearn – Teacher Dashboard</title>
 
 <style>
-:root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #ffffff;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --radius: 16px;
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg-light:#ffffff;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#111827;
+  --text-light:#e5e7eb;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --radius:16px;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg-light);
+  color:var(--text-dark);
 }
 
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
 }
 
-a { text-decoration: none; color: inherit; }
+a{text-decoration:none;color:inherit}
 
 /* Navbar */
-.navbar {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--card-light);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:var(--card-light);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+body.dark .navbar{background:var(--card-dark)}
+
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+  font-size:14px;
 }
 
-body.dark .navbar { background: var(--card-dark); }
-
-.navbar a {
-  color: var(--primary);
-  font-weight: 600;
-  margin-left: 14px;
-  font-size: 14px;
-}
-
-.logo { height: 32px; }
+.logo{height:32px}
 
 /* Hero */
-.hero {
-  padding: 70px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
+.hero{
+  padding:90px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
 }
 
-.hero h1 {
-  font-size: 34px;
-  margin-bottom: 10px;
+.hero h1{
+  font-size:36px;
+  margin-bottom:10px;
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: .9;
+.hero p{
+  font-size:18px;
+  opacity:.9;
 }
 
-/* Content */
-.container {
-  max-width: 1100px;
-  margin: -50px auto 0;
-  padding: 0 20px;
+/* Container */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:0 20px;
 }
 
-.card {
-  background: var(--card-light);
-  padding: 28px;
-  border-radius: var(--radius);
-  box-shadow: 0 14px 35px rgba(0,0,0,.12);
+.card{
+  margin-top:-60px;
+  background:var(--card-light);
+  border-radius:var(--radius);
+  padding:25px;
+  box-shadow:0 14px 35px rgba(0,0,0,.12);
+}
+body.dark .card{background:var(--card-dark)}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
 }
 
-body.dark .card { background: var(--card-dark); }
+thead{
+  background:#f1f5f9;
+}
+body.dark thead{background:#1f2933}
 
-/* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+th,td{
+  padding:14px;
+  text-align:left;
 }
 
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
+th{
+  font-weight:700;
 }
 
-body.dark th,
-body.dark td {
-  border-bottom: 1px solid #374151;
+tr:not(:last-child){
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+body.dark tr:not(:last-child){
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-th {
-  background: #f1f5f9;
-  font-weight: 600;
+.good{color:var(--success);font-weight:700}
+.bad{color:var(--danger);font-weight:700}
+
+input{
+  width:100%;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #cbd5f5;
+  font-family:inherit;
+}
+body.dark input{
+  background:#0f172a;
+  color:white;
+  border:1px solid #334155;
 }
 
-body.dark th { background: #1f2937; }
-
-select, input, button {
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 14px;
+.btn{
+  padding:8px 16px;
+  border-radius:999px;
+  border:none;
+  background:var(--primary);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
 }
-
-input, select {
-  border: 1px solid #cbd5f5;
-  width: 100%;
-}
-
-button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .25s;
-}
-
-button:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.pass { color: var(--success); font-weight: 700; }
-.fail { color: var(--danger); font-weight: 700; }
-
-.note {
-  font-size: 13px;
-  opacity: .8;
+.btn:hover{
+  background:var(--primary-dark);
 }
 
 /* Footer */
-footer {
-  text-align: center;
-  padding: 25px;
-  margin-top: 80px;
-  font-size: 14px;
-  opacity: .8;
+footer{
+  text-align:center;
+  padding:25px;
+  margin-top:90px;
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -182,54 +180,57 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth, async user => {
-  if (!user || user.email !== TEACHER_EMAIL) {
-    location.href = "login.html";
+/* Auto dark mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
+
+/* Auth */
+onAuthStateChanged(auth, async user=>{
+  if(!user || user.email !== TEACHER_EMAIL){
+    location.href="login.html";
     return;
   }
 
   const tbody = document.getElementById("students");
 
-  const snap = await getDocs(collection(db, "users"));
-  tbody.innerHTML = "";
+  const snap = await getDocs(collection(db,"users"));
+  let html = "";
 
-  snap.forEach(docSnap => {
-    const u = docSnap.data();
-    if (u.role !== "student") return;
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.firstName} ${u.lastName}</td>
-      <td>${u.email}</td>
-      <td>
-        <select id="res-${docSnap.id}">
-          <option value="">—</option>
-          <option value="Passed">Passed</option>
-          <option value="Failed">Failed</option>
-        </select>
-      </td>
-      <td>
-        <input id="note-${docSnap.id}" placeholder="Teacher note">
-      </td>
-      <td>
-        <button onclick="save('${docSnap.id}')">Save</button>
-      </td>
+  snap.forEach(d=>{
+    const u = d.data();
+    html += `
+      <tr>
+        <td>${u.firstName || ""} ${u.lastName || ""}</td>
+        <td>${u.email || ""}</td>
+        <td class="${u.result==="Passed"?"good":"bad"}">
+          ${u.result || "—"}
+        </td>
+        <td>
+          <input value="${u.note || ""}" id="note-${d.id}">
+        </td>
+        <td>
+          <button class="btn" onclick="saveNote('${d.id}')">Save</button>
+        </td>
+      </tr>
     `;
-    tbody.appendChild(tr);
   });
+
+  tbody.innerHTML = html;
 });
 
-window.save = async (id) => {
-  const result = document.getElementById("res-"+id).value;
+/* Save note */
+window.saveNote = async (id)=>{
   const note = document.getElementById("note-"+id).value;
+  await updateDoc(doc(db,"users",id),{ note });
+  alert("Note saved ✅");
+}
 
-  await updateDoc(doc(db, "users", id), {
-    result,
-    note
-  });
-
-  alert("Saved successfully ✅");
-};
+/* Logout */
+window.logout = async ()=>{
+  await signOut(auth);
+  location.href="login.html";
+}
 </script>
 </head>
 
@@ -240,7 +241,7 @@ window.save = async (id) => {
   <img src="logo.png" class="logo">
   <div>
     <a href="index.html">Home</a>
-    <a href="login.html">Logout</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
 </div>
 
@@ -250,18 +251,22 @@ window.save = async (id) => {
   <p>Follow students and manage their results</p>
 </section>
 
-<!-- Content -->
+<!-- Table -->
 <div class="container">
   <div class="card">
     <table>
-      <tr>
-        <th>Student</th>
-        <th>Email</th>
-        <th>Result</th>
-        <th>Note</th>
-        <th>Action</th>
-      </tr>
-      <tbody id="students"></tbody>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Email</th>
+          <th>Result</th>
+          <th>Note</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="students">
+        <tr><td colspan="5">Loading...</td></tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -269,12 +274,6 @@ window.save = async (id) => {
 <footer>
   © 2026 DriveLearn – Teacher Panel
 </footer>
-
-<script>
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  document.body.classList.add("dark");
-}
-</script>
 
 </body>
 </html>

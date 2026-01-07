@@ -8,7 +8,7 @@
 <style>
 *{
   box-sizing:border-box;
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI";
 }
 
 body{
@@ -83,6 +83,37 @@ button:hover{
   text-align:center;
 }
 
+/* Success Modal */
+.success-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.success-box{
+  background:white;
+  padding:30px 26px;
+  border-radius:18px;
+  text-align:center;
+  width:280px;
+  animation:scaleIn .3s ease;
+}
+
+.success-icon{
+  font-size:48px;
+  color:#16a34a;
+}
+
+@keyframes scaleIn{
+  from{transform:scale(.8);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+/* Footer */
 .footer{
   text-align:center;
   margin-top:40px;
@@ -108,6 +139,15 @@ button:hover{
 
 <div class="footer">
   © 2026 DriveLearn – Traffic Awareness Platform
+</div>
+
+<!-- Success Modal -->
+<div class="success-overlay" id="success">
+  <div class="success-box">
+    <div class="success-icon">✔</div>
+    <h3>Registration Successful</h3>
+    <p>Your account has been created</p>
+  </div>
 </div>
 
 <script type="module">
@@ -136,15 +176,15 @@ const errorBox = document.getElementById("error");
 window.register = async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
-  errorBox.textContent = "";
+  errorBox.textContent="";
 
   if(!email || !password){
-    errorBox.textContent = "Please fill in all fields";
+    errorBox.textContent="Please fill in all fields";
     return;
   }
 
   if(password.length < 6){
-    errorBox.textContent = "Password must be at least 6 characters";
+    errorBox.textContent="Password must be at least 6 characters";
     return;
   }
 
@@ -152,16 +192,20 @@ window.register = async () => {
     const cred = await createUserWithEmailAndPassword(auth,email,password);
 
     await setDoc(doc(db,"users",cred.user.uid),{
-      email: cred.user.email,
+      email:cred.user.email,
       role:"student",
       blocked:false,
       createdAt:new Date()
     });
 
-    location.href="login.html";
+    document.getElementById("success").style.display="flex";
+
+    setTimeout(()=>{
+      location.href="result.html";
+    },2000);
 
   }catch(e){
-    errorBox.textContent = "Registration failed: " + e.message;
+    errorBox.textContent="Registration failed: " + e.message;
   }
 };
 </script>

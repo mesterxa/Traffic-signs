@@ -1,229 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveLearn – Teacher Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Teacher Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root{
-  --primary:#2563eb;
-  --primary-dark:#1e40af;
-  --bg:#ffffff;
-  --card:#ffffff;
-  --text:#111827;
-  --success:#16a34a;
-  --danger:#dc2626;
-  --radius:16px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
 
-*{box-sizing:border-box}
+    body {
+      margin: 0;
+      background: #f5f7fb;
+    }
 
-body{
-  margin:0;
-  font-family:"Segoe UI",system-ui,sans-serif;
-  background:#f8fafc;
-  color:var(--text);
-}
+    /* Navbar */
+    .navbar {
+      background: white;
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
 
-/* Navbar */
-.navbar{
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 18px;
-  background:white;
-  box-shadow:0 4px 12px rgba(0,0,0,.06);
-}
+    .navbar a {
+      text-decoration: none;
+      color: #2563eb;
+      margin-left: 15px;
+      font-weight: 500;
+    }
 
-.navbar a{
-  color:var(--primary);
-  font-weight:600;
-  margin-left:14px;
-  font-size:14px;
-  text-decoration:none;
-}
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-.logo{height:32px}
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
 
-/* Hero */
-.hero{
-  padding:80px 20px;
-  text-align:center;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:white;
-}
+    .header p {
+      margin-top: 10px;
+      opacity: 0.9;
+    }
 
-.hero h1{
-  margin-bottom:8px;
-}
+    /* Card */
+    .card {
+      max-width: 1100px;
+      margin: -40px auto 40px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.1);
+      padding: 20px;
+    }
 
-.hero p{
-  opacity:.9;
-}
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
-/* Table */
-.container{
-  max-width:1100px;
-  margin:-60px auto 0;
-  padding:0 20px;
-}
+    .controls input,
+    .controls select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
 
-.table-card{
-  background:white;
-  border-radius:var(--radius);
-  box-shadow:0 14px 35px rgba(0,0,0,.12);
-  overflow-x:auto;
-}
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-}
+    th {
+      background: #f1f5f9;
+      text-align: left;
+      padding: 12px;
+      font-size: 14px;
+    }
 
-th,td{
-  padding:14px;
-  border-bottom:1px solid #e5e7eb;
-  text-align:left;
-  font-size:14px;
-}
+    td {
+      padding: 12px;
+      border-top: 1px solid #eee;
+    }
 
-th{
-  background:#f1f5f9;
-  font-weight:600;
-}
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
 
-.good{color:var(--success);font-weight:700}
-.bad{color:var(--danger);font-weight:700}
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-select,input{
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #cbd5e1;
-}
+    button:hover {
+      background: #1e40af;
+    }
 
-button{
-  padding:8px 14px;
-  border:none;
-  border-radius:10px;
-  background:var(--primary);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
+    footer {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      padding: 20px;
+    }
 
-button:hover{
-  background:var(--primary-dark);
-}
-
-/* Footer */
-footer{
-  text-align:center;
-  padding:30px;
-  margin-top:60px;
-  font-size:14px;
-  opacity:.7;
-}
-</style>
-
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-  storageBucket: "traffic-signs-fc047.appspot.com",
-  messagingSenderId: "746457575630",
-  appId: "1:746457575630:web:3219b85b64e2307126609f"
-};
-
-const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, async user=>{
-  if(!user || user.email !== TEACHER_EMAIL){
-    location.href="login.html";
-    return;
-  }
-
-  const tbody = document.getElementById("tbody");
-  const snap = await getDocs(collection(db,"users"));
-
-  let html = "";
-
-  snap.forEach(d=>{
-    const u = d.data();
-
-    html += `
-      <tr>
-        <td>${u.firstName || ""} ${u.lastName || ""}</td>
-        <td>${u.email}</td>
-        <td class="${u.result==="Passed"?"good":"bad"}">
-          ${u.result || "—"}
-        </td>
-        <td>
-          <input id="note-${d.id}" value="${u.note || ""}" placeholder="Note">
-        </td>
-        <td>
-          <select id="res-${d.id}">
-            <option ${u.result==="Passed"?"selected":""}>Passed</option>
-            <option ${u.result==="Failed"?"selected":""}>Failed</option>
-          </select>
-          <button onclick="save('${d.id}')">Save</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  tbody.innerHTML = html;
-});
-
-window.save = async (id)=>{
-  const result = document.getElementById("res-"+id).value;
-  const note = document.getElementById("note-"+id).value;
-
-  await updateDoc(doc(db,"users",id),{
-    result: result,
-    note: note
-  });
-
-  alert("Saved successfully ✅");
-};
-
-window.logout = ()=>{
-  signOut(auth).then(()=>location.href="login.html");
-};
-</script>
+    @media (max-width: 768px) {
+      table {
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-  <img src="logo.png" class="logo">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="#" onclick="logout()">Logout</a>
+  <!-- Navbar -->
+  <div class="navbar">
+    <strong>DriveLearn</strong>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="login.html">Logout</a>
+    </div>
   </div>
-</div>
 
-<!-- Hero -->
-<section class="hero">
-  <h1>Teacher Dashboard</h1>
-  <p>Follow students and manage their results</p>
-</section>
+  <!-- Header -->
+  <div class="header">
+    <h1>Teacher Dashboard</h1>
+    <p>Follow students and manage their results</p>
+  </div>
 
-<!-- Table -->
-<div class="container">
-  <div class="table-card">
+  <!-- Card -->
+  <div class="card">
+
+    <!-- Extra Options -->
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search student name">
+      <select id="filter">
+        <option value="all">All results</option>
+        <option value="pass">Passed</option>
+        <option value="fail">Failed</option>
+      </select>
+    </div>
+
+    <!-- Table -->
     <table>
       <thead>
         <tr>
@@ -234,16 +171,60 @@ window.logout = ()=>{
           <th>Action</th>
         </tr>
       </thead>
-      <tbody id="tbody">
-        <tr><td colspan="5">Loading...</td></tr>
+      <tbody id="studentsTable">
+        <!-- Dynamic -->
       </tbody>
     </table>
-  </div>
-</div>
 
-<footer>
-  © 2026 DriveLearn – Teacher Panel
-</footer>
+  </div>
+
+  <footer>
+    © 2026 DriveLearn – Teacher Panel
+  </footer>
+
+<script>
+  // بيانات تجريبية (يمكن ربطها بـ Firebase لاحقًا)
+  const students = [
+    { name: "Ahmed Ali", email: "ahmed@mail.com", result: "", note: "" },
+    { name: "Sara Mohamed", email: "sara@mail.com", result: "", note: "" }
+  ];
+
+  const table = document.getElementById("studentsTable");
+  const search = document.getElementById("search");
+  const filter = document.getElementById("filter");
+
+  function render() {
+    table.innerHTML = "";
+
+    students
+      .filter(s => s.name.toLowerCase().includes(search.value.toLowerCase()))
+      .filter(s => {
+        if (filter.value === "pass") return s.result >= 50;
+        if (filter.value === "fail") return s.result < 50 && s.result !== "";
+        return true;
+      })
+      .forEach((s, i) => {
+        table.innerHTML += `
+          <tr>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td><input type="number" value="${s.result}" onchange="students[${i}].result=this.value"></td>
+            <td><input type="text" value="${s.note}" onchange="students[${i}].note=this.value"></td>
+            <td><button onclick="save(${i})">Save</button></td>
+          </tr>
+        `;
+      });
+  }
+
+  function save(i) {
+    alert("Saved for " + students[i].name);
+  }
+
+  search.oninput = render;
+  filter.onchange = render;
+
+  render();
+</script>
 
 </body>
 </html>

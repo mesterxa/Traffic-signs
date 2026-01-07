@@ -9,140 +9,83 @@
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
-  --bg-light: #f8fafc;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-light: #e5e7eb;
+  --bg: #f8fafc;
+  --card: #ffffff;
   --radius: 16px;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: #111827;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Navbar */
-.navbar {
-  height: 56px;
+  background: var(--bg);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--primary);
-  color: white;
+  justify-content: center;
 }
 
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.logo {
-  height: 32px;
-}
-
-/* Auth Card */
-.auth-box {
-  max-width: 420px;
+.card {
   width: 100%;
-  margin: 40px auto;
-  background: var(--card-light);
+  max-width: 420px;
+  background: var(--card);
   padding: 32px;
   border-radius: var(--radius);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  box-shadow: 0 20px 50px rgba(0,0,0,.12);
 }
 
-.auth-box h2 {
+h2 {
+  margin-top: 0;
   text-align: center;
-  margin-bottom: 18px;
 }
 
-.auth-box input,
-.auth-box button {
+p {
+  text-align: center;
+  opacity: .8;
+  font-size: 14px;
+}
+
+input, button {
   width: 100%;
-  padding: 13px;
+  padding: 14px;
   margin-top: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 15px;
 }
 
-.auth-box input {
-  border: 1px solid #cbd5f5;
-  outline: none;
+input {
+  border: 1px solid #e5e7eb;
 }
 
-.auth-box input:focus {
-  border-color: var(--primary);
-}
-
-.auth-box button {
+button {
+  border: none;
   background: var(--primary);
   color: white;
-  border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: .25s ease;
 }
 
-.auth-box button:hover {
+button:hover {
   background: var(--primary-dark);
 }
 
-.auth-box p {
+.link {
+  margin-top: 18px;
   text-align: center;
   font-size: 14px;
-  margin-top: 16px;
 }
 
-.auth-box a {
+.link a {
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
 }
 
-/* Toast */
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,.97);
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: .4s;
-  z-index: 9999;
-}
-
-.ios-toast.show {
-  top: 25px;
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: var(--bg-dark);
-    color: var(--text-light);
-  }
-  .auth-box {
-    background: var(--card-dark);
-  }
-  .auth-box input {
-    background: #1f2933;
-    color: var(--text-light);
-    border: 1px solid #374151;
-  }
+.error {
+  margin-top: 12px;
+  color: #dc2626;
+  font-size: 14px;
+  text-align: center;
 }
 </style>
 
@@ -152,6 +95,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
+/* Firebase config (UNCHANGED) */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -165,69 +109,61 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.registerUser = async () => {
-  const firstName = document.getElementById("fname").value.trim();
-  const lastName = document.getElementById("lname").value.trim();
-  const email = document.getElementById("emailInput").value.trim();
-  const password = document.getElementById("passwordInput").value;
+window.register = async () => {
+  const firstName = fname.value.trim();
+  const lastName  = lname.value.trim();
+  const email     = emailInput.value.trim();
+  const password  = passwordInput.value;
+
+  errorBox.innerText = "";
 
   if (!firstName || !lastName || !email || !password) {
-    toast("Please fill all fields ❗");
+    errorBox.innerText = "Please fill in all fields";
     return;
   }
 
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
 
+    // Save student data
     await setDoc(doc(db, "users", cred.user.uid), {
       firstName,
       lastName,
       email,
+      role: "student",
       createdAt: new Date()
     });
 
-    toast("Registration successful 🎉");
+    // Redirect student to signs
+    location.href = "signs.html";
 
-    setTimeout(() => {
-      window.location.href = "result.html";
-    }, 1500);
-
-  } catch (e) {
-    toast(e.message);
-    console.error(e);
+  } catch (err) {
+    errorBox.innerText = err.message;
   }
 };
-
-function toast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2000);
-}
 </script>
 </head>
 
 <body>
 
-<div class="navbar">
-  <img src="logo.png" class="logo" alt="DriveLearn">
-  <a href="index.html">Home</a>
-</div>
-
-<div class="auth-box">
+<div class="card">
   <h2>Create Account</h2>
-  <input id="fname" placeholder="First Name">
-  <input id="lname" placeholder="Last Name">
+  <p>Register as a student to start learning</p>
+
+  <input id="fname" placeholder="First name">
+  <input id="lname" placeholder="Last name">
   <input id="emailInput" type="email" placeholder="Email">
   <input id="passwordInput" type="password" placeholder="Password">
-  <button onclick="registerUser()">Register</button>
-  <p>
+
+  <button onclick="register()">Register</button>
+
+  <div id="errorBox" class="error"></div>
+
+  <div class="link">
     Already have an account?
     <a href="login.html">Login</a>
-  </p>
+  </div>
 </div>
-
-<div id="toast" class="ios-toast"></div>
 
 </body>
 </html>

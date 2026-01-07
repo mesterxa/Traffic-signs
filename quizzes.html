@@ -2,259 +2,223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Traffic Quiz – DriveLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveLearn – Traffic Quiz</title>
 
 <style>
-:root{
+:root {
   --primary:#2563eb;
   --primary-dark:#1e40af;
-  --bg:#f8fafc;
-  --card:#ffffff;
+  --bg-light:#ffffff;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#111827;
+  --text-light:#e5e7eb;
   --radius:16px;
 }
 
+*{box-sizing:border-box}
+
 body{
   margin:0;
-  font-family:"Segoe UI",system-ui;
-  background:var(--bg);
+  min-height:100vh;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg-light);
+  color:var(--text-dark);
 }
 
-header{
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
+}
+
+a{text-decoration:none;color:inherit}
+
+/* Navbar */
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:var(--card-light);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+body.dark .navbar{background:var(--card-dark)}
+
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+  font-size:14px;
+}
+
+.logo{height:32px}
+
+/* Hero */
+.hero{
+  padding:80px 20px;
+  text-align:center;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:white;
-  padding:16px;
-  text-align:center;
-  font-size:20px;
-  font-weight:700;
 }
 
-.quiz-card{
-  background:var(--card);
-  max-width:420px;
-  margin:40px auto;
-  padding:26px;
+.hero h1{
+  font-size:34px;
+  margin-bottom:10px;
+}
+
+.hero p{
+  font-size:18px;
+  opacity:.9;
+}
+
+/* Quiz Card */
+.container{
+  max-width:600px;
+  margin:-60px auto 0;
+  padding:0 20px;
+}
+
+.card{
+  background:var(--card-light);
+  padding:30px;
   border-radius:var(--radius);
-  box-shadow:0 15px 35px rgba(0,0,0,.15);
+  box-shadow:0 14px 35px rgba(0,0,0,.12);
   text-align:center;
 }
+body.dark .card{background:var(--card-dark)}
 
-.quiz-card img{
+.card img{
   width:140px;
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
 
 .options button{
   width:100%;
-  padding:13px;
-  margin:8px 0;
+  margin:10px 0;
+  padding:14px;
   border:none;
   border-radius:12px;
   background:var(--primary);
   color:white;
   font-size:16px;
+  font-weight:600;
   cursor:pointer;
+  transition:.25s;
 }
 
 .options button:hover{
   background:var(--primary-dark);
+  transform:translateY(-2px);
 }
 
 .info{
-  margin-top:12px;
-  color:#555;
+  margin-top:15px;
   font-size:14px;
+  opacity:.8;
 }
 
-/* Modals */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
-}
-
-.modal.show{ display:flex; }
-
-.modal-card{
-  background:white;
-  width:90%;
-  max-width:360px;
-  padding:26px;
-  border-radius:18px;
+/* Footer */
+footer{
   text-align:center;
+  padding:30px;
+  margin-top:80px;
+  font-size:14px;
+  opacity:.8;
 }
-
-.icon{
-  font-size:58px;
-}
-
-.modal-actions{
-  display:flex;
-  gap:10px;
-  margin-top:22px;
-}
-
-.modal-actions button{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  font-size:15px;
-  cursor:pointer;
-}
-
-#retryBtn,#restartExam{ background:#e5e7eb; }
-#nextBtn{ background:#16a34a;color:white; }
-#reviewBtn,#reviewSigns{ background:var(--primary);color:white; }
 </style>
 </head>
 
 <body>
 
-<header>🚦 Traffic Quiz</header>
-
-<div class="quiz-card">
-  <img id="signImage">
-  <div class="options" id="options"></div>
-  <div class="info" id="info"></div>
-</div>
-
-<!-- Answer Modal -->
-<div id="resultModal" class="modal">
-  <div class="modal-card">
-    <div class="icon" id="resultIcon"></div>
-    <h3 id="resultTitle"></h3>
-    <p id="resultText"></p>
-    <div class="modal-actions">
-      <button id="retryBtn">🔁 Retry</button>
-      <button id="nextBtn">➡️ Next</button>
-      <button id="reviewBtn">📘 Review</button>
-    </div>
+<!-- Navbar -->
+<div class="navbar">
+  <img src="logo.png" class="logo">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="signs.html">Signs</a>
   </div>
 </div>
 
-<!-- Final Modal -->
-<div id="finalModal" class="modal">
-  <div class="modal-card">
-    <div class="icon" id="finalIcon"></div>
-    <h3 id="finalTitle"></h3>
-    <p id="finalText"></p>
-    <div class="modal-actions">
-      <button id="restartExam">🔁 إعادة الامتحان</button>
-      <button id="reviewSigns">📘 الذهاب للمراجعة</button>
-    </div>
+<!-- Hero -->
+<section class="hero">
+  <h1>Traffic Quiz</h1>
+  <p>Test your knowledge of traffic signs</p>
+</section>
+
+<!-- Quiz -->
+<div class="container">
+  <div class="card">
+    <img id="signImg">
+    <div class="options" id="options"></div>
+    <div class="info" id="info"></div>
   </div>
 </div>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+<footer>
+  © 2026 DriveLearn – Traffic Quiz
+</footer>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-  storageBucket: "traffic-signs-fc047.appspot.com",
-  messagingSenderId: "746457575630",
-  appId: "1:746457575630:web:3219b85b64e2307126609f"
-};
+<script>
+/* Auto dark mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let currentUser = null;
-
-onAuthStateChanged(auth, user=>{
-  if(!user) location.href="login.html";
-  currentUser = user;
-});
-
-/* Questions */
+/* Quiz logic */
 const questions = [
-  {id:"stop",img:"https://upload.wikimedia.org/wikipedia/commons/2/2f/Stop_sign.svg",options:["Stop","No entry","Parking"],answer:"Stop"},
-  {id:"no-entry",img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/No_entry.svg",options:["Stop","No entry","Danger"],answer:"No entry"},
-  {id:"pedestrians",img:"https://upload.wikimedia.org/wikipedia/commons/5/55/Children_crossing.svg",options:["School","Pedestrians","Children"],answer:"Children"}
+  {
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Stop_sign.svg/512px-Stop_sign.svg.png",
+    options:["Stop","No entry","Parking"],
+    answer:"Stop"
+  },
+  {
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/No_entry.svg/512px-No_entry.svg.png",
+    options:["Stop","No entry","Danger"],
+    answer:"No entry"
+  },
+  {
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Children_crossing.svg/512px-Children_crossing.svg.png",
+    options:["Children","Parking","Speed"],
+    answer:"Children"
+  }
 ];
 
-let index=0, score=0;
+let index = 0;
+let score = 0;
 
-/* DOM */
-const signImage = signImageEl = document.getElementById("signImage");
+const signImg = document.getElementById("signImg");
 const optionsBox = document.getElementById("options");
 const info = document.getElementById("info");
 
-/* Load Question */
 function loadQuestion(){
   const q = questions[index];
-  signImage.src = q.img;
-  optionsBox.innerHTML="";
-  info.textContent = `Question ${index+1}/${questions.length} | Score: ${score}/30`;
+  signImg.src = q.img;
+  optionsBox.innerHTML = "";
+  info.textContent = `Question ${index+1} / ${questions.length}`;
 
-  q.options.forEach(o=>{
-    const b=document.createElement("button");
-    b.textContent=o;
-    b.onclick=()=>checkAnswer(o);
-    optionsBox.appendChild(b);
+  q.options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = ()=>check(opt);
+    optionsBox.appendChild(btn);
   });
 }
 
-/* Answer */
-function checkAnswer(ans){
-  resultModal.classList.add("show");
-  if(ans===questions[index].answer){
-    score+=10;
-    resultIcon.textContent="✅";
-    resultTitle.textContent="Correct!";
-    resultText.textContent="Good job 🚗";
-  }else{
-    resultIcon.textContent="❌";
-    resultTitle.textContent="Wrong!";
-    resultText.textContent="راجع الإشارة";
+function check(answer){
+  if(answer === questions[index].answer){
+    score += 10;
   }
-}
 
-/* Navigation */
-retryBtn.onclick=()=>resultModal.classList.remove("show");
-
-reviewBtn.onclick=()=>{
-  location.href=`signs.html?sign=${questions[index].id}`;
-};
-
-nextBtn.onclick=()=>{
-  resultModal.classList.remove("show");
   index++;
-  index<questions.length ? loadQuestion() : showFinal();
-};
 
-/* Final */
-async function showFinal(){
-  finalModal.classList.add("show");
-
-  const passed = score >= 20;
-
-  finalIcon.textContent = passed ? "🎉" : "📘";
-  finalTitle.textContent = passed ? "تهانينا!" : "تحتاج إلى مراجعة";
-  finalText.textContent = `نتيجتك: ${score}/30`;
-
-  /* 🔥 SAVE RESULT */
-  await setDoc(doc(db,"results",currentUser.uid),{
-    uid: currentUser.uid,
-    email: currentUser.email,
-    score,
-    passed,
-    total: 30,
-    createdAt: new Date()
-  });
-
-  restartExam.onclick=()=>location.reload();
-  reviewSigns.onclick=()=>location.href="signs.html";
+  if(index < questions.length){
+    loadQuestion();
+  }else{
+    location.href = "result.html?score=" + score;
+  }
 }
 
 loadQuestion();

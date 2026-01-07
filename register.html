@@ -27,14 +27,19 @@ input,button{
   padding:14px;
   margin-top:14px;
   border-radius:12px;
+  font-size:15px;
 }
 button{
   border:none;
   background:#2563eb;
   color:white;
   font-weight:700;
+  cursor:pointer;
 }
-.error{color:#dc2626;margin-top:10px}
+.error{
+  color:#dc2626;
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -43,8 +48,8 @@ button{
 <div class="card">
   <h2>Create Account</h2>
   <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="register()">Register</button>
+  <input id="password" type="password" placeholder="Password (min 6 chars)">
+  <button id="registerBtn">Register</button>
   <div id="error" class="error"></div>
 </div>
 
@@ -53,6 +58,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
+/* Firebase config */
 const firebaseConfig={
   apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain:"traffic-signs-fc047.firebaseapp.com",
@@ -62,34 +68,49 @@ const firebaseConfig={
   appId:"1:746457575630:web:3219b85b64e2307126609f"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+/* Init */
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-window.register=async()=>{
+/* Elements */
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const errorBox = document.getElementById("error");
+const registerBtn = document.getElementById("registerBtn");
+
+/* Register */
+registerBtn.onclick = async () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  errorBox.textContent = "";
+
+  if(!email || !password){
+    errorBox.textContent = "Please fill in all fields";
+    return;
+  }
+
+  if(password.length < 6){
+    errorBox.textContent = "Password must be at least 6 characters";
+    return;
+  }
+
   try{
-    const cred=await createUserWithEmailAndPassword(
-      auth,
-      email.value.trim(),
-      password.value
-    );
+    const cred = await createUserWithEmailAndPassword(auth,email,password);
 
     await setDoc(doc(db,"users",cred.user.uid),{
-      email:cred.user.email,
-      blocked:false,
-      role:"student",
-      createdAt:Date.now()
+      email: cred.user.email,
+      role: "student",
+      blocked: false,
+      createdAt: new Date()
     });
 
-    location.href="login.html";
+    location.href = "login.html";
+
   }catch(e){
-    error.textContent=e.message;
+    errorBox.textContent = "Registration failed: " + e.message;
   }
 };
-
-const email=document.getElementById("email");
-const password=document.getElementById("password");
-const error=document.getElementById("error");
 </script>
 
 </body>

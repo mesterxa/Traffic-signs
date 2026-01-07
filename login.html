@@ -3,13 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login – DriveLearn</title>
+<title>DriveLearn – Login</title>
 
 <style>
-/* نفس CSS تمامًا */
-@import url("register.html");
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #ffffff;
+  --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
+  --text-dark: #111827;
+  --text-light: #e5e7eb;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
+.navbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--card-light);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+body.dark .navbar { background: var(--card-dark); }
+
+.navbar a {
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: 14px;
+  font-size: 14px;
+}
+
+.logo { height: 32px; }
+
+/* Hero */
+.hero {
+  padding: 90px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: .9;
+}
+
+/* Form Card */
+.container {
+  max-width: 420px;
+  margin: -60px auto 0;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--card-light);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+  text-align: center;
+}
+
+body.dark .card { background: var(--card-dark); }
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  font-size: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .25s;
+}
+
+button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.msg {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #dc2626;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 25px;
+  margin-top: 80px;
+  font-size: 14px;
+  opacity: .8;
+}
+
+/* Dark auto */
+@media (prefers-color-scheme: dark) {
+  body { background: var(--bg-dark); color: var(--text-light); }
+}
 </style>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -27,14 +162,15 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.login = async () => {
-  errorBox.innerText = "";
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  msg.textContent = "";
 
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-    successOverlay.classList.add("show");
-    setTimeout(() => location.href = "signs.html", 1200);
+    await signInWithEmailAndPassword(auth, email, password);
+    location.href = "signs.html";
   } catch (e) {
-    errorBox.innerText = e.message;
+    msg.textContent = "Invalid email or password";
   }
 };
 </script>
@@ -42,27 +178,34 @@ window.login = async () => {
 
 <body>
 
-<div class="card">
-  <h2>Login</h2>
-  <p>Access your account</p>
-
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button onclick="login()">Login</button>
-  <div id="errorBox" class="error"></div>
-
-  <div class="link">
-    New student? <a href="register.html">Create account</a>
+<!-- Navbar -->
+<div class="navbar">
+  <img src="logo.png" class="logo">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="register.html">Register</a>
   </div>
 </div>
 
-<div id="successOverlay" class="success-overlay">
-  <div class="success-box">
-    <div class="check">✔</div>
-    <p>Welcome Back</p>
+<!-- Hero -->
+<section class="hero">
+  <h1>Welcome Back</h1>
+  <p>Login to continue your driving education</p>
+</section>
+
+<!-- Login Form -->
+<div class="container">
+  <div class="card">
+    <input id="emailInput" type="email" placeholder="Email">
+    <input id="passwordInput" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div class="msg" id="msg"></div>
   </div>
 </div>
+
+<footer>
+  © 2026 DriveLearn – Traffic Awareness Platform
+</footer>
 
 </body>
 </html>

@@ -3,125 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register – DriveLearn</title>
+<title>DriveLearn – Register</title>
 
 <style>
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
-  --bg: #f8fafc;
-  --card: #ffffff;
+  --bg-light: #ffffff;
+  --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
+  --text-dark: #111827;
+  --text-light: #e5e7eb;
+  --success: #16a34a;
   --radius: 16px;
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg);
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
+.navbar {
+  height: 56px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--card-light);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-/* Card */
-.card {
-  width: 100%;
+body.dark .navbar { background: var(--card-dark); }
+
+.navbar a {
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: 14px;
+  font-size: 14px;
+}
+
+.logo { height: 32px; }
+
+/* Hero */
+.hero {
+  padding: 90px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: .9;
+}
+
+/* Form */
+.container {
   max-width: 420px;
-  background: var(--card);
+  margin: -60px auto 0;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--card-light);
   padding: 32px;
   border-radius: var(--radius);
-  box-shadow: 0 20px 50px rgba(0,0,0,.12);
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+  text-align: center;
 }
 
-h2 { text-align: center; margin-top: 0; }
-p { text-align: center; font-size: 14px; opacity: .8; }
+body.dark .card { background: var(--card-dark); }
 
-input, button {
+input {
   width: 100%;
   padding: 14px;
-  margin-top: 14px;
+  margin: 10px 0;
   border-radius: 12px;
+  border: 1px solid #cbd5f5;
   font-size: 15px;
 }
 
-input { border: 1px solid #e5e7eb; }
-
 button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 999px;
   border: none;
   background: var(--primary);
   color: white;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: .25s;
 }
 
-button:hover { background: var(--primary-dark); }
-
-.link {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 14px;
+button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-.link a {
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: none;
+.success {
+  margin-top: 18px;
+  font-size: 16px;
+  color: var(--success);
+  font-weight: 700;
 }
 
 .error {
-  margin-top: 12px;
-  color: #dc2626;
+  margin-top: 15px;
   font-size: 14px;
+  color: #dc2626;
+}
+
+/* Footer */
+footer {
   text-align: center;
-}
-
-/* Success Overlay */
-.success-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15,23,42,.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: .4s;
-}
-
-.success-overlay.show {
-  visibility: visible;
-  opacity: 1;
-}
-
-.success-box {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  text-align: center;
-  animation: pop .5s ease;
-}
-
-.success-box .check {
-  width: 80px;
-  height: 80px;
-  background: #22c55e;
-  border-radius: 50%;
-  color: white;
-  font-size: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-}
-
-@keyframes pop {
-  from { transform: scale(.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  padding: 25px;
+  margin-top: 80px;
+  font-size: 14px;
+  opacity: .8;
 }
 </style>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -141,33 +167,35 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 window.register = async () => {
-  errorBox.innerText = "";
+  const fname = firstName.value;
+  const lname = lastName.value;
+  const email = emailInput.value;
+  const pass = passwordInput.value;
 
-  if (!fname.value || !lname.value || !email.value || !password.value) {
-    errorBox.innerText = "Please fill all fields";
+  success.textContent = "";
+  error.textContent = "";
+
+  if(!fname || !lname || !email || !pass){
+    error.textContent = "Please fill all fields";
     return;
   }
 
   try {
-    const cred = await createUserWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
 
     await setDoc(doc(db, "users", cred.user.uid), {
-      firstName: fname.value,
-      lastName: lname.value,
-      email: email.value,
+      firstName: fname,
+      lastName: lname,
+      email: email,
       role: "student",
       createdAt: new Date()
     });
 
-    successOverlay.classList.add("show");
-    setTimeout(() => location.href = "signs.html", 1500);
+    success.innerHTML = "✔ Account created successfully<br>Redirecting...";
+    setTimeout(()=>location.href="signs.html",1500);
 
-  } catch (e) {
-    errorBox.innerText = e.message;
+  } catch(e){
+    error.textContent = e.message;
   }
 };
 </script>
@@ -175,29 +203,44 @@ window.register = async () => {
 
 <body>
 
-<div class="card">
-  <h2>Create Account</h2>
-  <p>Register to start learning</p>
-
-  <input id="fname" placeholder="First name">
-  <input id="lname" placeholder="Last name">
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button onclick="register()">Register</button>
-  <div id="errorBox" class="error"></div>
-
-  <div class="link">
-    Already have an account? <a href="login.html">Login</a>
+<!-- Navbar -->
+<div class="navbar">
+  <img src="logo.png" class="logo">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
   </div>
 </div>
 
-<div id="successOverlay" class="success-overlay">
-  <div class="success-box">
-    <div class="check">✔</div>
-    <p>Registration Successful</p>
+<!-- Hero -->
+<section class="hero">
+  <h1>Create Account</h1>
+  <p>Join DriveLearn and start learning traffic signs</p>
+</section>
+
+<!-- Register Form -->
+<div class="container">
+  <div class="card">
+    <input id="firstName" placeholder="First Name">
+    <input id="lastName" placeholder="Last Name">
+    <input id="emailInput" type="email" placeholder="Email">
+    <input id="passwordInput" type="password" placeholder="Password">
+    <button onclick="register()">Create Account</button>
+
+    <div id="success" class="success"></div>
+    <div id="error" class="error"></div>
   </div>
 </div>
+
+<footer>
+  © 2026 DriveLearn – Traffic Awareness Platform
+</footer>
+
+<script>
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
+</script>
 
 </body>
 </html>

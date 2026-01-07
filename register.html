@@ -24,6 +24,7 @@ body {
   justify-content: center;
 }
 
+/* Card */
 .card {
   width: 100%;
   max-width: 420px;
@@ -33,16 +34,8 @@ body {
   box-shadow: 0 20px 50px rgba(0,0,0,.12);
 }
 
-h2 {
-  margin-top: 0;
-  text-align: center;
-}
-
-p {
-  text-align: center;
-  opacity: .8;
-  font-size: 14px;
-}
+h2 { text-align: center; margin-top: 0; }
+p { text-align: center; font-size: 14px; opacity: .8; }
 
 input, button {
   width: 100%;
@@ -52,9 +45,7 @@ input, button {
   font-size: 15px;
 }
 
-input {
-  border: 1px solid #e5e7eb;
-}
+input { border: 1px solid #e5e7eb; }
 
 button {
   border: none;
@@ -62,12 +53,10 @@ button {
   color: white;
   font-weight: 700;
   cursor: pointer;
-  transition: .25s ease;
+  transition: .25s;
 }
 
-button:hover {
-  background: var(--primary-dark);
-}
+button:hover { background: var(--primary-dark); }
 
 .link {
   margin-top: 18px;
@@ -86,6 +75,50 @@ button:hover {
   color: #dc2626;
   font-size: 14px;
   text-align: center;
+}
+
+/* Success Overlay */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: .4s;
+}
+
+.success-overlay.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.success-box {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  animation: pop .5s ease;
+}
+
+.success-box .check {
+  width: 80px;
+  height: 80px;
+  background: #22c55e;
+  border-radius: 50%;
+  color: white;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+@keyframes pop {
+  from { transform: scale(.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 </style>
 
@@ -107,43 +140,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const fname = document.getElementById("fname");
-const lname = document.getElementById("lname");
-const emailInput = document.getElementById("emailInput");
-const passwordInput = document.getElementById("passwordInput");
-const errorBox = document.getElementById("errorBox");
-const registerBtn = document.getElementById("registerBtn");
-
-registerBtn.addEventListener("click", async () => {
+window.register = async () => {
   errorBox.innerText = "";
 
-  if (!fname.value || !lname.value || !emailInput.value || !passwordInput.value) {
-    errorBox.innerText = "Please fill in all fields";
+  if (!fname.value || !lname.value || !email.value || !password.value) {
+    errorBox.innerText = "Please fill all fields";
     return;
   }
 
   try {
     const cred = await createUserWithEmailAndPassword(
       auth,
-      emailInput.value.trim(),
-      passwordInput.value
+      email.value,
+      password.value
     );
 
     await setDoc(doc(db, "users", cred.user.uid), {
-      firstName: fname.value.trim(),
-      lastName: lname.value.trim(),
-      email: emailInput.value.trim(),
+      firstName: fname.value,
+      lastName: lname.value,
+      email: email.value,
       role: "student",
       createdAt: new Date()
     });
 
-    // ✅ التحويل يعمل الآن
-    window.location.href = "signs.html";
+    successOverlay.classList.add("show");
+    setTimeout(() => location.href = "signs.html", 1500);
 
-  } catch (err) {
-    errorBox.innerText = err.message;
+  } catch (e) {
+    errorBox.innerText = e.message;
   }
-});
+};
 </script>
 </head>
 
@@ -151,20 +177,25 @@ registerBtn.addEventListener("click", async () => {
 
 <div class="card">
   <h2>Create Account</h2>
-  <p>Register as a student to start learning</p>
+  <p>Register to start learning</p>
 
   <input id="fname" placeholder="First name">
   <input id="lname" placeholder="Last name">
-  <input id="emailInput" type="email" placeholder="Email">
-  <input id="passwordInput" type="password" placeholder="Password">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
 
-  <button id="registerBtn">Register</button>
-
+  <button onclick="register()">Register</button>
   <div id="errorBox" class="error"></div>
 
   <div class="link">
-    Already have an account?
-    <a href="login.html">Login</a>
+    Already have an account? <a href="login.html">Login</a>
+  </div>
+</div>
+
+<div id="successOverlay" class="success-overlay">
+  <div class="success-box">
+    <div class="check">✔</div>
+    <p>Registration Successful</p>
   </div>
 </div>
 

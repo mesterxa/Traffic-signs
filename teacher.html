@@ -9,12 +9,9 @@
 :root{
   --primary:#2563eb;
   --primary-dark:#1e40af;
-  --bg-light:#ffffff;
-  --bg-dark:#0f172a;
-  --card-light:#ffffff;
-  --card-dark:#111827;
-  --text-dark:#111827;
-  --text-light:#e5e7eb;
+  --bg:#ffffff;
+  --card:#ffffff;
+  --text:#111827;
   --success:#16a34a;
   --danger:#dc2626;
   --radius:16px;
@@ -24,18 +21,10 @@
 
 body{
   margin:0;
-  min-height:100vh;
   font-family:"Segoe UI",system-ui,sans-serif;
-  background:var(--bg-light);
-  color:var(--text-dark);
+  background:#f8fafc;
+  color:var(--text);
 }
-
-body.dark{
-  background:var(--bg-dark);
-  color:var(--text-light);
-}
-
-a{text-decoration:none;color:inherit}
 
 /* Navbar */
 .navbar{
@@ -44,118 +33,97 @@ a{text-decoration:none;color:inherit}
   align-items:center;
   justify-content:space-between;
   padding:0 18px;
-  background:var(--card-light);
+  background:white;
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
-body.dark .navbar{background:var(--card-dark)}
 
 .navbar a{
   color:var(--primary);
   font-weight:600;
   margin-left:14px;
   font-size:14px;
+  text-decoration:none;
 }
 
 .logo{height:32px}
 
 /* Hero */
 .hero{
-  padding:90px 20px;
+  padding:80px 20px;
   text-align:center;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:white;
 }
 
 .hero h1{
-  font-size:36px;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 
 .hero p{
-  font-size:18px;
   opacity:.9;
 }
 
-/* Container */
+/* Table */
 .container{
   max-width:1100px;
-  margin:auto;
+  margin:-60px auto 0;
   padding:0 20px;
 }
 
-.card{
-  margin-top:-60px;
-  background:var(--card-light);
+.table-card{
+  background:white;
   border-radius:var(--radius);
-  padding:25px;
   box-shadow:0 14px 35px rgba(0,0,0,.12);
+  overflow-x:auto;
 }
-body.dark .card{background:var(--card-dark)}
 
 table{
   width:100%;
   border-collapse:collapse;
-  font-size:14px;
 }
-
-thead{
-  background:#f1f5f9;
-}
-body.dark thead{background:#1f2933}
 
 th,td{
   padding:14px;
+  border-bottom:1px solid #e5e7eb;
   text-align:left;
+  font-size:14px;
 }
 
 th{
-  font-weight:700;
-}
-
-tr:not(:last-child){
-  border-bottom:1px solid rgba(0,0,0,.05);
-}
-body.dark tr:not(:last-child){
-  border-bottom:1px solid rgba(255,255,255,.08);
+  background:#f1f5f9;
+  font-weight:600;
 }
 
 .good{color:var(--success);font-weight:700}
 .bad{color:var(--danger);font-weight:700}
 
-input{
-  width:100%;
-  padding:8px 10px;
+select,input{
+  padding:8px;
   border-radius:8px;
-  border:1px solid #cbd5f5;
-  font-family:inherit;
-}
-body.dark input{
-  background:#0f172a;
-  color:white;
-  border:1px solid #334155;
+  border:1px solid #cbd5e1;
 }
 
-.btn{
-  padding:8px 16px;
-  border-radius:999px;
+button{
+  padding:8px 14px;
   border:none;
+  border-radius:10px;
   background:var(--primary);
   color:white;
-  font-weight:700;
+  font-weight:600;
   cursor:pointer;
-  transition:.25s;
 }
-.btn:hover{
+
+button:hover{
   background:var(--primary-dark);
 }
 
 /* Footer */
 footer{
   text-align:center;
-  padding:25px;
-  margin-top:90px;
+  padding:30px;
+  margin-top:60px;
   font-size:14px;
-  opacity:.8;
+  opacity:.7;
 }
 </style>
 
@@ -180,37 +148,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* Auto dark mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  document.body.classList.add("dark");
-}
-
-/* Auth */
 onAuthStateChanged(auth, async user=>{
   if(!user || user.email !== TEACHER_EMAIL){
     location.href="login.html";
     return;
   }
 
-  const tbody = document.getElementById("students");
-
+  const tbody = document.getElementById("tbody");
   const snap = await getDocs(collection(db,"users"));
+
   let html = "";
 
   snap.forEach(d=>{
     const u = d.data();
+
     html += `
       <tr>
         <td>${u.firstName || ""} ${u.lastName || ""}</td>
-        <td>${u.email || ""}</td>
+        <td>${u.email}</td>
         <td class="${u.result==="Passed"?"good":"bad"}">
           ${u.result || "—"}
         </td>
         <td>
-          <input value="${u.note || ""}" id="note-${d.id}">
+          <input id="note-${d.id}" value="${u.note || ""}" placeholder="Note">
         </td>
         <td>
-          <button class="btn" onclick="saveNote('${d.id}')">Save</button>
+          <select id="res-${d.id}">
+            <option ${u.result==="Passed"?"selected":""}>Passed</option>
+            <option ${u.result==="Failed"?"selected":""}>Failed</option>
+          </select>
+          <button onclick="save('${d.id}')">Save</button>
         </td>
       </tr>
     `;
@@ -219,18 +186,21 @@ onAuthStateChanged(auth, async user=>{
   tbody.innerHTML = html;
 });
 
-/* Save note */
-window.saveNote = async (id)=>{
+window.save = async (id)=>{
+  const result = document.getElementById("res-"+id).value;
   const note = document.getElementById("note-"+id).value;
-  await updateDoc(doc(db,"users",id),{ note });
-  alert("Note saved ✅");
-}
 
-/* Logout */
-window.logout = async ()=>{
-  await signOut(auth);
-  location.href="login.html";
-}
+  await updateDoc(doc(db,"users",id),{
+    result: result,
+    note: note
+  });
+
+  alert("Saved successfully ✅");
+};
+
+window.logout = ()=>{
+  signOut(auth).then(()=>location.href="login.html");
+};
 </script>
 </head>
 
@@ -253,7 +223,7 @@ window.logout = async ()=>{
 
 <!-- Table -->
 <div class="container">
-  <div class="card">
+  <div class="table-card">
     <table>
       <thead>
         <tr>
@@ -264,7 +234,7 @@ window.logout = async ()=>{
           <th>Action</th>
         </tr>
       </thead>
-      <tbody id="students">
+      <tbody id="tbody">
         <tr><td colspan="5">Loading...</td></tr>
       </tbody>
     </table>

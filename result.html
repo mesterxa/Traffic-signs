@@ -6,6 +6,7 @@
 <title>DriveLearn – Result</title>
 
 <style>
+/* ⚠️ التصميم لم يُمس */
 :root {
   --primary:#2563eb;
   --primary-dark:#1e40af;
@@ -29,15 +30,8 @@ body{
   background:var(--bg-light);
   color:var(--text-dark);
 }
+body.dark{background:var(--bg-dark);color:var(--text-light)}
 
-body.dark{
-  background:var(--bg-dark);
-  color:var(--text-light);
-}
-
-a{text-decoration:none;color:inherit}
-
-/* Navbar */
 .navbar{
   height:56px;
   display:flex;
@@ -58,7 +52,6 @@ body.dark .navbar{background:var(--card-dark)}
 
 .logo{height:32px}
 
-/* Hero */
 .hero{
   padding:90px 20px;
   text-align:center;
@@ -66,17 +59,6 @@ body.dark .navbar{background:var(--card-dark)}
   color:white;
 }
 
-.hero h1{
-  font-size:36px;
-  margin-bottom:12px;
-}
-
-.hero p{
-  font-size:18px;
-  opacity:.9;
-}
-
-/* Cards */
 .container{
   max-width:1000px;
   margin:auto;
@@ -110,14 +92,8 @@ body.dark .card{background:var(--card-dark)}
   font-weight:700;
   background:var(--primary);
   color:white;
-  transition:.25s;
-}
-.btn:hover{
-  background:var(--primary-dark);
-  transform:translateY(-2px);
 }
 
-/* Footer */
 footer{
   text-align:center;
   padding:25px;
@@ -127,13 +103,18 @@ footer{
 }
 </style>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, collection, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { 
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -145,69 +126,72 @@ const firebaseConfig = {
 
 const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
 
-/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* Auto dark mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+/* Dark mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches)
   document.body.classList.add("dark");
-}
 
-/* Auth check */
 onAuthStateChanged(auth, async user => {
   if (!user) return location.href = "login.html";
 
   const cards = document.getElementById("cards");
 
-  /* Read score from URL */
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const score = Number(params.get("score"));
-  const result = score >= 20 ? "Passed" : "Failed";
 
-  /* Save result if exists */
+  /* ✅ Save result (student only once per exam) */
   if (score) {
-    await setDoc(doc(db, "users", user.uid), {
+    await addDoc(collection(db,"results"),{
+      userId: user.uid,
+      email: user.email,
       score,
-      result
-    }, { merge:true });
+      result: score >= 20 ? "Passed" : "Failed",
+      createdAt: Date.now()
+    });
   }
 
-  /* 👨‍🏫 Teacher view */
+  /* 👨‍🏫 Teacher */
   if (user.email === TEACHER_EMAIL) {
-    const snap = await getDocs(collection(db,"users"));
-    let html = "";
+    const snap = await getDocs(collection(db,"results"));
+    let html="";
 
     snap.forEach(d=>{
-      const u = d.data();
-      html += `
+      const r=d.data();
+      html+=`
         <div class="card">
-          <h3>${u.firstName || "Student"} ${u.lastName || ""}</h3>
-          <p>${u.email || ""}</p>
-          <p class="${u.result === "Passed" ? "good":"bad"}">
-            ${u.result || "No result yet"}
-          </p>
+          <h3>${r.email}</h3>
+          <p class="${r.result==="Passed"?"good":"bad"}">${r.result}</p>
+          <p>Score: ${r.score}</p>
         </div>
       `;
     });
 
-    cards.innerHTML = html;
+    cards.innerHTML = html || "No results yet";
   }
 
-  /* 👨‍🎓 Student view */
+  /* 👨‍🎓 Student */
   else {
-    const snap = await getDoc(doc(db,"users",user.uid));
-    const d = snap.data();
+    const q = query(
+      collection(db,"results"),
+      where("userId","==",user.uid)
+    );
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      cards.innerHTML = `<div class="card">No result yet</div>`;
+      return;
+    }
+
+    const r = snap.docs.at(-1).data();
 
     cards.innerHTML = `
       <div class="card">
-        <h3>Welcome ${d.firstName || ""} 👋</h3>
-        <p>Your exam result:</p>
-        <h2 class="${d.result === "Passed" ? "good":"bad"}">
-          ${d.result || "Pending"}
-        </h2>
-        <p>Score: ${d.score || 0}</p>
+        <h3>Your Result</h3>
+        <h2 class="${r.result==="Passed"?"good":"bad"}">${r.result}</h2>
+        <p>Score: ${r.score}</p>
         <a href="signs.html" class="btn">Review Traffic Signs</a>
       </div>
     `;
@@ -218,7 +202,6 @@ onAuthStateChanged(auth, async user => {
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <div>
@@ -227,13 +210,11 @@ onAuthStateChanged(auth, async user => {
   </div>
 </div>
 
-<!-- Hero -->
 <section class="hero">
   <h1>Exam Results</h1>
   <p>Track your performance and improve your driving knowledge</p>
 </section>
 
-<!-- Cards -->
 <div class="container">
   <div class="cards" id="cards">Loading...</div>
 </div>

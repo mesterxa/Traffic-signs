@@ -2,216 +2,82 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Teacher Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveLearn – Teacher Panel</title>
 
 <style>
-*{box-sizing:border-box;font-family:"Segoe UI",Tahoma,sans-serif}
-body{margin:0;background:#f5f7fb;transition:.3s}
-
-/* Dark Mode */
-body.dark{background:#0f172a;color:#e5e7eb}
-body.dark .card,body.dark .navbar{background:#020617}
-body.dark th{background:#020617}
-body.dark input,body.dark select{background:#020617;color:white;border-color:#334155}
-
-/* Navbar */
-.navbar{
-background:white;padding:12px 30px;
-display:flex;justify-content:space-between;
-box-shadow:0 2px 8px rgba(0,0,0,.05)
-}
-.navbar a{text-decoration:none;color:#2563eb;margin-left:15px}
-
-/* Header */
-.header{
-background:linear-gradient(135deg,#2563eb,#1e40af);
-color:white;padding:50px 20px;text-align:center
-}
-
-/* Card */
-.card{
-max-width:1100px;margin:-40px auto 40px;
-background:white;border-radius:14px;
-box-shadow:0 15px 40px rgba(0,0,0,.1);
-padding:20px
-}
-
-/* Stats */
-.stats{
-display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;margin-bottom:20px
-}
-.stat{
-background:#f1f5f9;padding:15px;border-radius:12px;
-text-align:center;font-weight:600
-}
-.stat span{display:block;font-size:22px;color:#2563eb}
-
-/* Controls */
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
-input,select{
-padding:10px;border-radius:8px;border:1px solid #ddd
-}
-button{
-background:#2563eb;color:white;border:none;
-padding:8px 14px;border-radius:6px;cursor:pointer
-}
-button:hover{background:#1e40af}
-
-/* Table */
-table{width:100%;border-collapse:collapse}
-th{background:#f1f5f9;padding:12px;text-align:left}
-td{padding:12px;border-top:1px solid #eee}
-
-/* Modal */
-.modal{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,.5);
-display:none;align-items:center;justify-content:center
-}
-.modal-content{
-background:white;padding:25px;border-radius:12px;
-max-width:400px;width:90%
-}
-
-footer{text-align:center;font-size:13px;color:#888;padding:20px}
+body{margin:0;font-family:"Segoe UI";background:#f8fafc}
+.navbar{padding:14px 20px;background:#2563eb;color:white;font-weight:700}
+.container{max-width:1100px;margin:40px auto;padding:0 20px}
+table{width:100%;border-collapse:collapse;background:white;
+box-shadow:0 10px 30px rgba(0,0,0,.1);border-radius:12px;overflow:hidden}
+th,td{padding:14px;border-bottom:1px solid #e5e7eb;text-align:center}
+th{background:#1e40af;color:white}
+input{padding:8px;border-radius:6px;border:1px solid #ccc;width:90%}
+.pass{color:green;font-weight:700}
+.fail{color:red;font-weight:700}
 </style>
 </head>
 
 <body>
 
-<div class="navbar">
-<strong>DriveLearn</strong>
-<div>
-<button onclick="toggleDark()">🌙</button>
-<a href="index.html">Home</a>
-<a href="login.html">Logout</a>
-</div>
-</div>
+<div class="navbar">Teacher Dashboard</div>
 
-<div class="header">
-<h1>Teacher Dashboard</h1>
-<p>Follow students and manage their results</p>
-</div>
-
-<div class="card">
-
-<!-- Stats -->
-<div class="stats">
-<div class="stat">Students<span id="total">0</span></div>
-<div class="stat">Passed<span id="passed">0</span></div>
-<div class="stat">Failed<span id="failed">0</span></div>
-</div>
-
-<!-- Controls -->
-<div class="controls">
-<input id="search" placeholder="Search student">
-<select id="filter">
-<option value="all">All</option>
-<option value="pass">Passed</option>
-<option value="fail">Failed</option>
-</select>
-<button onclick="exportExcel()">Export Excel</button>
-</div>
-
+<div class="container">
 <table>
 <thead>
 <tr>
-<th>Student</th>
+<th>Name</th>
 <th>Email</th>
-<th>Result</th>
+<th>Score</th>
 <th>Note</th>
-<th>Action</th>
+<th>Status</th>
 </tr>
 </thead>
 <tbody id="table"></tbody>
 </table>
-
 </div>
 
-<footer>© 2026 DriveLearn – Teacher Panel</footer>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-<!-- Modal -->
-<div class="modal" id="modal">
-<div class="modal-content">
-<h3 id="mName"></h3>
-<p id="mEmail"></p>
-<p id="mResult"></p>
-<p id="mNote"></p>
-<button onclick="closeModal()">Close</button>
-</div>
-</div>
+const firebaseConfig={
+  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain:"traffic-signs-fc047.firebaseapp.com",
+  projectId:"traffic-signs-fc047"
+};
 
-<script>
-let students=[
-{name:"Ahmed Ali",email:"ahmed@mail.com",result:70,note:"Good"},
-{name:"Sara Mohamed",email:"sara@mail.com",result:40,note:"Needs practice"}
-];
-
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 const table=document.getElementById("table");
 
-function render(){
-table.innerHTML="";
-let pass=0,fail=0;
-
-students
-.filter(s=>s.name.toLowerCase().includes(search.value.toLowerCase()))
-.filter(s=>{
-if(filter.value=="pass")return s.result>=50;
-if(filter.value=="fail")return s.result<50;
-return true;
-})
-.forEach((s,i)=>{
-if(s.result>=50)pass++; else fail++;
-table.innerHTML+=`
-<tr>
-<td>${s.name}</td>
-<td>${s.email}</td>
-<td><input type="number" value="${s.result}" onchange="students[${i}].result=this.value"></td>
-<td><input value="${s.note}" onchange="students[${i}].note=this.value"></td>
-<td>
-<button onclick="details(${i})">View</button>
-<button onclick="save(${i})">Save</button>
-</td>
-</tr>`;
-});
-
-total.textContent=students.length;
-passed.textContent=pass;
-failed.textContent=fail;
+async function load(){
+  const snap=await getDocs(collection(db,"users"));
+  table.innerHTML="";
+  snap.forEach(d=>{
+    const u=d.data();
+    table.innerHTML+=`
+    <tr>
+      <td>${u.firstName} ${u.lastName}</td>
+      <td>${u.email}</td>
+      <td>${u.score ?? "-"}</td>
+      <td>
+        <input value="${u.note ?? ""}"
+        onchange="save('${d.id}',this.value)">
+      </td>
+      <td class="${u.result==="Passed"?"pass":"fail"}">
+        ${u.result ?? "Pending"}
+      </td>
+    </tr>`;
+  });
 }
 
-function save(i){
-alert("Saved for "+students[i].name);
-}
+window.save=async(id,note)=>{
+  await updateDoc(doc(db,"users",id),{note});
+};
 
-function details(i){
-modal.style.display="flex";
-mName.textContent=students[i].name;
-mEmail.textContent=students[i].email;
-mResult.textContent="Result: "+students[i].result;
-mNote.textContent="Note: "+students[i].note;
-}
-
-function closeModal(){modal.style.display="none"}
-
-function toggleDark(){document.body.classList.toggle("dark")}
-
-function exportExcel(){
-let csv="Name,Email,Result,Note\n";
-students.forEach(s=>{
-csv+=`${s.name},${s.email},${s.result},${s.note}\n`;
-});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-a.download="results.csv";
-a.click();
-}
-
-search.oninput=render;
-filter.onchange=render;
-render();
+load();
 </script>
 
 </body>

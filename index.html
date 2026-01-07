@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveLearn</title>
+<title>DriveLearn – Traffic Awareness</title>
 
 <style>
-/* =====================
-   Variables
-===================== */
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
@@ -21,12 +18,7 @@
   --radius: 16px;
 }
 
-/* =====================
-   Base
-===================== */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -46,17 +38,10 @@ a {
   color: inherit;
 }
 
-/* =====================
-   RTL
-===================== */
-.rtl {
-  direction: rtl;
-  text-align: right;
-}
+/* RTL */
+.rtl { direction: rtl; text-align: right; }
 
-/* =====================
-   Navbar
-===================== */
+/* Navbar */
 .navbar {
   height: 56px;
   display: flex;
@@ -67,9 +52,7 @@ a {
   box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-body.dark .navbar {
-  background: var(--card-dark);
-}
+body.dark .navbar { background: var(--card-dark); }
 
 .navbar a,
 .lang-switch {
@@ -80,13 +63,9 @@ body.dark .navbar {
   font-size: 14px;
 }
 
-.logo {
-  height: 32px;
-}
+.logo { height: 32px; }
 
-/* =====================
-   Hero
-===================== */
+/* Hero */
 .hero {
   padding: 90px 20px;
   text-align: center;
@@ -102,27 +81,39 @@ body.dark .navbar {
 .hero p {
   font-size: 18px;
   opacity: .9;
+  max-width: 700px;
+  margin: auto;
 }
 
-.hero .cta {
+.hero .buttons {
+  margin-top: 30px;
+}
+
+.hero .btn {
   display: inline-block;
-  margin-top: 22px;
+  margin: 10px;
   padding: 14px 32px;
-  background: white;
-  color: var(--primary);
   border-radius: 999px;
   font-weight: 700;
   transition: .25s ease;
 }
 
-.hero .cta:hover {
+.btn-login {
+  background: white;
+  color: var(--primary);
+}
+
+.btn-register {
+  border: 2px solid white;
+  color: white;
+}
+
+.btn:hover {
   transform: translateY(-2px);
   opacity: .95;
 }
 
-/* =====================
-   Cards
-===================== */
+/* Info Cards */
 .container {
   max-width: 1100px;
   margin: auto;
@@ -133,7 +124,7 @@ body.dark .navbar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 25px;
-  margin-top: 60px;
+  margin-top: 70px;
 }
 
 .card {
@@ -142,28 +133,13 @@ body.dark .navbar {
   border-radius: var(--radius);
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
-  transition: .3s ease;
 }
 
-body.dark .card {
-  background: var(--card-dark);
-}
+body.dark .card { background: var(--card-dark); }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
-}
+.card h3 { margin-top: 0; }
 
-.card svg {
-  width: 48px;
-  height: 48px;
-  fill: var(--primary);
-  margin-bottom: 16px;
-}
-
-/* =====================
-   Footer
-===================== */
+/* Footer */
 footer {
   text-align: center;
   padding: 25px;
@@ -172,17 +148,10 @@ footer {
   opacity: .8;
 }
 
-/* =====================
-   Mobile
-===================== */
+/* Mobile */
 @media (max-width: 600px) {
-  .hero h1 {
-    font-size: 28px;
-  }
-
-  .hero p {
-    font-size: 16px;
-  }
+  .hero h1 { font-size: 28px; }
+  .hero p { font-size: 16px; }
 }
 </style>
 </head>
@@ -201,36 +170,41 @@ footer {
 
 <!-- Hero -->
 <section class="hero">
-  <h1 id="hero-title">Learn Traffic Signs Easily</h1>
-  <p id="hero-sub">Professional driving education platform</p>
+  <h1 id="hero-title">Traffic Awareness & Driving Education</h1>
+  <p id="hero-sub">
+    A professional platform to learn traffic signs, prepare for driving exams,
+    and help teachers follow students' progress.
+  </p>
 
-  <!-- CTA -->
-  <a href="signs.html" class="cta">Start Learning 🚗</a>
+  <div class="buttons">
+    <a href="login.html" class="btn btn-login">Login</a>
+    <a href="register.html" class="btn btn-register">Create Account</a>
+  </div>
 </section>
 
-<!-- Cards -->
+<!-- Info Cards -->
 <div class="container">
   <div class="cards">
 
-    <!-- Traffic Signs -->
-    <a href="signs.html" class="card">
-      <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
-      <h3 id="card1-title">Traffic Signs</h3>
-      <p id="card1-desc">Learn all road signs with explanation</p>
-    </a>
-
-    <!-- Quizzes -->
-    <a href="quizzes.html" class="card">
-      <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
-      <h3 id="card2-title">Quizzes</h3>
-      <p id="card2-desc">Test your driving knowledge</p>
-    </a>
-
-    <!-- Practice -->
     <div class="card">
-      <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
-      <h3 id="card3-title">Practice</h3>
-      <p id="card3-desc">Prepare for the driving exam</p>
+      <h3 id="card1-title">🚦 Traffic Awareness</h3>
+      <p id="card1-desc">
+        Learn road signs and driving rules with clear explanations.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3 id="card2-title">📝 Smart Quizzes</h3>
+      <p id="card2-desc">
+        Test your knowledge and track your progress.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3 id="card3-title">👨‍🏫 Teacher Follow-up</h3>
+      <p id="card3-desc">
+        Teachers can review students’ results and leave notes.
+      </p>
     </div>
 
   </div>
@@ -238,7 +212,7 @@ footer {
 
 <!-- Footer -->
 <footer id="footer-text">
-  © 2026 DriveLearn – Driving Education Platform
+  © 2026 DriveLearn – Traffic Awareness Platform
 </footer>
 
 <script>
@@ -249,15 +223,20 @@ function toggleLanguage() {
   document.body.classList.toggle("rtl");
 
   if (arabic) {
-    hero-title.innerText = "تعلم السياقة بسهولة";
-    hero-sub.innerText = "منصة تعليم سياقة احترافية";
-    card1-title.innerText = "إشارات المرور";
-    card1-desc.innerText = "تعلم جميع إشارات الطريق";
-    card2-title.innerText = "اختبارات";
-    card2-desc.innerText = "اختبر معلوماتك";
-    card3-title.innerText = "تمارين";
-    card3-desc.innerText = "التحضير للامتحان";
-    footer-text.innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
+    hero-title.innerText = "منصة التوعية في السياقة";
+    hero-sub.innerText =
+      "منصة احترافية لتعلم إشارات المرور، التحضير للامتحان، ومتابعة الأساتذة للطلبة";
+
+    card1-title.innerText = "🚦 التوعية المرورية";
+    card1-desc.innerText = "تعلم إشارات المرور وقوانين السياقة بسهولة";
+
+    card2-title.innerText = "📝 اختبارات ذكية";
+    card2-desc.innerText = "اختبر معلوماتك وتابع تقدمك";
+
+    card3-title.innerText = "👨‍🏫 متابعة الأستاذ";
+    card3-desc.innerText = "متابعة نتائج الطلبة وإضافة ملاحظات";
+
+    footer-text.innerText = "© 2026 DriveLearn – منصة التوعية في السياقة";
   } else {
     location.reload();
   }

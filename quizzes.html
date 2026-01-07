@@ -20,7 +20,6 @@ body{
   background:var(--bg);
 }
 
-/* Header */
 header{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:white;
@@ -30,7 +29,6 @@ header{
   font-weight:700;
 }
 
-/* Quiz Card */
 .quiz-card{
   background:var(--card);
   max-width:420px;
@@ -46,7 +44,6 @@ header{
   margin-bottom:15px;
 }
 
-/* Options */
 .options button{
   width:100%;
   padding:13px;
@@ -57,7 +54,6 @@ header{
   color:white;
   font-size:16px;
   cursor:pointer;
-  transition:.25s;
 }
 
 .options button:hover{
@@ -70,7 +66,7 @@ header{
   font-size:14px;
 }
 
-/* Modal */
+/* Modals */
 .modal{
   position:fixed;
   inset:0;
@@ -94,7 +90,6 @@ header{
 
 .icon{
   font-size:58px;
-  margin-bottom:10px;
 }
 
 .modal-actions{
@@ -112,19 +107,9 @@ header{
   cursor:pointer;
 }
 
-#retryBtn,#restartExam{
-  background:#e5e7eb;
-}
-
-#nextBtn{
-  background:#16a34a;
-  color:white;
-}
-
-#reviewBtn,#reviewSigns{
-  background:var(--primary);
-  color:white;
-}
+#retryBtn,#restartExam{ background:#e5e7eb; }
+#nextBtn{ background:#16a34a;color:white; }
+#reviewBtn,#reviewSigns{ background:var(--primary);color:white; }
 </style>
 </head>
 
@@ -165,109 +150,111 @@ header{
   </div>
 </div>
 
-<script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, user=>{
+  if(!user) location.href="login.html";
+  currentUser = user;
+});
+
+/* Questions */
 const questions = [
-  {
-    id:"stop",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Stop_sign.svg/512px-Stop_sign.svg.png",
-    options:["Stop","No entry","Parking"],
-    answer:"Stop"
-  },
-  {
-    id:"no-entry",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/No_entry.svg/512px-No_entry.svg.png",
-    options:["Stop","No entry","Danger"],
-    answer:"No entry"
-  },
-  {
-    id:"pedestrians",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Children_crossing.svg/512px-Children_crossing.svg.png",
-    options:["School","Pedestrians","Children"],
-    answer:"Children"
-  }
+  {id:"stop",img:"https://upload.wikimedia.org/wikipedia/commons/2/2f/Stop_sign.svg",options:["Stop","No entry","Parking"],answer:"Stop"},
+  {id:"no-entry",img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/No_entry.svg",options:["Stop","No entry","Danger"],answer:"No entry"},
+  {id:"pedestrians",img:"https://upload.wikimedia.org/wikipedia/commons/5/55/Children_crossing.svg",options:["School","Pedestrians","Children"],answer:"Children"}
 ];
 
-let index = 0;
-let score = 0;
+let index=0, score=0;
 
-const signImage = document.getElementById("signImage");
+/* DOM */
+const signImage = signImageEl = document.getElementById("signImage");
 const optionsBox = document.getElementById("options");
 const info = document.getElementById("info");
 
-const resultModal = document.getElementById("resultModal");
-const finalModal = document.getElementById("finalModal");
-
-const resultIcon = document.getElementById("resultIcon");
-const resultTitle = document.getElementById("resultTitle");
-const resultText = document.getElementById("resultText");
-
-const retryBtn = document.getElementById("retryBtn");
-const nextBtn = document.getElementById("nextBtn");
-const reviewBtn = document.getElementById("reviewBtn");
-
-const finalIcon = document.getElementById("finalIcon");
-const finalTitle = document.getElementById("finalTitle");
-const finalText = document.getElementById("finalText");
-const restartExam = document.getElementById("restartExam");
-const reviewSigns = document.getElementById("reviewSigns");
-
+/* Load Question */
 function loadQuestion(){
   const q = questions[index];
   signImage.src = q.img;
-  optionsBox.innerHTML = "";
+  optionsBox.innerHTML="";
   info.textContent = `Question ${index+1}/${questions.length} | Score: ${score}/30`;
 
-  q.options.forEach(opt=>{
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = ()=>checkAnswer(opt);
-    optionsBox.appendChild(btn);
+  q.options.forEach(o=>{
+    const b=document.createElement("button");
+    b.textContent=o;
+    b.onclick=()=>checkAnswer(o);
+    optionsBox.appendChild(b);
   });
 }
 
-function checkAnswer(answer){
+/* Answer */
+function checkAnswer(ans){
   resultModal.classList.add("show");
-
-  if(answer === questions[index].answer){
-    score += 10;
-    resultIcon.textContent = "✅";
-    resultTitle.textContent = "Correct!";
-    resultText.textContent = "Good job 🚗";
-  } else {
-    resultIcon.textContent = "❌";
-    resultTitle.textContent = "Wrong!";
-    resultText.textContent = "راجع الإشارة جيدًا";
+  if(ans===questions[index].answer){
+    score+=10;
+    resultIcon.textContent="✅";
+    resultTitle.textContent="Correct!";
+    resultText.textContent="Good job 🚗";
+  }else{
+    resultIcon.textContent="❌";
+    resultTitle.textContent="Wrong!";
+    resultText.textContent="راجع الإشارة";
   }
 }
 
-retryBtn.onclick = ()=>resultModal.classList.remove("show");
+/* Navigation */
+retryBtn.onclick=()=>resultModal.classList.remove("show");
 
-reviewBtn.onclick = ()=>{
-  location.href = `signs.html?sign=${questions[index].id}`;
+reviewBtn.onclick=()=>{
+  location.href=`signs.html?sign=${questions[index].id}`;
 };
 
-nextBtn.onclick = ()=>{
+nextBtn.onclick=()=>{
   resultModal.classList.remove("show");
   index++;
-  if(index < questions.length) loadQuestion();
-  else showFinalResult();
+  index<questions.length ? loadQuestion() : showFinal();
 };
 
-function showFinalResult(){
+/* Final */
+async function showFinal(){
   finalModal.classList.add("show");
 
-  if(score >= 20){
-    finalIcon.textContent = "🎉";
-    finalTitle.textContent = "تهانينا!";
-    finalText.textContent = `لقد أكملت الاختبار بنجاح\nنتيجتك: ${score}/30`;
-  } else {
-    finalIcon.textContent = "📘";
-    finalTitle.textContent = "تحتاج إلى مراجعة";
-    finalText.textContent = `نتيجتك: ${score}/30\nننصحك بمراجعة الإشارات`;
-  }
+  const passed = score >= 20;
 
-  restartExam.onclick = ()=>location.reload();
-  reviewSigns.onclick = ()=>location.href="signs.html";
+  finalIcon.textContent = passed ? "🎉" : "📘";
+  finalTitle.textContent = passed ? "تهانينا!" : "تحتاج إلى مراجعة";
+  finalText.textContent = `نتيجتك: ${score}/30`;
+
+  /* 🔥 SAVE RESULT */
+  await setDoc(doc(db,"results",currentUser.uid),{
+    uid: currentUser.uid,
+    email: currentUser.email,
+    score,
+    passed,
+    total: 30,
+    createdAt: new Date()
+  });
+
+  restartExam.onclick=()=>location.reload();
+  reviewSigns.onclick=()=>location.href="signs.html";
 }
 
 loadQuestion();

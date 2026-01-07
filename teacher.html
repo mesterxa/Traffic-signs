@@ -3,70 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveLearn – Teacher Panel</title>
+<title>Teacher Panel – DriveLearn</title>
 
 <style>
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg-light:#ffffff;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#111827;
+  --text-light:#e5e7eb;
+  --danger:#dc2626;
+  --warning:#f59e0b;
+  --success:#16a34a;
+  --radius:16px;
+}
+
+*{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:"Segoe UI",system-ui,sans-serif;
-  background:#f8fafc;
+  background:var(--bg-light);
+  color:var(--text-dark);
+}
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
 }
 
 .navbar{
-  background:#2563eb;
-  color:white;
-  padding:14px 24px;
-  font-size:18px;
-  font-weight:700;
+  height:56px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:var(--card-light);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+body.dark .navbar{background:var(--card-dark)}
+
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+  font-size:14px;
 }
 
-.logout{
-  background:white;
-  color:#2563eb;
-  border:none;
-  padding:8px 16px;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
+.logo{height:32px}
+
+.hero{
+  padding:80px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
 }
 
 .container{
   max-width:1100px;
-  margin:50px auto;
+  margin:-60px auto 0;
   padding:0 20px;
 }
+
+.card{
+  background:var(--card-light);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+body.dark .card{background:var(--card-dark)}
 
 table{
   width:100%;
   border-collapse:collapse;
-  background:white;
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 14px 35px rgba(0,0,0,.12);
 }
-
 th,td{
   padding:14px;
   border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+th{font-size:14px;opacity:.7}
+
+.badge{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+}
+.pass{background:#bbf7d0;color:#166534}
+.fail{background:#fecaca;color:#7f1d1d}
+.blocked{background:#fde68a;color:#92400e}
+
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  margin-right:6px;
+}
+.blockBtn{background:var(--warning);color:white}
+.deleteBtn{background:var(--danger);color:white}
+
+footer{
   text-align:center;
-}
-
-th{
-  background:#1e40af;
-  color:white;
-}
-
-.pass{color:#16a34a;font-weight:700}
-.fail{color:#dc2626;font-weight:700}
-
-input{
-  width:90%;
-  padding:8px;
-  border-radius:6px;
-  border:1px solid #cbd5f5;
+  margin:60px 0 20px;
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 </head>
@@ -74,103 +119,127 @@ input{
 <body>
 
 <div class="navbar">
-  👨‍🏫 Teacher Dashboard
-  <button class="logout" onclick="logout()">Logout</button>
+  <img src="logo.png" class="logo">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="login.html">Logout</a>
+  </div>
 </div>
+
+<section class="hero">
+  <h1>Teacher Dashboard</h1>
+  <p>Manage students, results and access</p>
+</section>
 
 <div class="container">
-  <table>
-    <thead>
-      <tr>
-        <th>Student</th>
-        <th>Email</th>
-        <th>Score</th>
-        <th>Note</th>
-        <th>Result</th>
-      </tr>
-    </thead>
-    <tbody id="table">
-      Loading...
-    </tbody>
-  </table>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Result</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="students"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- Firebase -->
+<footer>
+  © 2026 DriveLearn – Teacher Panel
+</footer>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047"
+  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain:"traffic-signs-fc047.firebaseapp.com",
+  projectId:"traffic-signs-fc047",
+  storageBucket:"traffic-signs-fc047.appspot.com",
+  messagingSenderId:"746457575630",
+  appId:"1:746457575630:web:3219b85b64e2307126609f"
 };
 
-const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
+const TEACHER_EMAIL="aymenmed25071999@gmail.com";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const table = document.getElementById("table");
-
-/* 🔐 PROTECTION */
-onAuthStateChanged(auth, async user => {
-
-  if (!user) {
-    location.href = "login.html";
+onAuthStateChanged(auth, async user=>{
+  if(!user || user.email!==TEACHER_EMAIL){
+    location.href="login.html";
     return;
   }
 
-  const snap = await getDoc(doc(db,"users",user.uid));
-  const data = snap.data();
+  const snap=await getDocs(collection(db,"users"));
+  const tbody=document.getElementById("students");
+  tbody.innerHTML="";
 
-  /* منع الطالب */
-  if (user.email !== TEACHER_EMAIL && data.role !== "teacher") {
-    location.href = "index.html";
-    return;
-  }
+  snap.forEach(docSnap=>{
+    const u=docSnap.data();
+    if(u.role!=="student") return;
 
-  loadStudents();
-});
-
-async function loadStudents(){
-  const snap = await getDocs(collection(db,"users"));
-  table.innerHTML = "";
-
-  snap.forEach(d=>{
-    const u = d.data();
-
-    if(u.role === "teacher") return;
-
-    table.innerHTML += `
+    tbody.innerHTML+=`
       <tr>
-        <td>${u.firstName ?? ""} ${u.lastName ?? ""}</td>
+        <td>${u.firstName} ${u.lastName}</td>
         <td>${u.email}</td>
-        <td>${u.score ?? "-"}</td>
         <td>
-          <input
-            value="${u.note ?? ""}"
-            placeholder="Teacher note"
-            onchange="saveNote('${d.id}',this.value)">
+          <span class="badge ${u.result==="Passed"?"pass":"fail"}">
+            ${u.result||"Pending"}
+          </span>
         </td>
-        <td class="${u.result==="Passed"?"pass":"fail"}">
-          ${u.result ?? "Pending"}
+        <td>
+          ${u.blocked
+            ?'<span class="badge blocked">Blocked</span>'
+            :'<span class="badge pass">Active</span>'}
+        </td>
+        <td>
+          <button class="blockBtn"
+            onclick="blockUser('${docSnap.id}',${u.blocked})">
+            ${u.blocked?"Unblock":"Block"}
+          </button>
+          <button class="deleteBtn"
+            onclick="deleteUser('${docSnap.id}')">
+            Delete
+          </button>
         </td>
       </tr>
     `;
   });
+});
+
+window.blockUser=async(id,isBlocked)=>{
+  if(!confirm("Are you sure?"))return;
+  await updateDoc(doc(db,"users",id),{
+    blocked:!isBlocked
+  });
+  location.reload();
+};
+
+window.deleteUser=async(id)=>{
+  if(!confirm("Delete student permanently?"))return;
+  await deleteDoc(doc(db,"users",id));
+  location.reload();
+};
+
+/* Dark mode */
+if(window.matchMedia("(prefers-color-scheme: dark)").matches){
+  document.body.classList.add("dark");
 }
-
-window.saveNote = async (id,note)=>{
-  await updateDoc(doc(db,"users",id),{note});
-};
-
-window.logout = async ()=>{
-  await signOut(auth);
-  location.href="login.html";
-};
 </script>
 
 </body>

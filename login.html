@@ -6,72 +6,47 @@
 <title>Login – DriveLearn</title>
 
 <style>
-:root {
+:root{
   --primary:#2563eb;
   --primary-dark:#1e40af;
-  --bg-light:#ffffff;
-  --bg-dark:#0f172a;
-  --card-light:#ffffff;
-  --card-dark:#111827;
-  --text-dark:#111827;
-  --text-light:#e5e7eb;
-  --radius:18px;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --radius:16px;
 }
-
-*{box-sizing:border-box}
-
 body{
   margin:0;
   min-height:100vh;
-  font-family:"Segoe UI",system-ui,sans-serif;
-  background:var(--bg-light);
-  color:var(--text-dark);
+  font-family:system-ui;
+  background:var(--bg);
 }
-body.dark{
-  background:var(--bg-dark);
-  color:var(--text-light);
-}
-
-a{text-decoration:none;color:inherit}
-
 .navbar{
   height:56px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   padding:0 18px;
-  background:var(--card-light);
-  box-shadow:0 4px 12px rgba(0,0,0,.06);
+  background:white;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
 }
-body.dark .navbar{background:var(--card-dark)}
-
 .navbar a{
+  margin-left:14px;
   color:var(--primary);
   font-weight:600;
-  margin-left:14px;
-  font-size:14px;
 }
-
-.logo{height:32px}
-
 .hero{
-  padding:80px 20px 120px;
+  padding:80px 20px;
   text-align:center;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:white;
 }
-
 .card{
   max-width:420px;
-  margin:-90px auto 0;
-  background:var(--card-light);
+  margin:-70px auto 0;
+  background:var(--card);
   padding:30px;
   border-radius:var(--radius);
-  box-shadow:0 20px 45px rgba(0,0,0,.15);
-  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
 }
-body.dark .card{background:var(--card-dark)}
-
 input,button{
   width:100%;
   padding:14px;
@@ -79,33 +54,17 @@ input,button{
   border-radius:12px;
   font-size:15px;
 }
-
 input{border:1px solid #e5e7eb}
-
 button{
   border:none;
   background:var(--primary);
   color:white;
   font-weight:700;
   cursor:pointer;
-  transition:.25s;
 }
-button:hover{
-  background:var(--primary-dark);
-  transform:translateY(-2px);
-}
-
 .error{
-  margin-top:14px;
   color:#dc2626;
-  font-size:14px;
-}
-
-footer{
-  text-align:center;
-  margin-top:80px;
-  font-size:14px;
-  opacity:.8;
+  margin-top:12px;
 }
 </style>
 </head>
@@ -113,7 +72,7 @@ footer{
 <body>
 
 <div class="navbar">
-  <img src="logo.png" class="logo">
+  <strong>DriveLearn</strong>
   <div>
     <a href="index.html">Home</a>
     <a href="register.html">Register</a>
@@ -122,7 +81,7 @@ footer{
 
 <section class="hero">
   <h1>Welcome Back</h1>
-  <p>Login to continue your driving education</p>
+  <p>Login to continue learning traffic signs</p>
 </section>
 
 <div class="card">
@@ -132,13 +91,9 @@ footer{
   <div id="error" class="error"></div>
 </div>
 
-<footer>
-  © 2026 DriveLearn – Traffic Awareness Platform
-</footer>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig={
@@ -157,46 +112,40 @@ const auth=getAuth(app);
 const db=getFirestore(app);
 
 window.login=async()=>{
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const error=document.getElementById("error");
+  const email=emailInput.value.trim();
+  const password=passwordInput.value;
   error.textContent="";
-
-  if(!email||!password){
-    error.textContent="Please fill in all fields";
-    return;
-  }
 
   try{
     const cred=await signInWithEmailAndPassword(auth,email,password);
 
-    /* 👨‍🏫 Teacher */
     if(cred.user.email===TEACHER_EMAIL){
       location.href="teacher.html";
       return;
     }
 
-    /* 👨‍🎓 Student */
     const snap=await getDoc(doc(db,"users",cred.user.uid));
-    const data=snap.data();
+    if(!snap.exists()){
+      error.textContent="Profile not found";
+      await signOut(auth);
+      return;
+    }
 
-    if(data?.blocked){
-      error.textContent="Your account has been blocked by the teacher";
-      await auth.signOut();
+    if(snap.data().blocked){
+      error.textContent="Your account is blocked";
+      await signOut(auth);
       return;
     }
 
     location.href="signs.html";
-
   }catch(e){
-    error.textContent=e.message;
+    error.textContent="Invalid email or password";
   }
 };
 
-/* Dark mode */
-if(window.matchMedia("(prefers-color-scheme: dark)").matches){
-  document.body.classList.add("dark");
-}
+const emailInput=document.getElementById("email");
+const passwordInput=document.getElementById("password");
+const error=document.getElementById("error");
 </script>
 
 </body>

@@ -6,96 +6,14 @@
 <title>Login – DriveLearn</title>
 
 <style>
-:root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --radius: 16px;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--card);
-  padding: 32px;
-  border-radius: var(--radius);
-  box-shadow: 0 20px 50px rgba(0,0,0,.12);
-}
-
-h2 {
-  margin-top: 0;
-  text-align: center;
-}
-
-p {
-  text-align: center;
-  font-size: 14px;
-  opacity: .8;
-}
-
-input, button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 14px;
-  border-radius: 12px;
-  font-size: 15px;
-}
-
-input {
-  border: 1px solid #e5e7eb;
-}
-
-button {
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .25s ease;
-}
-
-button:hover {
-  background: var(--primary-dark);
-}
-
-.link {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.link a {
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.error {
-  margin-top: 12px;
-  color: #dc2626;
-  font-size: 14px;
-  text-align: center;
-}
+/* نفس CSS تمامًا */
+@import url("register.html");
 </style>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config (UNCHANGED) */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -105,44 +23,18 @@ const firebaseConfig = {
   appId: "1:746457575630:web:3219b85b64e2307126609f"
 };
 
-/* 🔐 Teacher Email (ONLY ONE) */
-const TEACHER_EMAIL = "teacher@drivelearn.com"; // عدله لاحقًا إن أردت
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
 window.login = async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
   errorBox.innerText = "";
 
-  if (!email || !password) {
-    errorBox.innerText = "Please enter email and password";
-    return;
-  }
-
   try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-
-    /* 👨‍🏫 Teacher */
-    if (email === TEACHER_EMAIL) {
-      location.href = "teacher.html";
-      return;
-    }
-
-    /* 👤 Student */
-    const snap = await getDoc(doc(db, "users", cred.user.uid));
-
-    if (!snap.exists()) {
-      errorBox.innerText = "User data not found";
-      return;
-    }
-
-    location.href = "signs.html";
-
-  } catch (err) {
-    errorBox.innerText = err.message;
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    successOverlay.classList.add("show");
+    setTimeout(() => location.href = "signs.html", 1200);
+  } catch (e) {
+    errorBox.innerText = e.message;
   }
 };
 </script>
@@ -152,18 +44,23 @@ window.login = async () => {
 
 <div class="card">
   <h2>Login</h2>
-  <p>Access your DriveLearn account</p>
+  <p>Access your account</p>
 
-  <input id="emailInput" type="email" placeholder="Email">
-  <input id="passwordInput" type="password" placeholder="Password">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
 
   <button onclick="login()">Login</button>
-
   <div id="errorBox" class="error"></div>
 
   <div class="link">
-    New student?
-    <a href="register.html">Create account</a>
+    New student? <a href="register.html">Create account</a>
+  </div>
+</div>
+
+<div id="successOverlay" class="success-overlay">
+  <div class="success-box">
+    <div class="check">✔</div>
+    <p>Welcome Back</p>
   </div>
 </div>
 

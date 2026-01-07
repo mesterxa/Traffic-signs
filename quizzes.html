@@ -6,7 +6,7 @@
 <title>DriveLearn – Traffic Quiz</title>
 
 <style>
-:root{
+:root {
   --primary:#2563eb;
   --primary-dark:#1e40af;
   --bg-light:#ffffff;
@@ -22,17 +22,11 @@
 
 body{
   margin:0;
-  min-height:100vh;
   font-family:"Segoe UI",system-ui,sans-serif;
   background:var(--bg-light);
   color:var(--text-dark);
 }
-
-body.dark{
-  background:var(--bg-dark);
-  color:var(--text-light);
-}
-
+body.dark{background:var(--bg-dark);color:var(--text-light)}
 a{text-decoration:none;color:inherit}
 
 /* Navbar */
@@ -46,15 +40,7 @@ a{text-decoration:none;color:inherit}
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
 body.dark .navbar{background:var(--card-dark)}
-
-.navbar a{
-  color:var(--primary);
-  font-weight:600;
-  margin-left:14px;
-  font-size:14px;
-}
-
-.logo{height:32px}
+.navbar a{color:var(--primary);font-weight:600;margin-left:14px}
 
 /* Hero */
 .hero{
@@ -64,16 +50,12 @@ body.dark .navbar{background:var(--card-dark)}
   color:white;
 }
 
-.hero h1{font-size:34px;margin-bottom:10px}
-.hero p{font-size:18px;opacity:.9}
-
-/* Quiz Card */
+/* Quiz */
 .container{
   max-width:600px;
   margin:-60px auto 0;
   padding:0 20px;
 }
-
 .card{
   background:var(--card-light);
   padding:30px;
@@ -83,13 +65,9 @@ body.dark .navbar{background:var(--card-dark)}
 }
 body.dark .card{background:var(--card-dark)}
 
-.emoji{
-  font-size:90px;
-  margin-bottom:20px;
-}
+.sign{font-size:90px;margin-bottom:20px}
 
-.options button,
-#resultBtn{
+.options button{
   width:100%;
   margin:10px 0;
   padding:14px;
@@ -100,137 +78,102 @@ body.dark .card{background:var(--card-dark)}
   font-size:16px;
   font-weight:600;
   cursor:pointer;
-  transition:.25s;
 }
+.options button:hover{background:var(--primary-dark)}
 
-.options button:hover,
-#resultBtn:hover{
-  background:var(--primary-dark);
-  transform:translateY(-2px);
-}
-
-.info{
+.next{
   margin-top:15px;
-  font-size:14px;
-  opacity:.8;
-}
-
-#resultBtn{
+  padding:12px 30px;
+  border-radius:999px;
+  background:#16a34a;
+  color:white;
+  border:none;
+  font-weight:700;
   display:none;
-  margin-top:20px;
-}
-
-/* Footer */
-footer{
-  text-align:center;
-  padding:30px;
-  margin-top:80px;
-  font-size:14px;
-  opacity:.8;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
-  <img src="logo.png" class="logo">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="signs.html">Signs</a>
-  </div>
+  <a href="index.html">Home</a>
+  <a href="signs.html">Signs</a>
 </div>
 
-<!-- Hero -->
 <section class="hero">
   <h1>Traffic Quiz</h1>
   <p>Test your knowledge of traffic signs</p>
 </section>
 
-<!-- Quiz -->
 <div class="container">
   <div class="card">
-    <div id="signEmoji" class="emoji"></div>
+    <div class="sign" id="sign"></div>
     <div class="options" id="options"></div>
-    <div class="info" id="info"></div>
-
-    <button id="resultBtn" onclick="showResult()">View Result</button>
+    <button class="next" id="next">Next</button>
   </div>
 </div>
 
-<footer>
-  © 2026 DriveLearn – Traffic Quiz
-</footer>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-<script>
-/* Auto dark mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  document.body.classList.add("dark");
-}
+const firebaseConfig = {
+  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain:"traffic-signs-fc047.firebaseapp.com",
+  projectId:"traffic-signs-fc047"
+};
 
-/* Quiz data (EMOJIS) */
-const questions = [
-  {
-    emoji:"🛑",
-    options:["Stop","No entry","Parking"],
-    answer:"Stop"
-  },
-  {
-    emoji:"⛔",
-    options:["Stop","No entry","Danger"],
-    answer:"No entry"
-  },
-  {
-    emoji:"🚸",
-    options:["Children","Parking","Speed"],
-    answer:"Children"
-  }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const quiz = [
+  {sign:"🛑",options:["Stop","No Entry","Parking"],answer:"Stop"},
+  {sign:"⛔",options:["Stop","No Entry","Danger"],answer:"No Entry"},
+  {sign:"🚸",options:["Children","Speed","Parking"],answer:"Children"}
 ];
 
-let index = 0;
-let score = 0;
+let i=0,score=0;
+const signEl=document.getElementById("sign");
+const options=document.getElementById("options");
+const next=document.getElementById("next");
 
-const signEmoji = document.getElementById("signEmoji");
-const optionsBox = document.getElementById("options");
-const info = document.getElementById("info");
-const resultBtn = document.getElementById("resultBtn");
-
-function loadQuestion(){
-  const q = questions[index];
-  signEmoji.textContent = q.emoji;
-  optionsBox.innerHTML = "";
-  info.textContent = `Question ${index+1} / ${questions.length}`;
-
-  q.options.forEach(opt=>{
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = ()=>check(opt);
-    optionsBox.appendChild(btn);
+function load(){
+  signEl.textContent=quiz[i].sign;
+  options.innerHTML="";
+  next.style.display="none";
+  quiz[i].options.forEach(o=>{
+    const b=document.createElement("button");
+    b.textContent=o;
+    b.onclick=()=>check(o);
+    options.appendChild(b);
   });
 }
 
-function check(answer){
-  if(answer === questions[index].answer){
-    score += 10;
-  }
-
-  index++;
-
-  if(index < questions.length){
-    loadQuestion();
-  }else{
-    optionsBox.innerHTML = "";
-    info.textContent = `Quiz finished – Score: ${score}`;
-    resultBtn.style.display = "block";
-  }
+function check(ans){
+  if(ans===quiz[i].answer) score+=10;
+  next.style.display="inline-block";
 }
 
-function showResult(){
-  location.href = "result.html?score=" + score;
+next.onclick=()=>{
+  i++;
+  if(i<quiz.length) load();
+  else finish();
+};
+
+function finish(){
+  auth.onAuthStateChanged(async user=>{
+    if(!user) return location.href="login.html";
+    const result=score>=20?"Passed":"Failed";
+    await updateDoc(doc(db,"users",user.uid),{score,result});
+    location.href="result.html";
+  });
 }
 
-loadQuestion();
+load();
 </script>
 
 </body>

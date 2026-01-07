@@ -28,18 +28,23 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg-light);
   color: #111827;
+  min-height: 100vh;
 }
 
 /* =====================
    Navbar
 ===================== */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 14px 24px;
   background: var(--primary);
   color: white;
+  box-shadow: 0 6px 20px rgba(0,0,0,.18);
 }
 
 .navbar a {
@@ -60,7 +65,7 @@ body {
   grid-template-columns: 2fr 1fr;
   gap: 25px;
   max-width: 1100px;
-  margin: 60px auto;
+  margin: 50px auto;
   padding: 0 20px;
 }
 
@@ -73,6 +78,13 @@ body {
   padding: 28px;
   border-radius: var(--radius);
   box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.game:hover,
+.leaderboard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 55px rgba(0,0,0,.18);
 }
 
 .game h2 {
@@ -86,6 +98,12 @@ body {
   font-size: 82px;
   margin: 25px 0;
   text-align: center;
+  animation: pop .6s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(.85); opacity: .4; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .options button {
@@ -100,11 +118,18 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: .25s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .options button:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
+}
+
+.options button:active {
+  transform: scale(.97);
 }
 
 .progress {
@@ -148,10 +173,25 @@ body {
   box-shadow: 0 12px 35px rgba(0,0,0,.18);
   transition: .4s cubic-bezier(.25,.8,.25,1);
   z-index: 9999;
+  backdrop-filter: blur(12px);
 }
 
 .ios-toast.show {
   top: 25px;
+}
+
+/* =====================
+   Responsive
+===================== */
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    margin: 30px auto;
+  }
+
+  .leaderboard {
+    order: -1;
+  }
 }
 
 /* =====================
@@ -163,6 +203,10 @@ body {
     color: var(--text-light);
   }
 
+  .navbar {
+    background: linear-gradient(135deg, #1e293b, #020617);
+  }
+
   .game,
   .leaderboard {
     background: var(--card-dark);
@@ -170,6 +214,10 @@ body {
 
   .leaderboard li {
     border-bottom: 1px solid #374151;
+  }
+
+  .options button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   }
 }
 </style>
@@ -292,13 +340,11 @@ function toast(msg) {
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
 </div>
 
-<!-- Content -->
 <div class="container">
 
   <div class="game">

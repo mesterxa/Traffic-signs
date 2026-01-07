@@ -2,172 +2,142 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DriveLearn - Learn Traffic Signs</title>
+<title>DriveLearn</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  background: #f7f8fa;
-  color: #2c2c2c;
-  transition: background 0.3s, color 0.3s;
+/* Dark mode auto */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0f172a;
+    color: #e5e7eb;
+  }
+  .navbar, .card {
+    background: #111827;
+  }
+  footer {
+    color: #9ca3af;
+  }
 }
-body.dark {
-  background: #1a1a1a;
-  color: #eee;
-}
-.rtl { direction: rtl; text-align: right; }
 
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1565c0;
-  padding: 12px 20px;
-  color: #fff;
-}
-body.dark .navbar { background: #0d47a1; }
-.navbar a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
-.navbar a:hover { text-decoration: underline; }
-.logo-img { height: 40px; }
-
-/* Hero */
 .hero {
+  padding: 90px 20px;
   text-align: center;
-  padding: 80px 20px 40px 20px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
 }
-.hero h1 { font-size: 2.2em; margin-bottom: 15px; }
-.hero p { font-size: 1.1em; color: #555; }
-body.dark .hero p { color: #ccc; }
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+.hero p {
+  opacity: 0.9;
+  font-size: 18px;
+}
 
-/* Cards */
-.container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 20px;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+  gap: 25px;
+  margin-top: 50px;
 }
+
 .card {
-  background: #fff;
-  width: 280px;
+  background: white;
   padding: 25px;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
   text-align: center;
-  transition: background 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  transition: transform .25s ease, box-shadow .25s ease;
 }
-body.dark .card { background: #2c2c2c; color: #eee; box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
-.card h3 { margin-top: 15px; margin-bottom: 10px; }
-.card p { color: #555; }
-body.dark .card p { color: #ccc; }
-.card svg { width: 60px; height: 60px; fill: #1565c0; transition: fill 0.3s; }
-body.dark .card svg { fill: #90caf9; }
-.card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.2); }
-
-/* Footer */
-footer { text-align: center; padding: 20px; color: #555; }
-body.dark footer { color: #ccc; }
-
-/* iOS Toast */
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.96);
-  color: #000;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  transition: all 0.45s cubic-bezier(.25,.8,.25,1);
-  z-index: 9999;
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
 }
-.ios-toast.show { top: 25px; }
-.ios-toast.success { border-left: 5px solid #34c759; }
-.ios-toast.error { border-left: 5px solid #ff3b30; }
+.card svg {
+  width: 48px;
+  height: 48px;
+  fill: #2563eb;
+  margin-bottom: 15px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  margin-top: 80px;
+  font-size: 14px;
+  opacity: .8;
+}
 </style>
-
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-  // Dark Mode تلقائي
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.body.classList.add('dark');
-  }
-
-  // iOS Toast ترحيب
-  showToast("Welcome to DriveLearn 🚗", "success");
-});
-
-// Language toggle
-let arabic = false;
-function toggleLanguage() {
-  arabic = !arabic;
-  document.body.classList.toggle('rtl');
-  document.getElementById('hero-title').innerText = arabic ? "تعلم علامات المرور بسهولة" : "Learn Traffic Signs Easily";
-  document.getElementById('hero-sub').innerText = arabic ? "منصة تعليمية احترافية مستوحاة من مدارس القيادة العالمية" : "Professional platform inspired by international driving schools";
-  document.getElementById('card1-title').innerText = arabic ? "علامات المرور" : "Traffic Signs";
-  document.getElementById('card1-desc').innerText = arabic ? "افهم علامات الطريق بوضوح" : "Understand road signs clearly";
-  document.getElementById('card2-title').innerText = arabic ? "اختبارات" : "Quizzes";
-  document.getElementById('card2-desc').innerText = arabic ? "اختبر معرفتك بالقيادة" : "Test your driving knowledge";
-  document.getElementById('card3-title').innerText = arabic ? "ممارسة" : "Practice";
-  document.getElementById('card3-desc').innerText = arabic ? "استعد لامتحان القيادة" : "Prepare for the driving exam";
-}
-
-// iOS Toast
-function showToast(message, type="success") {
-  const toast = document.getElementById("ios-toast");
-  toast.textContent = message;
-  toast.className = `ios-toast show ${type}`;
-  setTimeout(() => toast.classList.remove("show"), 2000);
-}
-</script>
 </head>
 
 <body>
 
 <div class="navbar">
-  <img src="logo.png" alt="DriveLearn" class="logo-img">
+  <img src="logo.png" alt="DriveLearn" class="logo">
   <div>
     <a href="login.html">Login</a>
     <a href="register.html">Register</a>
-    <a href="quizzes.html">Quizzes</a>
-    <span onclick="toggleLanguage()" style="cursor:pointer;font-weight:bold;">AR</span>
+    <span class="lang-switch" onclick="toggleLanguage()">AR / EN</span>
   </div>
 </div>
 
 <section class="hero">
   <h1 id="hero-title">Learn Traffic Signs Easily</h1>
-  <p id="hero-sub">Professional platform inspired by international driving schools</p>
+  <p id="hero-sub">
+    Professional driving education platform
+  </p>
 </section>
 
 <div class="container">
-  <div class="card">
-    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
-    <h3 id="card1-title">Traffic Signs</h3>
-    <p id="card1-desc">Understand road signs clearly</p>
-  </div>
-  <div class="card">
-    <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
-    <h3 id="card2-title">Quizzes</h3>
-    <p id="card2-desc">Test your driving knowledge</p>
-  </div>
-  <div class="card">
-    <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
-    <h3 id="card3-title">Practice</h3>
-    <p id="card3-desc">Prepare for the driving exam</p>
+  <div class="cards">
+
+    <div class="card">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
+      <h3 id="card1-title">Traffic Signs</h3>
+      <p id="card1-desc">Understand road signs clearly</p>
+    </div>
+
+    <div class="card">
+      <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
+      <h3 id="card2-title">Quizzes</h3>
+      <p id="card2-desc">Play & test your driving knowledge</p>
+    </div>
+
+    <div class="card">
+      <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
+      <h3 id="card3-title">Practice</h3>
+      <p id="card3-desc">Prepare for the driving exam</p>
+    </div>
+
   </div>
 </div>
 
-<footer>
-  © 2026 DriveLearn – Traffic Education Platform
+<footer id="footer-text">
+  © 2026 DriveLearn – Driving Education Platform
 </footer>
 
-<div id="ios-toast" class="ios-toast"></div>
+<script>
+let arabic = false;
+function toggleLanguage() {
+  arabic = !arabic;
+  document.body.classList.toggle("rtl");
+
+  if(arabic) {
+    hero-title.innerText = "تعلم السياقة بسهولة";
+    hero-sub.innerText = "منصة تعليم سياقة احترافية";
+    card1-title.innerText = "إشارات المرور";
+    card1-desc.innerText = "فهم إشارات الطريق بوضوح";
+    card2-title.innerText = "اختبارات";
+    card2-desc.innerText = "تعلم عبر اللعب";
+    card3-title.innerText = "تمارين";
+    card3-desc.innerText = "التحضير لاجتياز الامتحان";
+    footer-text.innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
+  } else {
+    location.reload();
+  }
+}
+</script>
 
 </body>
 </html>

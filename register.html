@@ -2,55 +2,162 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Register - DriveLearn</title>
+<title>Register – DriveLearn</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-@media (prefers-color-scheme: dark) {
-  body { background:#0f172a; color:#e5e7eb; }
-  .auth-box { background:#111827; }
+/* =====================
+   Variables
+===================== */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #f8fafc;
+  --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
+  --text-light: #e5e7eb;
+  --radius: 16px;
 }
 
+/* =====================
+   Base
+===================== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-light);
+  color: #111827;
+}
+
+/* =====================
+   Navbar
+===================== */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 24px;
+  background: var(--primary);
+  color: white;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.logo {
+  height: 36px;
+}
+
+/* =====================
+   Auth Card
+===================== */
 .auth-box {
   max-width: 420px;
-  margin: 80px auto;
-  background: #fff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.12);
+  margin: 90px auto;
+  background: var(--card-light);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  transition: .3s ease;
 }
 
-.auth-box input, .auth-box button {
+.auth-box h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+/* =====================
+   Inputs & Button
+===================== */
+.auth-box input,
+.auth-box button {
   width: 100%;
-  padding: 12px;
-  margin-top: 12px;
+  padding: 13px;
+  margin-top: 14px;
+  border-radius: 10px;
+  font-size: 15px;
 }
 
-button {
-  background: #2563eb;
+.auth-box input {
+  border: 1px solid #cbd5f5;
+}
+
+.auth-box button {
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: .25s ease;
 }
-button:hover { opacity:.9; }
 
+.auth-box button:hover {
+  background: var(--primary-dark);
+}
+
+/* =====================
+   Footer Text
+===================== */
+.auth-box p {
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.auth-box a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* =====================
+   iOS Toast
+===================== */
 .ios-toast {
   position: fixed;
   top: -120px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255,255,255,.96);
+  background: rgba(255,255,255,.97);
   padding: 14px 22px;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
-  transition: .4s;
+  font-weight: 600;
+  box-shadow: 0 12px 35px rgba(0,0,0,.18);
+  transition: .4s cubic-bezier(.25,.8,.25,1);
   z-index: 9999;
 }
-.ios-toast.show { top:25px; }
+
+.ios-toast.show {
+  top: 25px;
+}
+
+/* =====================
+   Dark Mode
+===================== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+
+  .auth-box {
+    background: var(--card-dark);
+  }
+
+  .auth-box input {
+    background: #1f2933;
+    color: var(--text-light);
+    border: 1px solid #374151;
+  }
+}
 </style>
 
+<!-- =====================
+     Firebase (UNCHANGED)
+===================== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -75,7 +182,7 @@ window.registerUser = async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
 
-  if(!firstName || !lastName || !email || !password){
+  if (!firstName || !lastName || !email || !password) {
     toast("Please fill all fields ❗");
     return;
   }
@@ -83,7 +190,7 @@ window.registerUser = async () => {
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    await setDoc(doc(db,"users",cred.user.uid),{
+    await setDoc(doc(db, "users", cred.user.uid), {
       firstName,
       lastName,
       email,
@@ -91,29 +198,31 @@ window.registerUser = async () => {
     });
 
     toast("Registration successful 🎉");
-    setTimeout(()=>location.href="result.html",2000);
+    setTimeout(() => location.href = "result.html", 2000);
 
-  } catch(e){
+  } catch (e) {
     toast(e.message);
   }
-}
+};
 
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2000);
+  setTimeout(() => t.classList.remove("show"), 2000);
 }
 </script>
 </head>
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
 </div>
 
+<!-- Register Card -->
 <div class="auth-box">
   <h2>Create Account</h2>
   <input id="fname" placeholder="First Name">
@@ -121,7 +230,7 @@ function toast(msg){
   <input id="emailInput" type="email" placeholder="Email">
   <input id="passwordInput" type="password" placeholder="Password">
   <button onclick="registerUser()">Register</button>
-  <p style="margin-top:12px">
+  <p>
     Already have an account? <a href="login.html">Login</a>
   </p>
 </div>

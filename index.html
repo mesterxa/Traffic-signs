@@ -88,7 +88,7 @@ body.dark .navbar {
    Hero
 ===================== */
 .hero {
-  padding: 80px 20px;
+  padding: 90px 20px;
   text-align: center;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
@@ -104,20 +104,20 @@ body.dark .navbar {
   opacity: .9;
 }
 
-.hero a {
+.hero .cta {
   display: inline-block;
   margin-top: 22px;
-  padding: 14px 28px;
+  padding: 14px 32px;
   background: white;
   color: var(--primary);
   border-radius: 999px;
   font-weight: 700;
-  transition: .3s ease;
+  transition: .25s ease;
 }
 
-.hero a:hover {
+.hero .cta:hover {
   transform: translateY(-2px);
-  opacity: .9;
+  opacity: .95;
 }
 
 /* =====================
@@ -143,7 +143,6 @@ body.dark .navbar {
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   transition: .3s ease;
-  cursor: pointer;
 }
 
 body.dark .card {
@@ -184,10 +183,6 @@ footer {
   .hero p {
     font-size: 16px;
   }
-
-  .cards {
-    margin-top: 40px;
-  }
 }
 </style>
 </head>
@@ -208,28 +203,30 @@ footer {
 <section class="hero">
   <h1 id="hero-title">Learn Traffic Signs Easily</h1>
   <p id="hero-sub">Professional driving education platform</p>
-  <a href="quizzes.html" id="hero-btn">Start Quiz</a>
+
+  <!-- CTA -->
+  <a href="signs.html" class="cta">Start Learning 🚗</a>
 </section>
 
 <!-- Cards -->
 <div class="container">
   <div class="cards">
 
-    <div class="card">
+    <!-- Traffic Signs -->
+    <a href="signs.html" class="card">
       <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
       <h3 id="card1-title">Traffic Signs</h3>
-      <p id="card1-desc">Understand road signs clearly</p>
-    </div>
-
-    <!-- ✅ Quiz Card -->
-    <a href="quizzes.html">
-      <div class="card">
-        <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
-        <h3 id="card2-title">Quizzes</h3>
-        <p id="card2-desc">Play & test your driving knowledge</p>
-      </div>
+      <p id="card1-desc">Learn all road signs with explanation</p>
     </a>
 
+    <!-- Quizzes -->
+    <a href="quizzes.html" class="card">
+      <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
+      <h3 id="card2-title">Quizzes</h3>
+      <p id="card2-desc">Test your driving knowledge</p>
+    </a>
+
+    <!-- Practice -->
     <div class="card">
       <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
       <h3 id="card3-title">Practice</h3>
@@ -252,16 +249,15 @@ function toggleLanguage() {
   document.body.classList.toggle("rtl");
 
   if (arabic) {
-    document.getElementById("hero-title").innerText = "تعلم السياقة بسهولة";
-    document.getElementById("hero-sub").innerText = "منصة تعليم سياقة احترافية";
-    document.getElementById("hero-btn").innerText = "ابدأ الاختبار";
-    document.getElementById("card1-title").innerText = "إشارات المرور";
-    document.getElementById("card1-desc").innerText = "فهم إشارات الطريق بوضوح";
-    document.getElementById("card2-title").innerText = "اختبارات";
-    document.getElementById("card2-desc").innerText = "تعلم عبر اللعب";
-    document.getElementById("card3-title").innerText = "تمارين";
-    document.getElementById("card3-desc").innerText = "التحضير لاجتياز الامتحان";
-    document.getElementById("footer-text").innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
+    hero-title.innerText = "تعلم السياقة بسهولة";
+    hero-sub.innerText = "منصة تعليم سياقة احترافية";
+    card1-title.innerText = "إشارات المرور";
+    card1-desc.innerText = "تعلم جميع إشارات الطريق";
+    card2-title.innerText = "اختبارات";
+    card2-desc.innerText = "اختبر معلوماتك";
+    card3-title.innerText = "تمارين";
+    card3-desc.innerText = "التحضير للامتحان";
+    footer-text.innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
   } else {
     location.reload();
   }

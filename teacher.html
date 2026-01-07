@@ -15,9 +15,22 @@ body{
 .navbar{
   background:#2563eb;
   color:white;
-  padding:16px 24px;
+  padding:14px 24px;
   font-size:18px;
   font-weight:700;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logout{
+  background:white;
+  color:#2563eb;
+  border:none;
+  padding:8px 16px;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
 }
 
 .container{
@@ -60,7 +73,10 @@ input{
 
 <body>
 
-<div class="navbar">👨‍🏫 Teacher Dashboard</div>
+<div class="navbar">
+  👨‍🏫 Teacher Dashboard
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
 
 <div class="container">
   <table>
@@ -82,8 +98,8 @@ input{
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -102,28 +118,31 @@ const table = document.getElementById("table");
 /* 🔐 PROTECTION */
 onAuthStateChanged(auth, async user => {
 
-  /* غير مسجل */
   if (!user) {
     location.href = "login.html";
     return;
   }
 
-  /* ليس الأستاذ */
-  if (user.email !== TEACHER_EMAIL) {
+  const snap = await getDoc(doc(db,"users",user.uid));
+  const data = snap.data();
+
+  /* منع الطالب */
+  if (user.email !== TEACHER_EMAIL && data.role !== "teacher") {
     location.href = "index.html";
     return;
   }
 
-  /* الأستاذ فقط يصل هنا */
   loadStudents();
 });
 
-async function loadStudents() {
+async function loadStudents(){
   const snap = await getDocs(collection(db,"users"));
   table.innerHTML = "";
 
-  snap.forEach(d => {
+  snap.forEach(d=>{
     const u = d.data();
+
+    if(u.role === "teacher") return;
 
     table.innerHTML += `
       <tr>
@@ -146,6 +165,11 @@ async function loadStudents() {
 
 window.saveNote = async (id,note)=>{
   await updateDoc(doc(db,"users",id),{note});
+};
+
+window.logout = async ()=>{
+  await signOut(auth);
+  location.href="login.html";
 };
 </script>
 

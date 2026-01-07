@@ -6,78 +6,147 @@
 <title>DriveLearn – Teacher Panel</title>
 
 <style>
-body{margin:0;font-family:"Segoe UI";background:#f8fafc}
-.navbar{padding:14px 20px;background:#2563eb;color:white;font-weight:700}
-.container{max-width:1100px;margin:40px auto;padding:0 20px}
-table{width:100%;border-collapse:collapse;background:white;
-box-shadow:0 10px 30px rgba(0,0,0,.1);border-radius:12px;overflow:hidden}
-th,td{padding:14px;border-bottom:1px solid #e5e7eb;text-align:center}
-th{background:#1e40af;color:white}
-input{padding:8px;border-radius:6px;border:1px solid #ccc;width:90%}
-.pass{color:green;font-weight:700}
-.fail{color:red;font-weight:700}
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:#f8fafc;
+}
+
+.navbar{
+  background:#2563eb;
+  color:white;
+  padding:16px 24px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.container{
+  max-width:1100px;
+  margin:50px auto;
+  padding:0 20px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 14px 35px rgba(0,0,0,.12);
+}
+
+th,td{
+  padding:14px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:center;
+}
+
+th{
+  background:#1e40af;
+  color:white;
+}
+
+.pass{color:#16a34a;font-weight:700}
+.fail{color:#dc2626;font-weight:700}
+
+input{
+  width:90%;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #cbd5f5;
+}
 </style>
 </head>
 
 <body>
 
-<div class="navbar">Teacher Dashboard</div>
+<div class="navbar">👨‍🏫 Teacher Dashboard</div>
 
 <div class="container">
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Score</th>
-<th>Note</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="table"></tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Email</th>
+        <th>Score</th>
+        <th>Note</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="table">
+      Loading...
+    </tbody>
+  </table>
 </div>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-const firebaseConfig={
-  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain:"traffic-signs-fc047.firebaseapp.com",
-  projectId:"traffic-signs-fc047"
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const table=document.getElementById("table");
+const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
 
-async function load(){
-  const snap=await getDocs(collection(db,"users"));
-  table.innerHTML="";
-  snap.forEach(d=>{
-    const u=d.data();
-    table.innerHTML+=`
-    <tr>
-      <td>${u.firstName} ${u.lastName}</td>
-      <td>${u.email}</td>
-      <td>${u.score ?? "-"}</td>
-      <td>
-        <input value="${u.note ?? ""}"
-        onchange="save('${d.id}',this.value)">
-      </td>
-      <td class="${u.result==="Passed"?"pass":"fail"}">
-        ${u.result ?? "Pending"}
-      </td>
-    </tr>`;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const table = document.getElementById("table");
+
+/* 🔐 PROTECTION */
+onAuthStateChanged(auth, async user => {
+
+  /* غير مسجل */
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+
+  /* ليس الأستاذ */
+  if (user.email !== TEACHER_EMAIL) {
+    location.href = "index.html";
+    return;
+  }
+
+  /* الأستاذ فقط يصل هنا */
+  loadStudents();
+});
+
+async function loadStudents() {
+  const snap = await getDocs(collection(db,"users"));
+  table.innerHTML = "";
+
+  snap.forEach(d => {
+    const u = d.data();
+
+    table.innerHTML += `
+      <tr>
+        <td>${u.firstName ?? ""} ${u.lastName ?? ""}</td>
+        <td>${u.email}</td>
+        <td>${u.score ?? "-"}</td>
+        <td>
+          <input
+            value="${u.note ?? ""}"
+            placeholder="Teacher note"
+            onchange="saveNote('${d.id}',this.value)">
+        </td>
+        <td class="${u.result==="Passed"?"pass":"fail"}">
+          ${u.result ?? "Pending"}
+        </td>
+      </tr>
+    `;
   });
 }
 
-window.save=async(id,note)=>{
+window.saveNote = async (id,note)=>{
   await updateDoc(doc(db,"users",id),{note});
 };
-
-load();
 </script>
 
 </body>

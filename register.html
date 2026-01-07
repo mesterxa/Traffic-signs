@@ -62,10 +62,23 @@ button {
   color: white;
   font-weight: 700;
   cursor: pointer;
+  transition: .25s ease;
 }
 
 button:hover {
   background: var(--primary-dark);
+}
+
+.link {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.link a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .error {
@@ -94,33 +107,37 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ✅ ربط الزر بطريقة صحيحة
-document.getElementById("registerBtn").addEventListener("click", async () => {
-  const firstName = document.getElementById("fname").value.trim();
-  const lastName  = document.getElementById("lname").value.trim();
-  const email     = document.getElementById("emailInput").value.trim();
-  const password  = document.getElementById("passwordInput").value;
-  const errorBox  = document.getElementById("errorBox");
+const fname = document.getElementById("fname");
+const lname = document.getElementById("lname");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const errorBox = document.getElementById("errorBox");
+const registerBtn = document.getElementById("registerBtn");
 
+registerBtn.addEventListener("click", async () => {
   errorBox.innerText = "";
 
-  if (!firstName || !lastName || !email || !password) {
+  if (!fname.value || !lname.value || !emailInput.value || !passwordInput.value) {
     errorBox.innerText = "Please fill in all fields";
     return;
   }
 
   try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      emailInput.value.trim(),
+      passwordInput.value
+    );
 
     await setDoc(doc(db, "users", cred.user.uid), {
-      firstName,
-      lastName,
-      email,
+      firstName: fname.value.trim(),
+      lastName: lname.value.trim(),
+      email: emailInput.value.trim(),
       role: "student",
       createdAt: new Date()
     });
 
-    // ✅ التحويل يعمل الآن 100%
+    // ✅ التحويل يعمل الآن
     window.location.href = "signs.html";
 
   } catch (err) {
@@ -145,10 +162,10 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
 
   <div id="errorBox" class="error"></div>
 
-  <p style="text-align:center;margin-top:14px">
+  <div class="link">
     Already have an account?
     <a href="login.html">Login</a>
-  </p>
+  </div>
 </div>
 
 </body>

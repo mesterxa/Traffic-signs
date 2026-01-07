@@ -7,142 +7,111 @@
 
 <style>
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #ffffff;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
-  --radius: 18px;
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg-light:#ffffff;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#111827;
+  --text-light:#e5e7eb;
+  --radius:18px;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg-light);
+  color:var(--text-dark);
+}
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
 }
 
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
+a{text-decoration:none;color:inherit}
+
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:var(--card-light);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+body.dark .navbar{background:var(--card-dark)}
+
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+  font-size:14px;
 }
 
-a { text-decoration: none; color: inherit; }
+.logo{height:32px}
 
-/* Navbar */
-.navbar {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--card-light);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+.hero{
+  padding:80px 20px 120px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
 }
 
-body.dark .navbar { background: var(--card-dark); }
+.card{
+  max-width:420px;
+  margin:-90px auto 0;
+  background:var(--card-light);
+  padding:30px;
+  border-radius:var(--radius);
+  box-shadow:0 20px 45px rgba(0,0,0,.15);
+  text-align:center;
+}
+body.dark .card{background:var(--card-dark)}
 
-.navbar a {
-  color: var(--primary);
-  font-weight: 600;
-  margin-left: 14px;
-  font-size: 14px;
+input,button{
+  width:100%;
+  padding:14px;
+  margin-top:14px;
+  border-radius:12px;
+  font-size:15px;
 }
 
-.logo { height: 32px; }
+input{border:1px solid #e5e7eb}
 
-/* Hero */
-.hero {
-  padding: 80px 20px 120px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
+button{
+  border:none;
+  background:var(--primary);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+}
+button:hover{
+  background:var(--primary-dark);
+  transform:translateY(-2px);
 }
 
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 10px;
+.error{
+  margin-top:14px;
+  color:#dc2626;
+  font-size:14px;
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: .9;
-}
-
-/* Card */
-.card {
-  max-width: 420px;
-  margin: -90px auto 0;
-  background: var(--card-light);
-  padding: 30px;
-  border-radius: var(--radius);
-  box-shadow: 0 20px 45px rgba(0,0,0,.15);
-  text-align: center;
-}
-
-body.dark .card { background: var(--card-dark); }
-
-input, button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 14px;
-  border-radius: 12px;
-  font-size: 15px;
-}
-
-input {
-  border: 1px solid #e5e7eb;
-}
-
-button {
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .25s;
-}
-
-button:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.error {
-  margin-top: 14px;
-  color: #dc2626;
-  font-size: 14px;
-}
-
-.link {
-  margin-top: 18px;
-  font-size: 14px;
-}
-
-.link a {
-  color: var(--primary);
-  font-weight: 600;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  margin-top: 80px;
-  font-size: 14px;
-  opacity: .8;
+footer{
+  text-align:center;
+  margin-top:80px;
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <div>
@@ -151,89 +120,81 @@ footer {
   </div>
 </div>
 
-<!-- Hero -->
 <section class="hero">
   <h1>Welcome Back</h1>
   <p>Login to continue your driving education</p>
 </section>
 
-<!-- Login Card -->
 <div class="card">
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
-
   <button onclick="login()">Login</button>
-
   <div id="error" class="error"></div>
-
-  <div class="link">
-    New student?
-    <a href="register.html">Create account</a>
-  </div>
 </div>
 
 <footer>
   © 2026 DriveLearn – Traffic Awareness Platform
 </footer>
 
-<!-- Firebase Logic -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-  storageBucket: "traffic-signs-fc047.appspot.com",
-  messagingSenderId: "746457575630",
-  appId: "1:746457575630:web:3219b85b64e2307126609f"
+const firebaseConfig={
+  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain:"traffic-signs-fc047.firebaseapp.com",
+  projectId:"traffic-signs-fc047",
+  storageBucket:"traffic-signs-fc047.appspot.com",
+  messagingSenderId:"746457575630",
+  appId:"1:746457575630:web:3219b85b64e2307126609f"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const TEACHER_EMAIL="aymenmed25071999@gmail.com";
 
-window.login = async () => {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const error = document.getElementById("error");
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-  error.textContent = "";
+window.login=async()=>{
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const error=document.getElementById("error");
+  error.textContent="";
 
-  if (!email || !password) {
-    error.textContent = "Please fill in all fields";
+  if(!email||!password){
+    error.textContent="Please fill in all fields";
     return;
   }
 
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
+  try{
+    const cred=await signInWithEmailAndPassword(auth,email,password);
 
-    /* 🔐 قراءة الدور من Firestore */
-    const snap = await getDoc(doc(db, "users", cred.user.uid));
-
-    if (!snap.exists()) {
-      error.textContent = "User data not found";
+    /* 👨‍🏫 Teacher */
+    if(cred.user.email===TEACHER_EMAIL){
+      location.href="teacher.html";
       return;
     }
 
-    const role = snap.data().role;
+    /* 👨‍🎓 Student */
+    const snap=await getDoc(doc(db,"users",cred.user.uid));
+    const data=snap.data();
 
-    /* 🚦 توجيه حسب الدور */
-    if (role === "teacher") {
-      location.href = "teacher.html";
-    } else {
-      location.href = "signs.html";
+    if(data?.blocked){
+      error.textContent="Your account has been blocked by the teacher";
+      await auth.signOut();
+      return;
     }
 
-  } catch (err) {
-    error.textContent = "Invalid email or password";
+    location.href="signs.html";
+
+  }catch(e){
+    error.textContent=e.message;
   }
 };
 
-/* Auto Dark Mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+/* Dark mode */
+if(window.matchMedia("(prefers-color-scheme: dark)").matches){
   document.body.classList.add("dark");
 }
 </script>

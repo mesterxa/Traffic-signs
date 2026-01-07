@@ -3,251 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveLearn – Register</title>
+<title>Register – DriveLearn</title>
 
 <style>
-:root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #ffffff;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
-  --success: #16a34a;
-  --radius: 16px;
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:system-ui;
+  background:#f1f5f9;
 }
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
+.card{
+  background:white;
+  padding:30px;
+  width:380px;
+  border-radius:16px;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
 }
-
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
+input,button{
+  width:100%;
+  padding:14px;
+  margin-top:14px;
+  border-radius:12px;
 }
-
-a {
-  text-decoration: none;
-  color: inherit;
+button{
+  border:none;
+  background:#2563eb;
+  color:white;
+  font-weight:700;
 }
-
-/* Navbar */
-.navbar {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--card-light);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
-}
-
-body.dark .navbar { background: var(--card-dark); }
-
-.navbar a {
-  color: var(--primary);
-  font-weight: 600;
-  margin-left: 14px;
-  font-size: 14px;
-}
-
-.logo { height: 32px; }
-
-/* Hero */
-.hero {
-  padding: 90px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-}
-
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 12px;
-}
-
-.hero p {
-  font-size: 18px;
-  opacity: .9;
-}
-
-/* Form */
-.container {
-  max-width: 420px;
-  margin: -60px auto 0;
-  padding: 0 20px;
-}
-
-.card {
-  background: var(--card-light);
-  padding: 32px;
-  border-radius: var(--radius);
-  box-shadow: 0 12px 30px rgba(0,0,0,.12);
-  text-align: center;
-}
-
-body.dark .card { background: var(--card-dark); }
-
-input {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 12px;
-  border: 1px solid #cbd5f5;
-  font-size: 15px;
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border-radius: 999px;
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .25s;
-}
-
-button:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.success {
-  margin-top: 18px;
-  font-size: 16px;
-  color: var(--success);
-  font-weight: 700;
-}
-
-.error {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #dc2626;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 25px;
-  margin-top: 80px;
-  font-size: 14px;
-  opacity: .8;
-}
+.error{color:#dc2626;margin-top:10px}
 </style>
+</head>
 
-<!-- Firebase -->
+<body>
+
+<div class="card">
+  <h2>Create Account</h2>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="register()">Register</button>
+  <div id="error" class="error"></div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-  storageBucket: "traffic-signs-fc047.appspot.com",
-  messagingSenderId: "746457575630",
-  appId: "1:746457575630:web:3219b85b64e2307126609f"
+const firebaseConfig={
+  apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain:"traffic-signs-fc047.firebaseapp.com",
+  projectId:"traffic-signs-fc047",
+  storageBucket:"traffic-signs-fc047.appspot.com",
+  messagingSenderId:"746457575630",
+  appId:"1:746457575630:web:3219b85b64e2307126609f"
 };
 
-const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+window.register=async()=>{
+  try{
+    const cred=await createUserWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value
+    );
 
-window.register = async () => {
-  const fname = firstName.value.trim();
-  const lname = lastName.value.trim();
-  const email = emailInput.value.trim();
-  const pass = passwordInput.value;
-
-  success.textContent = "";
-  error.textContent = "";
-
-  if(!fname || !lname || !email || !pass){
-    error.textContent = "Please fill all fields";
-    return;
-  }
-
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-
-    /* 🔐 تحديد الدور تلقائيًا */
-    const role = email === TEACHER_EMAIL ? "teacher" : "student";
-
-    await setDoc(doc(db, "users", cred.user.uid), {
-      firstName: fname,
-      lastName: lname,
-      email: email,
-      role: role,
-      createdAt: new Date()
+    await setDoc(doc(db,"users",cred.user.uid),{
+      email:cred.user.email,
+      blocked:false,
+      role:"student",
+      createdAt:Date.now()
     });
 
-    success.innerHTML = "✔ Account created successfully<br>Redirecting...";
-
-    setTimeout(()=>{
-      location.href = role === "teacher" ? "teacher.html" : "signs.html";
-    },1500);
-
-  } catch(e){
-    error.textContent = e.message;
+    location.href="login.html";
+  }catch(e){
+    error.textContent=e.message;
   }
 };
-</script>
-</head>
 
-<body>
-
-<!-- Navbar -->
-<div class="navbar">
-  <img src="logo.png" class="logo">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="login.html">Login</a>
-  </div>
-</div>
-
-<!-- Hero -->
-<section class="hero">
-  <h1>Create Account</h1>
-  <p>Join DriveLearn and start learning traffic signs</p>
-</section>
-
-<!-- Register Form -->
-<div class="container">
-  <div class="card">
-    <input id="firstName" placeholder="First Name">
-    <input id="lastName" placeholder="Last Name">
-    <input id="emailInput" type="email" placeholder="Email">
-    <input id="passwordInput" type="password" placeholder="Password">
-    <button onclick="register()">Create Account</button>
-
-    <div id="success" class="success"></div>
-    <div id="error" class="error"></div>
-  </div>
-</div>
-
-<footer>
-  © 2026 DriveLearn – Traffic Awareness Platform
-</footer>
-
-<script>
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  document.body.classList.add("dark");
-}
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+const error=document.getElementById("error");
 </script>
 
 </body>

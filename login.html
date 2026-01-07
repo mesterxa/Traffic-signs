@@ -6,94 +6,122 @@
 <title>Login – DriveLearn</title>
 
 <style>
-:root{
-  --primary:#2563eb;
-  --primary-dark:#1e40af;
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --radius:16px;
+*{
+  box-sizing:border-box;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI";
 }
+
 body{
   margin:0;
   min-height:100vh;
-  font-family:system-ui;
-  background:var(--bg);
+  background:#f1f5f9;
 }
-.navbar{
-  height:56px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 18px;
-  background:white;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-}
-.navbar a{
-  margin-left:14px;
-  color:var(--primary);
-  font-weight:600;
-}
-.hero{
-  padding:80px 20px;
-  text-align:center;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+
+/* Header */
+.header{
+  background:linear-gradient(135deg,#2563eb,#1e40af);
   color:white;
+  padding:80px 20px 120px;
+  text-align:center;
 }
+
+.header h1{
+  margin:0;
+  font-size:32px;
+}
+
+.header p{
+  margin-top:10px;
+  opacity:.9;
+}
+
+/* Card */
 .card{
   max-width:420px;
-  margin:-70px auto 0;
-  background:var(--card);
-  padding:30px;
-  border-radius:var(--radius);
-  box-shadow:0 20px 40px rgba(0,0,0,.15);
+  background:white;
+  margin:-80px auto 0;
+  padding:32px;
+  border-radius:18px;
+  box-shadow:0 25px 50px rgba(0,0,0,.15);
 }
-input,button{
+
+input{
   width:100%;
-  padding:14px;
+  padding:14px 16px;
   margin-top:14px;
   border-radius:12px;
+  border:1px solid #e5e7eb;
   font-size:15px;
 }
-input{border:1px solid #e5e7eb}
+
+input:focus{
+  outline:none;
+  border-color:#2563eb;
+}
+
 button{
+  width:100%;
+  margin-top:20px;
+  padding:14px;
   border:none;
-  background:var(--primary);
+  border-radius:14px;
+  background:#2563eb;
   color:white;
+  font-size:16px;
   font-weight:700;
   cursor:pointer;
 }
+
+button:hover{
+  background:#1e40af;
+}
+
 .error{
+  margin-top:14px;
+  font-size:14px;
   color:#dc2626;
-  margin-top:12px;
+  text-align:center;
+}
+
+.success{
+  margin-top:14px;
+  font-size:14px;
+  color:#16a34a;
+  text-align:center;
+}
+
+.footer{
+  text-align:center;
+  margin-top:40px;
+  color:#6b7280;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="navbar">
-  <strong>DriveLearn</strong>
-  <div>
-    <a href="index.html">Home</a>
-    <a href="register.html">Register</a>
-  </div>
+<div class="header">
+  <h1>Welcome Back</h1>
+  <p>Log in to continue your learning journey</p>
 </div>
 
-<section class="hero">
-  <h1>Welcome Back</h1>
-  <p>Login to continue learning traffic signs</p>
-</section>
-
 <div class="card">
-  <input id="email" type="email" placeholder="Email">
+  <input id="email" type="email" placeholder="Email address">
   <input id="password" type="password" placeholder="Password">
-  <button id="loginBtn">Login</button>
-  <div id="error" class="error"></div>
+  <button onclick="login()">Login</button>
+
+  <div id="message" class="error"></div>
+</div>
+
+<div class="footer">
+  © 2026 DriveLearn – Traffic Awareness Platform
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 /* Firebase config */
 const firebaseConfig={
@@ -105,43 +133,49 @@ const firebaseConfig={
   appId:"1:746457575630:web:3219b85b64e2307126609f"
 };
 
-const TEACHER_EMAIL="aymenmed25071999@gmail.com";
-
-/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-/* Elements */
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
-const errorBox = document.getElementById("error");
-const loginBtn = document.getElementById("loginBtn");
+const messageBox = document.getElementById("message");
 
-/* Login */
-loginBtn.onclick = async () => {
+window.login = async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
-  errorBox.textContent = "";
+  messageBox.textContent = "";
 
   if(!email || !password){
-    errorBox.textContent = "Please fill in all fields";
+    messageBox.textContent = "Please fill in all fields";
     return;
   }
 
   try{
     const cred = await signInWithEmailAndPassword(auth,email,password);
 
-    /* Teacher */
-    if(cred.user.email === TEACHER_EMAIL){
-      location.href = "teacher.html";
+    const snap = await getDoc(doc(db,"users",cred.user.uid));
+
+    if(!snap.exists()){
+      messageBox.textContent="User data not found";
       return;
     }
 
-    /* Student */
-    location.href = "signs.html";
+    if(snap.data().blocked){
+      messageBox.textContent="Your account is blocked";
+      return;
+    }
+
+    messageBox.className="success";
+    messageBox.textContent="Login successful";
+
+    setTimeout(()=>{
+      location.href="index.html";
+    },1500);
 
   }catch(e){
-    errorBox.textContent = "Invalid email or password";
+    messageBox.className="error";
+    messageBox.textContent="Login failed: incorrect email or password";
   }
 };
 </script>

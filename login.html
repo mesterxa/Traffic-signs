@@ -4,194 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login – DriveLearn</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
-/* =====================
-   Variables
-===================== */
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
-  --bg-light: #f8fafc;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
+  --bg: #f8fafc;
+  --card: #ffffff;
   --radius: 16px;
-}
-
-/* =====================
-   Base
-===================== */
-* {
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  display: flex;
-  flex-direction: column;
-}
-
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
-}
-
-.rtl {
-  direction: rtl;
-  text-align: right;
-}
-
-/* =====================
-   Navbar
-===================== */
-.navbar {
-  height: 56px;
+  background: var(--bg);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--primary);
-  color: white;
+  justify-content: center;
 }
 
-.navbar a,
-#lang-switch {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 14px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.logo {
-  height: 32px;
-}
-
-/* =====================
-   Auth Card
-===================== */
-.auth-box {
-  max-width: 420px;
+.card {
   width: 100%;
-  margin: 40px auto;
-  background: var(--card-light);
+  max-width: 420px;
+  background: var(--card);
   padding: 32px;
   border-radius: var(--radius);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  box-shadow: 0 20px 50px rgba(0,0,0,.12);
+}
+
+h2 {
+  margin-top: 0;
   text-align: center;
 }
 
-body.dark .auth-box {
-  background: var(--card-dark);
+p {
+  text-align: center;
+  font-size: 14px;
+  opacity: .8;
 }
 
-/* =====================
-   Inputs & Button
-===================== */
-.auth-box input,
-.auth-box button {
+input, button {
   width: 100%;
-  padding: 13px;
+  padding: 14px;
   margin-top: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 15px;
 }
 
-.auth-box input {
-  border: 1px solid #cbd5f5;
-  outline: none;
+input {
+  border: 1px solid #e5e7eb;
 }
 
-.auth-box input:focus {
-  border-color: var(--primary);
-}
-
-body.dark .auth-box input {
-  background: #1f2933;
-  color: var(--text-light);
-  border: 1px solid #374151;
-}
-
-.auth-box button {
+button {
+  border: none;
   background: var(--primary);
   color: white;
-  border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: .25s ease;
 }
 
-.auth-box button:hover {
+button:hover {
   background: var(--primary-dark);
 }
 
-/* =====================
-   Footer Text
-===================== */
-.auth-box p {
-  margin-top: 16px;
+.link {
+  margin-top: 18px;
+  text-align: center;
   font-size: 14px;
 }
 
-.auth-box a {
+.link a {
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
 }
 
-/* =====================
-   Toast
-===================== */
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,.97);
-  color: #000;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: .4s cubic-bezier(.25,.8,.25,1);
-  z-index: 9999;
-}
-
-.ios-toast.show { top: 25px; }
-.ios-toast.success { border-left: 5px solid #22c55e; }
-.ios-toast.error { border-left: 5px solid #ef4444; }
-
-/* =====================
-   Mobile
-===================== */
-@media (max-width: 600px) {
-  .auth-box {
-    margin: 24px 16px;
-    padding: 24px;
-  }
-
-  .logo {
-    height: 28px;
-  }
+.error {
+  margin-top: 12px;
+  color: #dc2626;
+  font-size: 14px;
+  text-align: center;
 }
 </style>
 
-<!-- =====================
-     Firebase (UNCHANGED)
-===================== -->
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
+/* Firebase config (UNCHANGED) */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -201,79 +105,67 @@ const firebaseConfig = {
   appId: "1:746457575630:web:3219b85b64e2307126609f"
 };
 
+/* 🔐 Teacher Email (ONLY ONE) */
+const TEACHER_EMAIL = "teacher@drivelearn.com"; // عدله لاحقًا إن أردت
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-window.loginUser = () => {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-pass").value;
+window.login = async () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  errorBox.innerText = "";
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => showToast(arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋", "success", true))
-    .catch(err => showToast(err.message, "error"));
+  if (!email || !password) {
+    errorBox.innerText = "Please enter email and password";
+    return;
+  }
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+
+    /* 👨‍🏫 Teacher */
+    if (email === TEACHER_EMAIL) {
+      location.href = "teacher.html";
+      return;
+    }
+
+    /* 👤 Student */
+    const snap = await getDoc(doc(db, "users", cred.user.uid));
+
+    if (!snap.exists()) {
+      errorBox.innerText = "User data not found";
+      return;
+    }
+
+    location.href = "signs.html";
+
+  } catch (err) {
+    errorBox.innerText = err.message;
+  }
 };
 </script>
 </head>
 
 <body>
 
-<div id="toast" class="ios-toast"></div>
+<div class="card">
+  <h2>Login</h2>
+  <p>Access your DriveLearn account</p>
 
-<!-- Navbar -->
-<div class="navbar">
-  <img src="logo.png" class="logo" alt="DriveLearn">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="register.html">Register</a>
-    <span id="lang-switch">AR</span>
+  <input id="emailInput" type="email" placeholder="Email">
+  <input id="passwordInput" type="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <div id="errorBox" class="error"></div>
+
+  <div class="link">
+    New student?
+    <a href="register.html">Create account</a>
   </div>
 </div>
-
-<!-- Login Card -->
-<div class="auth-box">
-  <h2 id="title">Login</h2>
-  <input type="email" id="login-email" placeholder="Email">
-  <input type="password" id="login-pass" placeholder="Password">
-  <button onclick="loginUser()" id="login-btn">Login</button>
-  <p id="footer-text">
-    Don't have an account? <a href="register.html">Register</a>
-  </p>
-</div>
-
-<script>
-let arabic = false;
-
-/* Language Toggle */
-document.getElementById("lang-switch").onclick = () => {
-  arabic = !arabic;
-  document.body.classList.toggle("rtl");
-
-  document.getElementById("title").innerText = arabic ? "تسجيل الدخول" : "Login";
-  document.getElementById("login-email").placeholder = arabic ? "البريد الإلكتروني" : "Email";
-  document.getElementById("login-pass").placeholder = arabic ? "كلمة المرور" : "Password";
-  document.getElementById("login-btn").innerText = arabic ? "دخول" : "Login";
-  document.getElementById("footer-text").innerHTML = arabic
-    ? 'ليس لديك حساب؟ <a href="register.html">سجل الآن</a>'
-    : 'Don\'t have an account? <a href="register.html">Register</a>';
-};
-
-/* Auto Dark Mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  document.body.classList.add("dark");
-}
-
-/* Toast */
-function showToast(msg, type="success", redirect=false) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = `ios-toast show ${type}`;
-
-  setTimeout(() => {
-    t.classList.remove("show");
-    if (redirect) location.href = "result.html";
-  }, 2000);
-}
-</script>
 
 </body>
 </html>

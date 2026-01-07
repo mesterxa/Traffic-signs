@@ -8,52 +8,83 @@
 <style>
 :root {
   --primary:#2563eb;
+  --primary-dark:#1e40af;
   --bg:#f8fafc;
-  --card:#fff;
+  --card:#ffffff;
   --radius:16px;
+  --text:#111827;
 }
+
+* { box-sizing: border-box; }
 
 body{
   margin:0;
   font-family:"Segoe UI",system-ui;
   background:var(--bg);
+  color:var(--text);
 }
 
+/* Navbar */
 .navbar{
-  background:var(--primary);
-  padding:14px 20px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  padding:14px 22px;
   color:#fff;
   display:flex;
-  gap:20px;
+  justify-content:space-between;
   align-items:center;
 }
 
-.navbar a{
+.navbar .left a{
+  color:white;
+  text-decoration:none;
+  font-weight:700;
+  margin-right:18px;
+}
+
+.navbar .right a{
   color:white;
   text-decoration:none;
   font-weight:600;
+  margin-left:16px;
 }
 
+/* Page Title */
+.header{
+  text-align:center;
+  margin:40px 20px 10px;
+}
+
+.header h1{
+  margin:0;
+  font-size:32px;
+}
+
+.header p{
+  opacity:.8;
+}
+
+/* Cards */
 .container{
   max-width:1100px;
-  margin:30px auto;
+  margin:30px auto 80px;
   padding:0 20px;
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
+  gap:24px;
 }
 
 .card{
   background:var(--card);
-  padding:24px;
+  padding:26px;
   border-radius:var(--radius);
-  box-shadow:0 10px 30px rgba(0,0,0,.1);
+  box-shadow:0 12px 30px rgba(0,0,0,.1);
   text-align:center;
-  transition:.3s;
+  transition:.3s ease;
+  cursor:pointer;
 }
 
 .card:hover{
-  transform:translateY(-5px);
+  transform:translateY(-6px);
 }
 
 .card.highlight{
@@ -63,40 +94,104 @@ body{
 
 .sign{
   font-size:72px;
+  margin-bottom:10px;
+}
+
+.card h3{
+  margin:10px 0 6px;
+}
+
+.card p{
+  font-size:14px;
+  opacity:.85;
+}
+
+/* Footer */
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:14px;
+  opacity:.7;
 }
 </style>
+
+<!-- Firebase (Auth Guard فقط) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* 🔐 حماية الصفحة */
+onAuthStateChanged(auth, user => {
+  if (!user) location.href = "login.html";
+});
+
+window.logout = async () => {
+  await signOut(auth);
+  location.href = "login.html";
+};
+</script>
 </head>
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
-  <a href="index.html">Home</a>
-  <a href="quizzes.html">Quiz</a>
+  <div class="left">
+    <a href="index.html">DriveLearn</a>
+    <a href="quizzes.html">Quiz</a>
+  </div>
+  <div class="right">
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
 </div>
 
+<!-- Header -->
+<div class="header">
+  <h1>🚦 Traffic Signs</h1>
+  <p>Learn and understand the most important road signs</p>
+</div>
+
+<!-- Cards -->
 <div class="container">
 
   <div class="card" id="stop">
     <div class="sign">🛑</div>
     <h3>Stop</h3>
-    <p>You must stop completely.</p>
+    <p>You must stop completely before proceeding.</p>
   </div>
 
   <div class="card" id="no-entry">
     <div class="sign">⛔</div>
     <h3>No Entry</h3>
-    <p>Entry is forbidden.</p>
+    <p>Entry is strictly forbidden.</p>
   </div>
 
   <div class="card" id="pedestrians">
     <div class="sign">🚸</div>
     <h3>Pedestrians</h3>
-    <p>Pedestrian crossing area.</p>
+    <p>Pedestrian crossing area ahead.</p>
   </div>
 
 </div>
 
+<footer>
+  © 2026 DriveLearn – Traffic Awareness Platform
+</footer>
+
 <script>
+/* Highlight from quiz */
 const params = new URLSearchParams(location.search);
 const sign = params.get("sign");
 

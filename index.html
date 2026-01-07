@@ -2,74 +2,99 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DriveLearn</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
 /* =====================
-   CSS Variables
+   Variables
 ===================== */
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
   --bg-light: #ffffff;
   --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
   --text-dark: #111827;
   --text-light: #e5e7eb;
   --radius: 16px;
 }
 
 /* =====================
-   Base Styles
+   Base
 ===================== */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg-light);
   color: var(--text-dark);
 }
 
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
 a {
   text-decoration: none;
-  color: inherit;
+}
+
+/* =====================
+   RTL
+===================== */
+.rtl {
+  direction: rtl;
+  text-align: right;
 }
 
 /* =====================
    Navbar
 ===================== */
 .navbar {
+  height: 56px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 28px;
-  background: var(--bg-light);
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--card-light);
   box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-.navbar a {
-  margin-left: 18px;
-  font-weight: 500;
-  color: var(--primary);
+body.dark .navbar {
+  background: var(--card-dark);
 }
 
+.navbar a,
 .lang-switch {
-  margin-left: 18px;
-  cursor: pointer;
+  color: var(--primary);
   font-weight: 600;
+  margin-left: 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logo {
+  height: 32px;
 }
 
 /* =====================
-   Hero Section
+   Hero
 ===================== */
 .hero {
-  padding: 90px 20px;
+  padding: 80px 20px;
   text-align: center;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
 }
 
 .hero h1 {
-  font-size: 38px;
+  font-size: 36px;
   margin-bottom: 12px;
 }
 
@@ -95,12 +120,16 @@ a {
 }
 
 .card {
-  background: var(--bg-light);
+  background: var(--card-light);
   padding: 28px;
   border-radius: var(--radius);
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   transition: .3s ease;
+}
+
+body.dark .card {
+  background: var(--card-dark);
 }
 
 .card:hover {
@@ -127,29 +156,19 @@ footer {
 }
 
 /* =====================
-   RTL Support
+   Mobile
 ===================== */
-.rtl {
-  direction: rtl;
-  text-align: right;
-}
-
-/* =====================
-   Dark Mode
-===================== */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: var(--bg-dark);
-    color: var(--text-light);
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 28px;
   }
 
-  .navbar,
-  .card {
-    background: #111827;
+  .hero p {
+    font-size: 16px;
   }
 
-  footer {
-    color: #9ca3af;
+  .cards {
+    margin-top: 40px;
   }
 }
 </style>
@@ -163,7 +182,7 @@ footer {
   <div>
     <a href="login.html">Login</a>
     <a href="register.html">Register</a>
-    <span class="lang-switch" onclick="toggleLanguage()">AR / EN</span>
+    <span class="lang-switch" onclick="toggleLanguage()">AR</span>
   </div>
 </div>
 
@@ -210,21 +229,24 @@ function toggleLanguage() {
   arabic = !arabic;
   document.body.classList.toggle("rtl");
 
-  const t = id => document.getElementById(id);
-
   if (arabic) {
-    t("hero-title").innerText = "تعلم السياقة بسهولة";
-    t("hero-sub").innerText = "منصة تعليم سياقة احترافية";
-    t("card1-title").innerText = "إشارات المرور";
-    t("card1-desc").innerText = "فهم إشارات الطريق بوضوح";
-    t("card2-title").innerText = "اختبارات";
-    t("card2-desc").innerText = "تعلم عبر اللعب";
-    t("card3-title").innerText = "تمارين";
-    t("card3-desc").innerText = "التحضير لاجتياز الامتحان";
-    t("footer-text").innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
+    document.getElementById("hero-title").innerText = "تعلم السياقة بسهولة";
+    document.getElementById("hero-sub").innerText = "منصة تعليم سياقة احترافية";
+    document.getElementById("card1-title").innerText = "إشارات المرور";
+    document.getElementById("card1-desc").innerText = "فهم إشارات الطريق بوضوح";
+    document.getElementById("card2-title").innerText = "اختبارات";
+    document.getElementById("card2-desc").innerText = "تعلم عبر اللعب";
+    document.getElementById("card3-title").innerText = "تمارين";
+    document.getElementById("card3-desc").innerText = "التحضير لاجتياز الامتحان";
+    document.getElementById("footer-text").innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
   } else {
     location.reload();
   }
+}
+
+/* Auto Dark Mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
 }
 </script>
 

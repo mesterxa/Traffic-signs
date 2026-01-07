@@ -23,7 +23,6 @@ body{
   min-height:100vh;
 }
 
-/* Navbar */
 .navbar{
   display:flex;
   align-items:center;
@@ -41,14 +40,12 @@ body{
 
 .logo{height:34px}
 
-/* Layout */
 .container{
   max-width:520px;
   margin:40px auto;
   padding:0 16px;
 }
 
-/* Card */
 .quiz-card{
   background:var(--card);
   padding:28px;
@@ -73,7 +70,6 @@ body{
   font-size:16px;
   font-weight:600;
   cursor:pointer;
-  transition:.25s;
 }
 
 .options button:hover{
@@ -107,12 +103,6 @@ body{
   border-radius:20px;
   text-align:center;
   box-shadow:0 25px 60px rgba(0,0,0,.25);
-  animation:pop .3s ease;
-}
-
-@keyframes pop{
-  from{transform:scale(.85);opacity:0}
-  to{transform:scale(1);opacity:1}
 }
 
 .modal-card .icon{
@@ -121,7 +111,7 @@ body{
 
 .modal-actions{
   display:flex;
-  gap:12px;
+  gap:10px;
   margin-top:20px;
 }
 
@@ -135,19 +125,18 @@ body{
 }
 
 #retryBtn{background:#e5e7eb}
+#nextBtn{background:#22c55e;color:white}
 #learnBtn{background:var(--primary);color:white}
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
 </div>
 
-<!-- Quiz -->
 <div class="container">
   <div class="quiz-card">
     <h2>Traffic Quiz</h2>
@@ -157,7 +146,7 @@ body{
   </div>
 </div>
 
-<!-- Result Modal -->
+<!-- Modal -->
 <div id="resultModal" class="modal">
   <div class="modal-card">
     <div id="resultIcon" class="icon"></div>
@@ -166,86 +155,67 @@ body{
 
     <div class="modal-actions">
       <button id="retryBtn">🔁 Retry</button>
+      <button id="nextBtn">➡️ Next</button>
       <button id="learnBtn">📘 Review</button>
     </div>
   </div>
 </div>
 
 <script>
-/* =====================
-   Questions (Linked to signs.html)
-===================== */
 const questions = [
-  {
-    sign:"🛑",
-    correct:"Stop",
-    options:["Stop","No entry","Danger"],
-    signId:"stop"
-  },
-  {
-    sign:"⛔",
-    correct:"No entry",
-    options:["Stop","No entry","Parking"],
-    signId:"no-entry"
-  },
-  {
-    sign:"🚸",
-    correct:"Pedestrians",
-    options:["School","Pedestrians","Children"],
-    signId:"pedestrians"
-  }
+  { sign:"🛑", correct:"Stop", options:["Stop","No entry","Danger"], signId:"stop" },
+  { sign:"⛔", correct:"No entry", options:["Stop","No entry","Parking"], signId:"no-entry" },
+  { sign:"🚸", correct:"Pedestrians", options:["School","Pedestrians","Children"], signId:"pedestrians" }
 ];
 
 let index = 0;
 let score = 0;
+let lastCorrect = false;
 
 function loadQuestion(){
   const q = questions[index];
-  document.getElementById("sign").textContent = q.sign;
-
-  const opts = document.getElementById("options");
-  opts.innerHTML = "";
+  sign.textContent = q.sign;
+  options.innerHTML = "";
 
   q.options.forEach(o=>{
     const b = document.createElement("button");
     b.textContent = o;
     b.onclick = ()=>answer(o);
-    opts.appendChild(b);
+    options.appendChild(b);
   });
 
-  document.getElementById("progress").textContent =
-    `Question ${index+1}/${questions.length} | Score: ${score}`;
+  progress.textContent = `Question ${index+1}/${questions.length} | Score: ${score}`;
 }
 
 function answer(choice){
   const q = questions[index];
-  const correct = choice === q.correct;
+  lastCorrect = choice === q.correct;
+  if(lastCorrect) score += 10;
 
-  showResult(correct, q.signId);
-
-  if(correct) score += 10;
-
-  index++;
-  if(index < questions.length){
-    setTimeout(loadQuestion,300);
-  }
+  showModal(q.signId);
 }
 
-function showResult(correct, signId){
-  const modal = document.getElementById("resultModal");
-  document.getElementById("resultIcon").textContent = correct ? "✅" : "❌";
-  document.getElementById("resultTitle").textContent =
-    correct ? "Correct!" : "Wrong answer";
-  document.getElementById("resultText").textContent =
-    correct ? "Good job 🚗" : "Review the sign and try again";
+function showModal(signId){
+  resultModal.classList.add("show");
+  resultIcon.textContent = lastCorrect ? "✅" : "❌";
+  resultTitle.textContent = lastCorrect ? "Correct!" : "Wrong";
+  resultText.textContent = lastCorrect ? "Good job 🚗" : "Review the sign";
 
-  modal.classList.add("show");
-
-  document.getElementById("retryBtn").onclick = ()=>{
-    modal.classList.remove("show");
+  retryBtn.onclick = ()=>{
+    resultModal.classList.remove("show");
   };
 
-  document.getElementById("learnBtn").onclick = ()=>{
+  nextBtn.onclick = ()=>{
+    resultModal.classList.remove("show");
+    index++;
+    if(index < questions.length){
+      loadQuestion();
+    } else {
+      alert("Quiz Finished 🎉\nScore: " + score);
+    }
+  };
+
+  learnBtn.onclick = ()=>{
     location.href = `signs.html?sign=${signId}`;
   };
 }

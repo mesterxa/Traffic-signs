@@ -43,6 +43,7 @@ body.dark {
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 /* =====================
@@ -103,6 +104,22 @@ body.dark .navbar {
   opacity: .9;
 }
 
+.hero a {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 14px 28px;
+  background: white;
+  color: var(--primary);
+  border-radius: 999px;
+  font-weight: 700;
+  transition: .3s ease;
+}
+
+.hero a:hover {
+  transform: translateY(-2px);
+  opacity: .9;
+}
+
 /* =====================
    Cards
 ===================== */
@@ -126,6 +143,7 @@ body.dark .navbar {
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   transition: .3s ease;
+  cursor: pointer;
 }
 
 body.dark .card {
@@ -190,6 +208,7 @@ footer {
 <section class="hero">
   <h1 id="hero-title">Learn Traffic Signs Easily</h1>
   <p id="hero-sub">Professional driving education platform</p>
+  <a href="quizzes.html" id="hero-btn">Start Quiz</a>
 </section>
 
 <!-- Cards -->
@@ -202,11 +221,14 @@ footer {
       <p id="card1-desc">Understand road signs clearly</p>
     </div>
 
-    <div class="card">
-      <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
-      <h3 id="card2-title">Quizzes</h3>
-      <p id="card2-desc">Play & test your driving knowledge</p>
-    </div>
+    <!-- ✅ Quiz Card -->
+    <a href="quizzes.html">
+      <div class="card">
+        <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6.6 3 11c0 2.4 1.2 4.6 3 6.1V21l3-1.5 3 1.5v-3.9c1.8-1.5 3-3.7 3-6.1 0-4.4-4-8-9-8z"/></svg>
+        <h3 id="card2-title">Quizzes</h3>
+        <p id="card2-desc">Play & test your driving knowledge</p>
+      </div>
+    </a>
 
     <div class="card">
       <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
@@ -232,6 +254,7 @@ function toggleLanguage() {
   if (arabic) {
     document.getElementById("hero-title").innerText = "تعلم السياقة بسهولة";
     document.getElementById("hero-sub").innerText = "منصة تعليم سياقة احترافية";
+    document.getElementById("hero-btn").innerText = "ابدأ الاختبار";
     document.getElementById("card1-title").innerText = "إشارات المرور";
     document.getElementById("card1-desc").innerText = "فهم إشارات الطريق بوضوح";
     document.getElementById("card2-title").innerText = "اختبارات";

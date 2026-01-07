@@ -2,174 +2,112 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Traffic Signs – DriveLearn</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 :root {
-  --primary: #2563eb;
-  --bg-light: #f8fafc;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-light: #e5e7eb;
-  --radius: 16px;
+  --primary:#2563eb;
+  --bg:#f8fafc;
+  --card:#fff;
+  --radius:16px;
 }
 
-body {
-  margin: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: #111827;
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui;
+  background:var(--bg);
 }
 
-/* Navbar */
-.navbar {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 14px 24px;
-  background: var(--primary);
-  color: white;
+.navbar{
+  background:var(--primary);
+  padding:14px 20px;
+  color:#fff;
+  display:flex;
+  gap:20px;
+  align-items:center;
 }
 
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
+.navbar a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
 }
 
-.logo {
-  height: 34px;
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
 }
 
-/* Layout */
-.container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+.card{
+  background:var(--card);
+  padding:24px;
+  border-radius:var(--radius);
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+  text-align:center;
+  transition:.3s;
 }
 
-h2 {
-  margin-bottom: 25px;
+.card:hover{
+  transform:translateY(-5px);
 }
 
-/* Cards */
-.signs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
+.card.highlight{
+  outline:4px solid var(--primary);
+  transform:scale(1.05);
 }
 
-.card {
-  background: var(--card-light);
-  padding: 22px;
-  border-radius: var(--radius);
-  text-align: center;
-  box-shadow: 0 12px 30px rgba(0,0,0,.1);
-  transition: .3s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-}
-
-.icon {
-  font-size: 56px;
-  margin-bottom: 12px;
-}
-
-.card h3 {
-  margin: 8px 0;
-}
-
-.card p {
-  font-size: 14px;
-  opacity: .85;
-}
-
-/* Category Badge */
-.badge {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  background: #e0e7ff;
-  color: #1e40af;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: var(--bg-dark);
-    color: var(--text-light);
-  }
-
-  .card {
-    background: var(--card-dark);
-  }
-
-  .badge {
-    background: #1e293b;
-    color: #93c5fd;
-  }
+.sign{
+  font-size:72px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
-  <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
   <a href="quizzes.html">Quiz</a>
 </div>
 
 <div class="container">
-  <h2>📚 Traffic Signs Bank</h2>
 
-  <div class="signs">
-
-    <div class="card">
-      <div class="icon">🛑</div>
-      <h3>Stop</h3>
-      <p>You must stop completely and give way before continuing.</p>
-      <span class="badge">Prohibitory</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">⛔</div>
-      <h3>No Entry</h3>
-      <p>Vehicles are not allowed to enter this road.</p>
-      <span class="badge">Prohibitory</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">🚸</div>
-      <h3>Pedestrians</h3>
-      <p>Watch out for pedestrians crossing the road.</p>
-      <span class="badge">Warning</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">⚠️</div>
-      <h3>Danger Ahead</h3>
-      <p>There is a potential hazard ahead. Slow down.</p>
-      <span class="badge">Warning</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">➡️</div>
-      <h3>Turn Right</h3>
-      <p>You must turn right. Other directions are not allowed.</p>
-      <span class="badge">Mandatory</span>
-    </div>
-
+  <div class="card" id="stop">
+    <div class="sign">🛑</div>
+    <h3>Stop</h3>
+    <p>You must stop completely.</p>
   </div>
+
+  <div class="card" id="no-entry">
+    <div class="sign">⛔</div>
+    <h3>No Entry</h3>
+    <p>Entry is forbidden.</p>
+  </div>
+
+  <div class="card" id="pedestrians">
+    <div class="sign">🚸</div>
+    <h3>Pedestrians</h3>
+    <p>Pedestrian crossing area.</p>
+  </div>
+
 </div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const sign = params.get("sign");
+
+if(sign){
+  const el = document.getElementById(sign);
+  if(el){
+    el.classList.add("highlight");
+    el.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+</script>
 
 </body>
 </html>

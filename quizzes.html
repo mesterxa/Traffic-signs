@@ -2,264 +2,167 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Quiz – DriveLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quizzes – DriveLearn</title>
 
 <style>
-:root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #f8fafc;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-light: #e5e7eb;
-  --radius: 18px;
+:root{
+  --primary:#2563eb;
+  --bg:#f8fafc;
+  --card:#fff;
+  --radius:16px;
 }
 
-body {
-  margin: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: #111827;
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui;
+  background:var(--bg);
 }
 
-/* Navbar */
-.navbar {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 14px 24px;
-  background: var(--primary);
-  color: white;
+.navbar{
+  background:var(--primary);
+  padding:14px 20px;
+  color:#fff;
+  display:flex;
+  gap:20px;
 }
 
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
+.navbar a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
 }
 
-.logo {
-  height: 36px;
+.container{
+  max-width:600px;
+  margin:40px auto;
+  padding:0 20px;
 }
 
-/* Layout */
-.container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 25px;
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+.card{
+  background:var(--card);
+  padding:30px;
+  border-radius:var(--radius);
+  box-shadow:0 12px 35px rgba(0,0,0,.15);
+  text-align:center;
 }
 
-.game, .leaderboard {
-  background: var(--card-light);
-  padding: 28px;
-  border-radius: var(--radius);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+.sign{
+  font-size:80px;
+  margin:20px 0;
 }
 
-.sign {
-  font-size: 80px;
-  text-align: center;
-  margin: 20px 0;
+button{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
 }
 
-.options button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 12px;
-  background: var(--primary);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
+button:hover{
+  opacity:.9;
 }
 
-.progress {
-  margin-top: 14px;
-  font-weight: 600;
-}
-
-/* Leaderboard */
-.leaderboard ul {
-  list-style: none;
-  padding: 0;
-}
-
-.leaderboard li {
-  padding: 8px 0;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Toast */
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: .4s;
-}
-
-.ios-toast.show {
-  top: 25px;
+.progress{
+  margin-top:15px;
+  font-weight:600;
 }
 </style>
+</head>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+<body>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-};
+<div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="signs.html">Traffic Signs</a>
+</div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+<div class="container">
+  <div class="card">
+    <h2>Traffic Quiz</h2>
 
-/* Questions */
+    <div id="sign" class="sign"></div>
+
+    <div id="options"></div>
+
+    <button id="learnBtn">📘 Learn this sign</button>
+
+    <div id="progress" class="progress"></div>
+  </div>
+</div>
+
+<script>
 const questions = [
-  { sign: "🛑", correct: "Stop", options: ["Stop","No entry","Yield"] },
-  { sign: "🚸", correct: "Pedestrians", options: ["School","Pedestrians","Children"] },
-  { sign: "⛔", correct: "No entry", options: ["Stop","No entry","Danger"] }
+  {
+    sign:"🛑",
+    correct:"Stop",
+    options:["Stop","No entry","Yield"],
+    signId:"stop"
+  },
+  {
+    sign:"🚸",
+    correct:"Pedestrians",
+    options:["School","Pedestrians","Children"],
+    signId:"pedestrians"
+  },
+  {
+    sign:"⛔",
+    correct:"No entry",
+    options:["Stop","No entry","Danger"],
+    signId:"no-entry"
+  }
 ];
 
 let index = 0;
 let score = 0;
-let userId = null;
 
-/* Auth */
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    location.href = "login.html";
-    return;
-  }
-
-  userId = user.uid;
-
-  const userSnap = await getDoc(doc(db, "users", user.uid));
-  const u = userSnap.data();
-
-  const scoreRef = doc(db, "scores", user.uid);
-  const scoreSnap = await getDoc(scoreRef);
-
-  if (!scoreSnap.exists()) {
-    await setDoc(scoreRef, {
-      firstName: u.firstName,
-      lastName: u.lastName,
-      points: 0
-    });
-  } else {
-    score = scoreSnap.data().points;
-  }
-
-  loadQuestion();
-  loadLeaderboard();
-});
-
-function loadQuestion() {
-  if (index >= questions.length) {
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("sign").innerText = "🎉";
-    document.getElementById("progress").innerText = `Finished! Final score: ${score}`;
-    return;
-  }
-
+function loadQuestion(){
   const q = questions[index];
   document.getElementById("sign").innerText = q.sign;
 
   const opts = document.getElementById("options");
   opts.innerHTML = "";
 
-  q.options.forEach(o => {
-    const btn = document.createElement("button");
-    btn.innerText = o;
-    btn.onclick = () => answer(o);
-    opts.appendChild(btn);
+  q.options.forEach(o=>{
+    const b = document.createElement("button");
+    b.innerText = o;
+    b.onclick = ()=>answer(o);
+    opts.appendChild(b);
   });
+
+  document.getElementById("learnBtn").onclick = ()=>{
+    location.href = `signs.html?sign=${q.signId}`;
+  };
 
   document.getElementById("progress").innerText =
-    `Question ${index + 1}/${questions.length} | Score: ${score}`;
+    `Question ${index+1}/${questions.length} | Score: ${score}`;
 }
 
-async function answer(choice) {
+function answer(choice){
   const q = questions[index];
-
-  if (choice === q.correct) {
+  if(choice === q.correct){
     score += 10;
-    toast("Correct ✅");
-  } else {
-    toast("Wrong ❌");
+    alert("Correct ✅");
+  }else{
+    alert("Wrong ❌");
   }
 
-  await setDoc(doc(db, "scores", userId), {
-    points: score
-  }, { merge: true });
-
   index++;
-  loadQuestion();
-  loadLeaderboard();
+  if(index < questions.length){
+    loadQuestion();
+  }else{
+    alert("Quiz Finished 🎉 Score: "+score);
+  }
 }
 
-async function loadLeaderboard() {
-  const q = query(collection(db, "scores"), orderBy("points", "desc"));
-  const snap = await getDocs(q);
-
-  const list = document.getElementById("leader");
-  list.innerHTML = "";
-
-  snap.forEach(d => {
-    const s = d.data();
-    list.innerHTML += `<li>${s.firstName} ${s.lastName} — ${s.points}</li>`;
-  });
-}
-
-function toast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2000);
-}
+loadQuestion();
 </script>
-</head>
-
-<body>
-
-<div class="navbar">
-  <img src="logo.png" class="logo">
-  <a href="index.html">Home</a>
-</div>
-
-<div class="container">
-
-  <div class="game">
-    <h2>Traffic Quiz</h2>
-    <div id="sign" class="sign">🚦</div>
-    <div id="options" class="options"></div>
-    <div id="progress" class="progress"></div>
-  </div>
-
-  <div class="leaderboard">
-    <h3>Leaderboard</h3>
-    <ul id="leader"></ul>
-  </div>
-
-</div>
-
-<div id="toast" class="ios-toast"></div>
 
 </body>
 </html>

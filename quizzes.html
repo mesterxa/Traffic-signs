@@ -1,62 +1,183 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quizzes - DriveLearn</title>
-<link rel="stylesheet" href="style.css"><style>
+<title>Quizzes – DriveLearn</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* =====================
+   Variables
+===================== */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #f8fafc;
+  --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
+  --text-light: #e5e7eb;
+  --radius: 18px;
+}
+
+/* =====================
+   Base
+===================== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-light);
+  color: #111827;
+}
+
+/* =====================
+   Navbar
+===================== */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 24px;
+  background: var(--primary);
+  color: white;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.logo {
+  height: 36px;
+}
+
+/* =====================
+   Layout
+===================== */
+.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+/* =====================
+   Cards
+===================== */
+.game,
+.leaderboard {
+  background: var(--card-light);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+}
+
+.game h2 {
+  margin-top: 0;
+}
+
+/* =====================
+   Quiz
+===================== */
+.sign {
+  font-size: 82px;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.options button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .25s ease;
+}
+
+.options button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.progress {
+  margin-top: 18px;
+  font-weight: 600;
+  opacity: .85;
+}
+
+/* =====================
+   Leaderboard
+===================== */
+.leaderboard h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.leaderboard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leaderboard li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 500;
+}
+
+/* =====================
+   iOS Toast
+===================== */
+.ios-toast {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 12px 35px rgba(0,0,0,.18);
+  transition: .4s cubic-bezier(.25,.8,.25,1);
+  z-index: 9999;
+}
+
+.ios-toast.show {
+  top: 25px;
+}
+
+/* =====================
+   Dark Mode
+===================== */
 @media (prefers-color-scheme: dark) {
-  body { background:#0f172a; color:#e5e7eb; }
-  .game, .leaderboard { background:#111827; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+
+  .game,
+  .leaderboard {
+    background: var(--card-dark);
+  }
+
+  .leaderboard li {
+    border-bottom: 1px solid #374151;
+  }
 }
+</style>
 
-.container{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:25px;
-  max-width:1100px;
-  margin:60px auto;
-}
-
-.game, .leaderboard{
-  background:#fff;
-  padding:25px;
-  border-radius:18px;
-  box-shadow:0 15px 35px rgba(0,0,0,.12);
-}
-
-.sign{
-  font-size:80px;
-  margin:20px 0;
-}
-
-.options button{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border:none;
-  border-radius:12px;
-  background:#2563eb;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-  transition:.2s;
-}
-.options button:hover{ transform:scale(1.02); }
-
-.progress{ margin-top:15px; font-weight:600; }
-
-.leaderboard h3{ margin-bottom:10px; }
-
-.leaderboard ul{ list-style:none; padding:0; }
-.leaderboard li{ padding:8px 0; border-bottom:1px solid #e5e7eb; }
-
-.ios-toast{
-  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
-  background:#fff;padding:14px 22px;border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-  transition:.4s;z-index:9999;
-}
-.ios-toast.show{ top:25px; }
-</style><script type="module">
+<!-- =====================
+     Firebase (UNCHANGED)
+===================== -->
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
@@ -74,10 +195,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* =====================
+   Quiz Logic
+===================== */
 const questions = [
-  { sign:"🛑", correct:"Stop", options:["Stop","No entry","Yield"] },
-  { sign:"🚸", correct:"Pedestrians", options:["School","Pedestrians","Children"] },
-  { sign:"⛔", correct:"No entry", options:["Stop","No entry","Danger"] }
+  { sign: "🛑", correct: "Stop", options: ["Stop","No entry","Yield"] },
+  { sign: "🚸", correct: "Pedestrians", options: ["School","Pedestrians","Children"] },
+  { sign: "⛔", correct: "No entry", options: ["Stop","No entry","Danger"] }
 ];
 
 let index = 0;
@@ -85,86 +209,113 @@ let score = 0;
 let currentUser = null;
 
 onAuthStateChanged(auth, async user => {
-  if(!user) return location.href="login.html";
+  if (!user) return location.href = "login.html";
   currentUser = user;
 
-  const userDoc = await getDoc(doc(db,"users",user.uid));
+  const userDoc = await getDoc(doc(db, "users", user.uid));
   const u = userDoc.data();
 
-  await setDoc(doc(db,"scores",user.uid),{
-    uid:user.uid,
-    firstName:u.firstName,
-    lastName:u.lastName,
-    points:0,
-    updatedAt:new Date()
+  await setDoc(doc(db, "scores", user.uid), {
+    uid: user.uid,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    points: 0,
+    updatedAt: new Date()
   });
 
   loadQuestion();
   loadLeaderboard();
 });
 
-function loadQuestion(){
+function loadQuestion() {
   const q = questions[index];
   document.getElementById("sign").innerText = q.sign;
+
   const opts = document.getElementById("options");
-  opts.innerHTML="";
-  q.options.forEach(o=>{
-    const b=document.createElement("button");
-    b.innerText=o;
-    b.onclick=()=>answer(o);
+  opts.innerHTML = "";
+
+  q.options.forEach(o => {
+    const b = document.createElement("button");
+    b.innerText = o;
+    b.onclick = () => answer(o);
     opts.appendChild(b);
   });
-  document.getElementById("progress").innerText = `Question ${index+1}/${questions.length} | Score: ${score}`;
+
+  document.getElementById("progress").innerText =
+    `Question ${index + 1}/${questions.length} | Score: ${score}`;
 }
 
-async function answer(choice){
+async function answer(choice) {
   const q = questions[index];
-  if(choice===q.correct){ score+=10; toast("Correct ✅"); }
-  else toast("Wrong ❌");
 
-  await setDoc(doc(db,"scores",currentUser.uid),{
-    points:score,
-    updatedAt:new Date()
-  },{merge:true});
+  if (choice === q.correct) {
+    score += 10;
+    toast("Correct ✅");
+  } else {
+    toast("Wrong ❌");
+  }
+
+  await setDoc(doc(db, "scores", currentUser.uid), {
+    points: score,
+    updatedAt: new Date()
+  }, { merge: true });
 
   index++;
-  if(index<questions.length) loadQuestion();
+
+  if (index < questions.length) loadQuestion();
   else toast("Quiz Finished 🎉");
 
   loadLeaderboard();
 }
 
-async function loadLeaderboard(){
-  const q = query(collection(db,"scores"), orderBy("points","desc"));
+async function loadLeaderboard() {
+  const q = query(collection(db, "scores"), orderBy("points", "desc"));
   const snap = await getDocs(q);
+
   const list = document.getElementById("leader");
-  list.innerHTML="";
-  snap.forEach(d=>{
-    const s=d.data();
-    list.innerHTML+=`<li>${s.firstName} ${s.lastName} — ${s.points}</li>`;
+  list.innerHTML = "";
+
+  snap.forEach(d => {
+    const s = d.data();
+    list.innerHTML += `<li>${s.firstName} ${s.lastName} — ${s.points}</li>`;
   });
 }
 
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2000);
+  setTimeout(() => t.classList.remove("show"), 2000);
 }
-</script></head><body>
+</script>
+</head>
+
+<body>
+
+<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
-</div><div class="container">
+</div>
+
+<!-- Content -->
+<div class="container">
+
   <div class="game">
     <h2>Traffic Quiz</h2>
     <div id="sign" class="sign">🚦</div>
     <div id="options" class="options"></div>
     <div id="progress" class="progress"></div>
-  </div>  <div class="leaderboard">
+  </div>
+
+  <div class="leaderboard">
     <h3>Leaderboard</h3>
     <ul id="leader"></ul>
   </div>
-</div><div id="toast" class="ios-toast"></div>
+
+</div>
+
+<div id="toast" class="ios-toast"></div>
+
 </body>
 </html>

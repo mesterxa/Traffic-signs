@@ -162,14 +162,16 @@ const firebaseConfig = {
   appId: "1:746457575630:web:3219b85b64e2307126609f"
 };
 
+const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 window.register = async () => {
-  const fname = firstName.value;
-  const lname = lastName.value;
-  const email = emailInput.value;
+  const fname = firstName.value.trim();
+  const lname = lastName.value.trim();
+  const email = emailInput.value.trim();
   const pass = passwordInput.value;
 
   success.textContent = "";
@@ -183,16 +185,22 @@ window.register = async () => {
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
 
+    /* 🔐 تحديد الدور تلقائيًا */
+    const role = email === TEACHER_EMAIL ? "teacher" : "student";
+
     await setDoc(doc(db, "users", cred.user.uid), {
       firstName: fname,
       lastName: lname,
       email: email,
-      role: "student",
+      role: role,
       createdAt: new Date()
     });
 
     success.innerHTML = "✔ Account created successfully<br>Redirecting...";
-    setTimeout(()=>location.href="signs.html",1500);
+
+    setTimeout(()=>{
+      location.href = role === "teacher" ? "teacher.html" : "signs.html";
+    },1500);
 
   } catch(e){
     error.textContent = e.message;

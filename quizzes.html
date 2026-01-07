@@ -2,60 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quiz – DriveLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quizzes – DriveLearn</title>
 
 <style>
 :root{
   --primary:#2563eb;
+  --primary-dark:#1e40af;
   --bg:#f8fafc;
-  --card:#fff;
-  --radius:16px;
+  --card:#ffffff;
+  --radius:18px;
 }
+
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  font-family:"Segoe UI",system-ui;
+  font-family:"Segoe UI",system-ui,sans-serif;
   background:var(--bg);
+  min-height:100vh;
 }
 
+/* Navbar */
 .navbar{
-  background:var(--primary);
-  padding:14px 20px;
-  color:#fff;
   display:flex;
-  gap:20px;
+  align-items:center;
+  gap:16px;
+  padding:14px 20px;
+  background:var(--primary);
+  color:white;
 }
 
 .navbar a{
   color:white;
   text-decoration:none;
-  font-weight:600;
+  font-weight:500;
 }
 
+.logo{height:34px}
+
+/* Layout */
 .container{
-  max-width:600px;
+  max-width:520px;
   margin:40px auto;
-  padding:0 20px;
+  padding:0 16px;
 }
 
-.card{
+/* Card */
+.quiz-card{
   background:var(--card);
-  padding:30px;
+  padding:28px;
   border-radius:var(--radius);
-  box-shadow:0 12px 35px rgba(0,0,0,.15);
+  box-shadow:0 18px 40px rgba(0,0,0,.12);
   text-align:center;
 }
 
 .sign{
-  font-size:80px;
+  font-size:90px;
   margin:20px 0;
 }
 
-button{
+.options button{
   width:100%;
   padding:14px;
-  margin-top:12px;
+  margin-top:14px;
   border:none;
   border-radius:12px;
   background:var(--primary);
@@ -63,59 +73,126 @@ button{
   font-size:16px;
   font-weight:600;
   cursor:pointer;
+  transition:.25s;
 }
 
-button:hover{
-  opacity:.9;
+.options button:hover{
+  background:var(--primary-dark);
 }
 
 .progress{
-  margin-top:15px;
+  margin-top:18px;
   font-weight:600;
+  opacity:.7;
 }
+
+/* Modal */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.modal.show{display:flex}
+
+.modal-card{
+  background:white;
+  width:90%;
+  max-width:340px;
+  padding:28px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 25px 60px rgba(0,0,0,.25);
+  animation:pop .3s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.modal-card .icon{
+  font-size:60px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+}
+
+.modal-actions button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+#retryBtn{background:#e5e7eb}
+#learnBtn{background:var(--primary);color:white}
 </style>
 </head>
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
+  <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
-  <a href="signs.html">Traffic Signs</a>
 </div>
 
+<!-- Quiz -->
 <div class="container">
-  <div class="card">
+  <div class="quiz-card">
     <h2>Traffic Quiz</h2>
-
-    <div id="sign" class="sign"></div>
-
-    <div id="options"></div>
-
-    <button id="learnBtn">📘 Learn this sign</button>
-
+    <div id="sign" class="sign">🚦</div>
+    <div id="options" class="options"></div>
     <div id="progress" class="progress"></div>
   </div>
 </div>
 
+<!-- Result Modal -->
+<div id="resultModal" class="modal">
+  <div class="modal-card">
+    <div id="resultIcon" class="icon"></div>
+    <h3 id="resultTitle"></h3>
+    <p id="resultText"></p>
+
+    <div class="modal-actions">
+      <button id="retryBtn">🔁 Retry</button>
+      <button id="learnBtn">📘 Review</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* =====================
+   Questions (Linked to signs.html)
+===================== */
 const questions = [
   {
     sign:"🛑",
     correct:"Stop",
-    options:["Stop","No entry","Yield"],
+    options:["Stop","No entry","Danger"],
     signId:"stop"
+  },
+  {
+    sign:"⛔",
+    correct:"No entry",
+    options:["Stop","No entry","Parking"],
+    signId:"no-entry"
   },
   {
     sign:"🚸",
     correct:"Pedestrians",
     options:["School","Pedestrians","Children"],
     signId:"pedestrians"
-  },
-  {
-    sign:"⛔",
-    correct:"No entry",
-    options:["Stop","No entry","Danger"],
-    signId:"no-entry"
   }
 ];
 
@@ -124,41 +201,53 @@ let score = 0;
 
 function loadQuestion(){
   const q = questions[index];
-  document.getElementById("sign").innerText = q.sign;
+  document.getElementById("sign").textContent = q.sign;
 
   const opts = document.getElementById("options");
   opts.innerHTML = "";
 
   q.options.forEach(o=>{
     const b = document.createElement("button");
-    b.innerText = o;
+    b.textContent = o;
     b.onclick = ()=>answer(o);
     opts.appendChild(b);
   });
 
-  document.getElementById("learnBtn").onclick = ()=>{
-    location.href = `signs.html?sign=${q.signId}`;
-  };
-
-  document.getElementById("progress").innerText =
+  document.getElementById("progress").textContent =
     `Question ${index+1}/${questions.length} | Score: ${score}`;
 }
 
 function answer(choice){
   const q = questions[index];
-  if(choice === q.correct){
-    score += 10;
-    alert("Correct ✅");
-  }else{
-    alert("Wrong ❌");
-  }
+  const correct = choice === q.correct;
+
+  showResult(correct, q.signId);
+
+  if(correct) score += 10;
 
   index++;
   if(index < questions.length){
-    loadQuestion();
-  }else{
-    alert("Quiz Finished 🎉 Score: "+score);
+    setTimeout(loadQuestion,300);
   }
+}
+
+function showResult(correct, signId){
+  const modal = document.getElementById("resultModal");
+  document.getElementById("resultIcon").textContent = correct ? "✅" : "❌";
+  document.getElementById("resultTitle").textContent =
+    correct ? "Correct!" : "Wrong answer";
+  document.getElementById("resultText").textContent =
+    correct ? "Good job 🚗" : "Review the sign and try again";
+
+  modal.classList.add("show");
+
+  document.getElementById("retryBtn").onclick = ()=>{
+    modal.classList.remove("show");
+  };
+
+  document.getElementById("learnBtn").onclick = ()=>{
+    location.href = `signs.html?sign=${signId}`;
+  };
 }
 
 loadQuestion();

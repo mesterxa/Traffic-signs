@@ -7,136 +7,123 @@
 
 <style>
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #ffffff;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --radius: 16px;
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg-light:#ffffff;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#111827;
+  --text-light:#e5e7eb;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --radius:16px;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg-light);
+  color:var(--text-dark);
 }
 
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+a{text-decoration:none;color:inherit}
 
 /* Navbar */
-.navbar {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--card-light);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:var(--card-light);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+body.dark .navbar{background:var(--card-dark)}
+
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+  font-size:14px;
 }
 
-body.dark .navbar { background: var(--card-dark); }
-
-.navbar a {
-  color: var(--primary);
-  font-weight: 600;
-  margin-left: 14px;
-  font-size: 14px;
-}
-
-.logo { height: 32px; }
+.logo{height:32px}
 
 /* Hero */
-.hero {
-  padding: 90px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
+.hero{
+  padding:90px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
 }
 
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 12px;
+.hero h1{
+  font-size:36px;
+  margin-bottom:12px;
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: .9;
-  max-width: 700px;
-  margin: auto;
+.hero p{
+  font-size:18px;
+  opacity:.9;
 }
 
 /* Cards */
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 0 20px;
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:0 20px;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
-  margin-top: -60px;
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:25px;
+  margin-top:-60px;
 }
 
-.card {
-  background: var(--card-light);
-  padding: 30px;
-  border-radius: var(--radius);
-  text-align: center;
-  box-shadow: 0 12px 30px rgba(0,0,0,.1);
+.card{
+  background:var(--card-light);
+  padding:30px;
+  border-radius:var(--radius);
+  text-align:center;
+  box-shadow:0 12px 30px rgba(0,0,0,.1);
 }
+body.dark .card{background:var(--card-dark)}
 
-body.dark .card { background: var(--card-dark); }
+.good{color:var(--success);font-weight:800}
+.bad{color:var(--danger);font-weight:800}
 
-.good { color: var(--success); font-weight: 800; }
-.bad { color: var(--danger); font-weight: 800; }
-
-.btn {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 12px 26px;
-  border-radius: 999px;
-  font-weight: 700;
-  background: var(--primary);
-  color: white;
-  transition: .25s;
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:12px 26px;
+  border-radius:999px;
+  font-weight:700;
+  background:var(--primary);
+  color:white;
+  transition:.25s;
 }
-
-.btn:hover {
-  transform: translateY(-2px);
-  background: var(--primary-dark);
+.btn:hover{
+  background:var(--primary-dark);
+  transform:translateY(-2px);
 }
 
 /* Footer */
-footer {
-  text-align: center;
-  padding: 25px;
-  margin-top: 90px;
-  font-size: 14px;
-  opacity: .8;
-}
-
-/* Dark auto */
-@media (prefers-color-scheme: dark) {
-  body { background: var(--bg-dark); color: var(--text-light); }
+footer{
+  text-align:center;
+  padding:25px;
+  margin-top:90px;
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 
@@ -146,6 +133,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, collection, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -157,47 +145,69 @@ const firebaseConfig = {
 
 const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
 
+/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* Auto dark mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
+
+/* Auth check */
 onAuthStateChanged(auth, async user => {
   if (!user) return location.href = "login.html";
 
   const cards = document.getElementById("cards");
 
-  /* 👨‍🏫 Teacher */
+  /* Read score from URL */
+  const params = new URLSearchParams(window.location.search);
+  const score = Number(params.get("score"));
+  const result = score >= 20 ? "Passed" : "Failed";
+
+  /* Save result if exists */
+  if (score) {
+    await setDoc(doc(db, "users", user.uid), {
+      score,
+      result
+    }, { merge:true });
+  }
+
+  /* 👨‍🏫 Teacher view */
   if (user.email === TEACHER_EMAIL) {
-    const snap = await getDocs(collection(db, "users"));
+    const snap = await getDocs(collection(db,"users"));
     let html = "";
 
-    snap.forEach(d => {
+    snap.forEach(d=>{
       const u = d.data();
       html += `
         <div class="card">
-          <h3>${u.firstName} ${u.lastName}</h3>
-          <p>${u.email}</p>
-          <p class="${u.result === "Passed" ? "good" : "bad"}">
+          <h3>${u.firstName || "Student"} ${u.lastName || ""}</h3>
+          <p>${u.email || ""}</p>
+          <p class="${u.result === "Passed" ? "good":"bad"}">
             ${u.result || "No result yet"}
           </p>
-        </div>`;
+        </div>
+      `;
     });
 
     cards.innerHTML = html;
   }
 
-  /* 👨‍🎓 Student */
+  /* 👨‍🎓 Student view */
   else {
-    const snap = await getDoc(doc(db, "users", user.uid));
+    const snap = await getDoc(doc(db,"users",user.uid));
     const d = snap.data();
 
     cards.innerHTML = `
       <div class="card">
-        <h3>Welcome ${d.firstName} 👋</h3>
+        <h3>Welcome ${d.firstName || ""} 👋</h3>
         <p>Your exam result:</p>
-        <h2 class="${d.result === "Passed" ? "good" : "bad"}">
+        <h2 class="${d.result === "Passed" ? "good":"bad"}">
           ${d.result || "Pending"}
         </h2>
+        <p>Score: ${d.score || 0}</p>
         <a href="signs.html" class="btn">Review Traffic Signs</a>
       </div>
     `;
@@ -225,9 +235,7 @@ onAuthStateChanged(auth, async user => {
 
 <!-- Cards -->
 <div class="container">
-  <div class="cards" id="cards">
-    Loading...
-  </div>
+  <div class="cards" id="cards">Loading...</div>
 </div>
 
 <footer>

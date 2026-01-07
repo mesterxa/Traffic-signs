@@ -4,12 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register – DriveLearn</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
-/* =====================
-   Variables
-===================== */
 :root {
   --primary: #2563eb;
   --primary-dark: #1e40af;
@@ -21,9 +17,6 @@
   --radius: 16px;
 }
 
-/* =====================
-   Base
-===================== */
 * {
   box-sizing: border-box;
 }
@@ -38,9 +31,7 @@ body {
   flex-direction: column;
 }
 
-/* =====================
-   Navbar
-===================== */
+/* Navbar */
 .navbar {
   height: 56px;
   display: flex;
@@ -55,16 +46,13 @@ body {
   color: white;
   text-decoration: none;
   font-weight: 500;
-  font-size: 15px;
 }
 
 .logo {
   height: 32px;
 }
 
-/* =====================
-   Auth Card
-===================== */
+/* Auth Card */
 .auth-box {
   max-width: 420px;
   width: 100%;
@@ -76,13 +64,10 @@ body {
 }
 
 .auth-box h2 {
-  margin: 0 0 18px;
   text-align: center;
+  margin-bottom: 18px;
 }
 
-/* =====================
-   Inputs & Button
-===================== */
 .auth-box input,
 .auth-box button {
   width: 100%;
@@ -107,20 +92,16 @@ body {
   border: none;
   font-weight: 600;
   cursor: pointer;
-  transition: .25s ease;
 }
 
 .auth-box button:hover {
   background: var(--primary-dark);
 }
 
-/* =====================
-   Footer Text
-===================== */
 .auth-box p {
-  margin-top: 16px;
-  font-size: 14px;
   text-align: center;
+  font-size: 14px;
+  margin-top: 16px;
 }
 
 .auth-box a {
@@ -129,9 +110,7 @@ body {
   text-decoration: none;
 }
 
-/* =====================
-   iOS Toast
-===================== */
+/* Toast */
 .ios-toast {
   position: fixed;
   top: -120px;
@@ -142,7 +121,7 @@ body {
   border-radius: 14px;
   font-weight: 600;
   box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: .4s cubic-bezier(.25,.8,.25,1);
+  transition: .4s;
   z-index: 9999;
 }
 
@@ -150,48 +129,24 @@ body {
   top: 25px;
 }
 
-/* =====================
-   Dark Mode
-===================== */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
   body {
     background: var(--bg-dark);
     color: var(--text-light);
   }
-
   .auth-box {
     background: var(--card-dark);
   }
-
   .auth-box input {
     background: #1f2933;
     color: var(--text-light);
     border: 1px solid #374151;
   }
 }
-
-/* =====================
-   Mobile Optimization
-===================== */
-@media (max-width: 600px) {
-  .auth-box {
-    margin: 24px 16px;
-    padding: 24px;
-  }
-
-  .auth-box h2 {
-    font-size: 20px;
-  }
-
-  .logo {
-    height: 28px;
-  }
-}
 </style>
 
-<!-- =====================
-     Firebase (UNCHANGED)
-===================== -->
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -211,10 +166,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 window.registerUser = async () => {
-  const firstName = fname.value.trim();
-  const lastName = lname.value.trim();
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+  const firstName = document.getElementById("fname").value.trim();
+  const lastName = document.getElementById("lname").value.trim();
+  const email = document.getElementById("emailInput").value.trim();
+  const password = document.getElementById("passwordInput").value;
 
   if (!firstName || !lastName || !email || !password) {
     toast("Please fill all fields ❗");
@@ -232,10 +187,14 @@ window.registerUser = async () => {
     });
 
     toast("Registration successful 🎉");
-    setTimeout(() => location.href = "result.html", 2000);
+
+    setTimeout(() => {
+      window.location.href = "result.html";
+    }, 1500);
 
   } catch (e) {
     toast(e.message);
+    console.error(e);
   }
 };
 
@@ -250,13 +209,11 @@ function toast(msg) {
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo" alt="DriveLearn">
   <a href="index.html">Home</a>
 </div>
 
-<!-- Register Card -->
 <div class="auth-box">
   <h2>Create Account</h2>
   <input id="fname" placeholder="First Name">

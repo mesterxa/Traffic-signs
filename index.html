@@ -6,73 +6,158 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-/* Dark mode auto */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #0f172a;
-    color: #e5e7eb;
-  }
-  .navbar, .card {
-    background: #111827;
-  }
-  footer {
-    color: #9ca3af;
-  }
+/* =====================
+   CSS Variables
+===================== */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #ffffff;
+  --bg-dark: #0f172a;
+  --text-dark: #111827;
+  --text-light: #e5e7eb;
+  --radius: 16px;
 }
 
+/* =====================
+   Base Styles
+===================== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =====================
+   Navbar
+===================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  background: var(--bg-light);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+.navbar a {
+  margin-left: 18px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.lang-switch {
+  margin-left: 18px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* =====================
+   Hero Section
+===================== */
 .hero {
   padding: 90px 20px;
   text-align: center;
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
 }
+
 .hero h1 {
-  font-size: 36px;
+  font-size: 38px;
   margin-bottom: 12px;
 }
+
 .hero p {
-  opacity: 0.9;
   font-size: 18px;
+  opacity: .9;
+}
+
+/* =====================
+   Cards
+===================== */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 25px;
-  margin-top: 50px;
+  margin-top: 60px;
 }
 
 .card {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
+  background: var(--bg-light);
+  padding: 28px;
+  border-radius: var(--radius);
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
-  transition: transform .25s ease, box-shadow .25s ease;
+  transition: .3s ease;
 }
+
 .card:hover {
   transform: translateY(-6px);
   box-shadow: 0 18px 40px rgba(0,0,0,.12);
 }
+
 .card svg {
   width: 48px;
   height: 48px;
-  fill: #2563eb;
-  margin-bottom: 15px;
+  fill: var(--primary);
+  margin-bottom: 16px;
 }
 
+/* =====================
+   Footer
+===================== */
 footer {
   text-align: center;
   padding: 25px;
-  margin-top: 80px;
+  margin-top: 90px;
   font-size: 14px;
   opacity: .8;
+}
+
+/* =====================
+   RTL Support
+===================== */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* =====================
+   Dark Mode
+===================== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+
+  .navbar,
+  .card {
+    background: #111827;
+  }
+
+  footer {
+    color: #9ca3af;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" alt="DriveLearn" class="logo">
   <div>
@@ -82,13 +167,13 @@ footer {
   </div>
 </div>
 
+<!-- Hero -->
 <section class="hero">
   <h1 id="hero-title">Learn Traffic Signs Easily</h1>
-  <p id="hero-sub">
-    Professional driving education platform
-  </p>
+  <p id="hero-sub">Professional driving education platform</p>
 </section>
 
+<!-- Cards -->
 <div class="container">
   <div class="cards">
 
@@ -113,26 +198,30 @@ footer {
   </div>
 </div>
 
+<!-- Footer -->
 <footer id="footer-text">
   © 2026 DriveLearn – Driving Education Platform
 </footer>
 
 <script>
 let arabic = false;
+
 function toggleLanguage() {
   arabic = !arabic;
   document.body.classList.toggle("rtl");
 
-  if(arabic) {
-    hero-title.innerText = "تعلم السياقة بسهولة";
-    hero-sub.innerText = "منصة تعليم سياقة احترافية";
-    card1-title.innerText = "إشارات المرور";
-    card1-desc.innerText = "فهم إشارات الطريق بوضوح";
-    card2-title.innerText = "اختبارات";
-    card2-desc.innerText = "تعلم عبر اللعب";
-    card3-title.innerText = "تمارين";
-    card3-desc.innerText = "التحضير لاجتياز الامتحان";
-    footer-text.innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
+  const t = id => document.getElementById(id);
+
+  if (arabic) {
+    t("hero-title").innerText = "تعلم السياقة بسهولة";
+    t("hero-sub").innerText = "منصة تعليم سياقة احترافية";
+    t("card1-title").innerText = "إشارات المرور";
+    t("card1-desc").innerText = "فهم إشارات الطريق بوضوح";
+    t("card2-title").innerText = "اختبارات";
+    t("card2-desc").innerText = "تعلم عبر اللعب";
+    t("card3-title").innerText = "تمارين";
+    t("card3-desc").innerText = "التحضير لاجتياز الامتحان";
+    t("footer-text").innerText = "© 2026 DriveLearn – منصة تعليم السياقة";
   } else {
     location.reload();
   }

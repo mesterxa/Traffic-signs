@@ -7,243 +7,252 @@
 
 <style>
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --bg-light: #ffffff;
-  --bg-dark: #0f172a;
-  --card-light: #ffffff;
-  --card-dark: #111827;
-  --text-dark: #111827;
-  --text-light: #e5e7eb;
-  --radius: 16px;
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg-light:#f8fafc;
+  --bg-dark:#0f172a;
+  --card-light:#ffffff;
+  --card-dark:#111827;
+  --text-dark:#0f172a;
+  --text-light:#e5e7eb;
+  --radius:18px;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  background:var(--bg-light);
+  color:var(--text-dark);
 }
 
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-light);
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+a{text-decoration:none;color:inherit}
+.rtl{direction:rtl;text-align:right}
+
+/* NAVBAR */
+.navbar{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  background:var(--card-light);
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
 }
 
-/* RTL */
-.rtl { direction: rtl; text-align: right; }
+body.dark .navbar{background:var(--card-dark)}
 
-/* Navbar */
-.navbar {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  background: var(--card-light);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+.navbar .links a{
+  margin-left:18px;
+  font-weight:600;
+  color:var(--primary);
 }
 
-body.dark .navbar { background: var(--card-dark); }
+.logo{height:34px}
 
-.navbar a,
-.lang-switch {
-  color: var(--primary);
-  font-weight: 600;
-  margin-left: 14px;
-  cursor: pointer;
-  font-size: 14px;
+/* HERO */
+.hero{
+  padding:90px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
 }
 
-.logo { height: 32px; }
-
-/* Hero */
-.hero {
-  padding: 90px 20px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
+.hero h1{
+  font-size:38px;
+  margin-bottom:14px;
 }
 
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 12px;
+.hero p{
+  font-size:18px;
+  max-width:720px;
+  margin:auto;
+  opacity:.95;
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: .9;
-  max-width: 700px;
-  margin: auto;
+.hero .actions{
+  margin-top:34px;
 }
 
-.hero .buttons {
-  margin-top: 30px;
+.btn{
+  display:inline-block;
+  margin:10px;
+  padding:14px 34px;
+  border-radius:999px;
+  font-weight:700;
+  transition:.25s;
 }
 
-.hero .btn {
-  display: inline-block;
-  margin: 10px;
-  padding: 14px 32px;
-  border-radius: 999px;
-  font-weight: 700;
-  transition: .25s ease;
+.btn-primary{
+  background:#fff;
+  color:var(--primary);
 }
 
-.btn-login {
-  background: white;
-  color: var(--primary);
+.btn-outline{
+  border:2px solid #fff;
+  color:#fff;
 }
 
-.btn-register {
-  border: 2px solid white;
-  color: white;
+.btn:hover{
+  transform:translateY(-2px);
+  opacity:.95;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  opacity: .95;
+/* SECTIONS */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:0 20px;
 }
 
-/* Info Cards */
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 0 20px;
+.section-title{
+  text-align:center;
+  margin:80px 0 20px;
+  font-size:28px;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 25px;
-  margin-top: 70px;
+/* CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:26px;
 }
 
-.card {
-  background: var(--card-light);
-  padding: 28px;
-  border-radius: var(--radius);
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+.card{
+  background:var(--card-light);
+  padding:30px;
+  border-radius:var(--radius);
+  text-align:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.08);
+  transition:.25s;
 }
 
-body.dark .card { background: var(--card-dark); }
+body.dark .card{background:var(--card-dark)}
 
-.card h3 { margin-top: 0; }
-
-/* Footer */
-footer {
-  text-align: center;
-  padding: 25px;
-  margin-top: 90px;
-  font-size: 14px;
-  opacity: .8;
+.card:hover{
+  transform:translateY(-6px);
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  .hero h1 { font-size: 28px; }
-  .hero p { font-size: 16px; }
+.card h3{
+  margin-top:0;
+}
+
+.card a{
+  display:inline-block;
+  margin-top:14px;
+  font-weight:600;
+  color:var(--primary);
+}
+
+/* FOOTER */
+footer{
+  margin-top:90px;
+  padding:30px;
+  text-align:center;
+  font-size:14px;
+  opacity:.8;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .hero h1{font-size:28px}
+  .hero p{font-size:16px}
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
+<!-- NAVBAR -->
 <div class="navbar">
-  <img src="logo.png" alt="DriveLearn" class="logo">
-  <div>
+  <img src="logo.png" class="logo" alt="DriveLearn">
+  <div class="links">
     <a href="login.html">Login</a>
     <a href="register.html">Register</a>
     <span class="lang-switch" onclick="toggleLanguage()">AR</span>
   </div>
 </div>
 
-<!-- Hero -->
+<!-- HERO -->
 <section class="hero">
-  <h1 id="hero-title">Traffic Awareness & Driving Education</h1>
+  <h1 id="hero-title">Learn Driving the Smart Way</h1>
   <p id="hero-sub">
-    A professional platform to learn traffic signs, prepare for driving exams,
-    and help teachers follow students' progress.
+    Master traffic signs, practice quizzes, and prepare confidently for your driving exam.
   </p>
 
-  <div class="buttons">
-    <a href="login.html" class="btn btn-login">Login</a>
-    <a href="register.html" class="btn btn-register">Create Account</a>
+  <div class="actions">
+    <a href="register.html" class="btn btn-primary">Create Account</a>
+    <a href="login.html" class="btn btn-outline">Login</a>
   </div>
 </section>
 
-<!-- Info Cards -->
+<!-- LEARNING PATH -->
 <div class="container">
+  <h2 class="section-title" id="path-title">Learning Sections</h2>
+
   <div class="cards">
 
     <div class="card">
-      <h3 id="card1-title">🚦 Traffic Awareness</h3>
-      <p id="card1-desc">
-        Learn road signs and driving rules with clear explanations.
-      </p>
+      <h3 id="c1">🚦 Traffic Signs</h3>
+      <p id="d1">Learn and understand all road signs with clear explanations.</p>
+      <a href="signs.html">Open Signs</a>
     </div>
 
     <div class="card">
-      <h3 id="card2-title">📝 Smart Quizzes</h3>
-      <p id="card2-desc">
-        Test your knowledge and track your progress.
-      </p>
+      <h3 id="c2">📝 Quizzes</h3>
+      <p id="d2">Test your knowledge and track your progress.</p>
+      <a href="quizzes.html">Start Quiz</a>
     </div>
 
     <div class="card">
-      <h3 id="card3-title">👨‍🏫 Teacher Follow-up</h3>
-      <p id="card3-desc">
-        Teachers can review students’ results and leave notes.
-      </p>
+      <h3 id="c3">👤 Account</h3>
+      <p id="d3">Create an account or log in to save your results.</p>
+      <a href="register.html">Register / Login</a>
     </div>
 
   </div>
 </div>
 
-<!-- Footer -->
-<footer id="footer-text">
+<!-- FOOTER -->
+<footer id="footer">
   © 2026 DriveLearn – Traffic Awareness Platform
 </footer>
 
 <script>
-let arabic = false;
+let ar=false;
 
-function toggleLanguage() {
-  arabic = !arabic;
+function toggleLanguage(){
+  ar=!ar;
   document.body.classList.toggle("rtl");
 
-  if (arabic) {
-    hero-title.innerText = "منصة التوعية في السياقة";
-    hero-sub.innerText =
-      "منصة احترافية لتعلم إشارات المرور، التحضير للامتحان، ومتابعة الأساتذة للطلبة";
+  if(ar){
+    hero-title.innerText="تعلّم السياقة بذكاء";
+    hero-sub.innerText="منصة لتعلّم إشارات المرور، الاختبارات، والتحضير لامتحان السياقة";
 
-    card1-title.innerText = "🚦 التوعية المرورية";
-    card1-desc.innerText = "تعلم إشارات المرور وقوانين السياقة بسهولة";
+    path-title.innerText="أقسام التعلم";
 
-    card2-title.innerText = "📝 اختبارات ذكية";
-    card2-desc.innerText = "اختبر معلوماتك وتابع تقدمك";
+    c1.innerText="🚦 إشارات المرور";
+    d1.innerText="تعلّم وفهم جميع إشارات الطريق";
 
-    card3-title.innerText = "👨‍🏫 متابعة الأستاذ";
-    card3-desc.innerText = "متابعة نتائج الطلبة وإضافة ملاحظات";
+    c2.innerText="📝 اختبارات";
+    d2.innerText="اختبر معلوماتك وتابع تقدمك";
 
-    footer-text.innerText = "© 2026 DriveLearn – منصة التوعية في السياقة";
-  } else {
+    c3.innerText="👤 الحساب";
+    d3.innerText="أنشئ حسابك أو سجّل الدخول";
+
+    footer.innerText="© 2026 DriveLearn – منصة التوعية في السياقة";
+  }else{
     location.reload();
   }
 }
 
-/* Auto Dark Mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+if(window.matchMedia("(prefers-color-scheme: dark)").matches){
   document.body.classList.add("dark");
 }
 </script>

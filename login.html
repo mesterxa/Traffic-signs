@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveLearn – Login</title>
+<title>Login – DriveLearn</title>
 
 <style>
 :root {
@@ -15,7 +15,7 @@
   --card-dark: #111827;
   --text-dark: #111827;
   --text-light: #e5e7eb;
-  --radius: 16px;
+  --radius: 18px;
 }
 
 * { box-sizing: border-box; }
@@ -33,10 +33,7 @@ body.dark {
   color: var(--text-light);
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+a { text-decoration: none; color: inherit; }
 
 /* Navbar */
 .navbar {
@@ -62,7 +59,7 @@ body.dark .navbar { background: var(--card-dark); }
 
 /* Hero */
 .hero {
-  padding: 90px 20px;
+  padding: 80px 20px 120px;
   text-align: center;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
@@ -70,7 +67,7 @@ body.dark .navbar { background: var(--card-dark); }
 
 .hero h1 {
   font-size: 36px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .hero p {
@@ -78,41 +75,35 @@ body.dark .navbar { background: var(--card-dark); }
   opacity: .9;
 }
 
-/* Form Card */
-.container {
-  max-width: 420px;
-  margin: -60px auto 0;
-  padding: 0 20px;
-}
-
+/* Card */
 .card {
+  max-width: 420px;
+  margin: -90px auto 0;
   background: var(--card-light);
-  padding: 32px;
+  padding: 30px;
   border-radius: var(--radius);
-  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+  box-shadow: 0 20px 45px rgba(0,0,0,.15);
   text-align: center;
 }
 
 body.dark .card { background: var(--card-dark); }
 
-input {
+input, button {
   width: 100%;
   padding: 14px;
-  margin: 10px 0;
+  margin-top: 14px;
   border-radius: 12px;
-  border: 1px solid #cbd5f5;
   font-size: 15px;
 }
 
+input {
+  border: 1px solid #e5e7eb;
+}
+
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border-radius: 999px;
   border: none;
   background: var(--primary);
   color: white;
-  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: .25s;
@@ -123,57 +114,30 @@ button:hover {
   transform: translateY(-2px);
 }
 
-.msg {
-  margin-top: 15px;
-  font-size: 14px;
+.error {
+  margin-top: 14px;
   color: #dc2626;
+  font-size: 14px;
+}
+
+.link {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.link a {
+  color: var(--primary);
+  font-weight: 600;
 }
 
 /* Footer */
 footer {
   text-align: center;
-  padding: 25px;
   margin-top: 80px;
   font-size: 14px;
   opacity: .8;
 }
-
-/* Dark auto */
-@media (prefers-color-scheme: dark) {
-  body { background: var(--bg-dark); color: var(--text-light); }
-}
 </style>
-
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
-  authDomain: "traffic-signs-fc047.firebaseapp.com",
-  projectId: "traffic-signs-fc047",
-  storageBucket: "traffic-signs-fc047.appspot.com",
-  messagingSenderId: "746457575630",
-  appId: "1:746457575630:web:3219b85b64e2307126609f"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-window.login = async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  msg.textContent = "";
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    location.href = "signs.html";
-  } catch (e) {
-    msg.textContent = "Invalid email or password";
-  }
-};
-</script>
 </head>
 
 <body>
@@ -193,19 +157,78 @@ window.login = async () => {
   <p>Login to continue your driving education</p>
 </section>
 
-<!-- Login Form -->
-<div class="container">
-  <div class="card">
-    <input id="emailInput" type="email" placeholder="Email">
-    <input id="passwordInput" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <div class="msg" id="msg"></div>
+<!-- Login Card -->
+<div class="card">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <div id="error" class="error"></div>
+
+  <div class="link">
+    New student?
+    <a href="register.html">Create account</a>
   </div>
 </div>
 
 <footer>
   © 2026 DriveLearn – Traffic Awareness Platform
 </footer>
+
+<!-- Firebase Logic -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+/* Firebase config (UNCHANGED) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
+
+/* 👨‍🏫 Teacher Email */
+const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const error = document.getElementById("error");
+
+  error.textContent = "";
+
+  if (!email || !password) {
+    error.textContent = "Please fill in all fields";
+    return;
+  }
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+
+    /* ✅ Correct redirect */
+    if (cred.user.email === TEACHER_EMAIL) {
+      location.href = "teacher.html";
+    } else {
+      location.href = "signs.html";
+    }
+
+  } catch (err) {
+    error.textContent = err.message;
+  }
+};
+
+/* Auto Dark Mode */
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
+</script>
 
 </body>
 </html>

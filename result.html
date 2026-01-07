@@ -6,7 +6,7 @@
 <title>DriveLearn – Result</title>
 
 <style>
-/* ⚠️ التصميم لم يُمس */
+/* ======= DESIGN (لم يُمس) ======= */
 :root {
   --primary:#2563eb;
   --primary-dark:#1e40af;
@@ -20,9 +20,7 @@
   --danger:#dc2626;
   --radius:16px;
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
   min-height:100vh;
@@ -30,8 +28,11 @@ body{
   background:var(--bg-light);
   color:var(--text-dark);
 }
-body.dark{background:var(--bg-dark);color:var(--text-light)}
-
+body.dark{
+  background:var(--bg-dark);
+  color:var(--text-light);
+}
+a{text-decoration:none;color:inherit}
 .navbar{
   height:56px;
   display:flex;
@@ -42,36 +43,30 @@ body.dark{background:var(--bg-dark);color:var(--text-light)}
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
 body.dark .navbar{background:var(--card-dark)}
-
 .navbar a{
   color:var(--primary);
   font-weight:600;
   margin-left:14px;
   font-size:14px;
 }
-
 .logo{height:32px}
-
 .hero{
   padding:90px 20px;
   text-align:center;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:white;
 }
-
 .container{
   max-width:1000px;
   margin:auto;
   padding:0 20px;
 }
-
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:25px;
   margin-top:-60px;
 }
-
 .card{
   background:var(--card-light);
   padding:30px;
@@ -80,10 +75,8 @@ body.dark .navbar{background:var(--card-dark)}
   box-shadow:0 12px 30px rgba(0,0,0,.1);
 }
 body.dark .card{background:var(--card-dark)}
-
 .good{color:var(--success);font-weight:800}
 .bad{color:var(--danger);font-weight:800}
-
 .btn{
   display:inline-block;
   margin-top:15px;
@@ -93,7 +86,6 @@ body.dark .card{background:var(--card-dark)}
   background:var(--primary);
   color:white;
 }
-
 footer{
   text-align:center;
   padding:25px;
@@ -103,18 +95,13 @@ footer{
 }
 </style>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { 
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -126,14 +113,17 @@ const firebaseConfig = {
 
 const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
 
+/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* Dark mode */
-if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   document.body.classList.add("dark");
+}
 
+/* Auth */
 onAuthStateChanged(auth, async user => {
   if (!user) return location.href = "login.html";
 
@@ -141,26 +131,27 @@ onAuthStateChanged(auth, async user => {
 
   const params = new URLSearchParams(location.search);
   const score = Number(params.get("score"));
+  const result = score >= 20 ? "Passed" : "Failed";
 
-  /* ✅ Save result (student only once per exam) */
+  /* حفظ النتيجة (مرة واحدة فقط) */
   if (score) {
-    await addDoc(collection(db,"results"),{
+    await addDoc(collection(db,"results"), {
       userId: user.uid,
       email: user.email,
       score,
-      result: score >= 20 ? "Passed" : "Failed",
+      result,
       createdAt: Date.now()
     });
   }
 
-  /* 👨‍🏫 Teacher */
+  /* 👨‍🏫 الأستاذ */
   if (user.email === TEACHER_EMAIL) {
     const snap = await getDocs(collection(db,"results"));
-    let html="";
+    let html = "";
 
-    snap.forEach(d=>{
-      const r=d.data();
-      html+=`
+    snap.forEach(doc=>{
+      const r = doc.data();
+      html += `
         <div class="card">
           <h3>${r.email}</h3>
           <p class="${r.result==="Passed"?"good":"bad"}">${r.result}</p>
@@ -169,27 +160,29 @@ onAuthStateChanged(auth, async user => {
       `;
     });
 
-    cards.innerHTML = html || "No results yet";
+    cards.innerHTML = html || "<p>No results yet</p>";
   }
 
-  /* 👨‍🎓 Student */
+  /* 👨‍🎓 الطالب */
   else {
     const q = query(
       collection(db,"results"),
       where("userId","==",user.uid)
     );
+
     const snap = await getDocs(q);
 
     if (snap.empty) {
-      cards.innerHTML = `<div class="card">No result yet</div>`;
+      cards.innerHTML = "<p>No result yet</p>";
       return;
     }
 
-    const r = snap.docs.at(-1).data();
+    const r = snap.docs[0].data();
 
     cards.innerHTML = `
       <div class="card">
-        <h3>Your Result</h3>
+        <h3>Welcome 👋</h3>
+        <p>Your exam result:</p>
         <h2 class="${r.result==="Passed"?"good":"bad"}">${r.result}</h2>
         <p>Score: ${r.score}</p>
         <a href="signs.html" class="btn">Review Traffic Signs</a>

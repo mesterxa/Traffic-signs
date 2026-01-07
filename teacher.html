@@ -1,229 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Teacher Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Teacher Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-    }
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Tahoma,sans-serif}
+body{margin:0;background:#f5f7fb;transition:.3s}
 
-    body {
-      margin: 0;
-      background: #f5f7fb;
-    }
+/* Dark Mode */
+body.dark{background:#0f172a;color:#e5e7eb}
+body.dark .card,body.dark .navbar{background:#020617}
+body.dark th{background:#020617}
+body.dark input,body.dark select{background:#020617;color:white;border-color:#334155}
 
-    /* Navbar */
-    .navbar {
-      background: white;
-      padding: 12px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-    }
+/* Navbar */
+.navbar{
+background:white;padding:12px 30px;
+display:flex;justify-content:space-between;
+box-shadow:0 2px 8px rgba(0,0,0,.05)
+}
+.navbar a{text-decoration:none;color:#2563eb;margin-left:15px}
 
-    .navbar a {
-      text-decoration: none;
-      color: #2563eb;
-      margin-left: 15px;
-      font-weight: 500;
-    }
+/* Header */
+.header{
+background:linear-gradient(135deg,#2563eb,#1e40af);
+color:white;padding:50px 20px;text-align:center
+}
 
-    /* Header */
-    .header {
-      background: linear-gradient(135deg, #2563eb, #1e40af);
-      color: white;
-      padding: 50px 20px;
-      text-align: center;
-    }
+/* Card */
+.card{
+max-width:1100px;margin:-40px auto 40px;
+background:white;border-radius:14px;
+box-shadow:0 15px 40px rgba(0,0,0,.1);
+padding:20px
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 32px;
-    }
+/* Stats */
+.stats{
+display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;margin-bottom:20px
+}
+.stat{
+background:#f1f5f9;padding:15px;border-radius:12px;
+text-align:center;font-weight:600
+}
+.stat span{display:block;font-size:22px;color:#2563eb}
 
-    .header p {
-      margin-top: 10px;
-      opacity: 0.9;
-    }
+/* Controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input,select{
+padding:10px;border-radius:8px;border:1px solid #ddd
+}
+button{
+background:#2563eb;color:white;border:none;
+padding:8px 14px;border-radius:6px;cursor:pointer
+}
+button:hover{background:#1e40af}
 
-    /* Card */
-    .card {
-      max-width: 1100px;
-      margin: -40px auto 40px;
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.1);
-      padding: 20px;
-    }
+/* Table */
+table{width:100%;border-collapse:collapse}
+th{background:#f1f5f9;padding:12px;text-align:left}
+td{padding:12px;border-top:1px solid #eee}
 
-    /* Controls */
-    .controls {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
+/* Modal */
+.modal{
+position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,.5);
+display:none;align-items:center;justify-content:center
+}
+.modal-content{
+background:white;padding:25px;border-radius:12px;
+max-width:400px;width:90%
+}
 
-    .controls input,
-    .controls select {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 14px;
-    }
-
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th {
-      background: #f1f5f9;
-      text-align: left;
-      padding: 12px;
-      font-size: 14px;
-    }
-
-    td {
-      padding: 12px;
-      border-top: 1px solid #eee;
-    }
-
-    input[type="number"],
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #1e40af;
-    }
-
-    footer {
-      text-align: center;
-      color: #888;
-      font-size: 13px;
-      padding: 20px;
-    }
-
-    @media (max-width: 768px) {
-      table {
-        font-size: 13px;
-      }
-    }
-  </style>
+footer{text-align:center;font-size:13px;color:#888;padding:20px}
+</style>
 </head>
+
 <body>
 
-  <!-- Navbar -->
-  <div class="navbar">
-    <strong>DriveLearn</strong>
-    <div>
-      <a href="index.html">Home</a>
-      <a href="login.html">Logout</a>
-    </div>
-  </div>
+<div class="navbar">
+<strong>DriveLearn</strong>
+<div>
+<button onclick="toggleDark()">🌙</button>
+<a href="index.html">Home</a>
+<a href="login.html">Logout</a>
+</div>
+</div>
 
-  <!-- Header -->
-  <div class="header">
-    <h1>Teacher Dashboard</h1>
-    <p>Follow students and manage their results</p>
-  </div>
+<div class="header">
+<h1>Teacher Dashboard</h1>
+<p>Follow students and manage their results</p>
+</div>
 
-  <!-- Card -->
-  <div class="card">
+<div class="card">
 
-    <!-- Extra Options -->
-    <div class="controls">
-      <input type="text" id="search" placeholder="Search student name">
-      <select id="filter">
-        <option value="all">All results</option>
-        <option value="pass">Passed</option>
-        <option value="fail">Failed</option>
-      </select>
-    </div>
+<!-- Stats -->
+<div class="stats">
+<div class="stat">Students<span id="total">0</span></div>
+<div class="stat">Passed<span id="passed">0</span></div>
+<div class="stat">Failed<span id="failed">0</span></div>
+</div>
 
-    <!-- Table -->
-    <table>
-      <thead>
-        <tr>
-          <th>Student</th>
-          <th>Email</th>
-          <th>Result</th>
-          <th>Note</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="studentsTable">
-        <!-- Dynamic -->
-      </tbody>
-    </table>
+<!-- Controls -->
+<div class="controls">
+<input id="search" placeholder="Search student">
+<select id="filter">
+<option value="all">All</option>
+<option value="pass">Passed</option>
+<option value="fail">Failed</option>
+</select>
+<button onclick="exportExcel()">Export Excel</button>
+</div>
 
-  </div>
+<table>
+<thead>
+<tr>
+<th>Student</th>
+<th>Email</th>
+<th>Result</th>
+<th>Note</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
 
-  <footer>
-    © 2026 DriveLearn – Teacher Panel
-  </footer>
+</div>
+
+<footer>© 2026 DriveLearn – Teacher Panel</footer>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+<div class="modal-content">
+<h3 id="mName"></h3>
+<p id="mEmail"></p>
+<p id="mResult"></p>
+<p id="mNote"></p>
+<button onclick="closeModal()">Close</button>
+</div>
+</div>
 
 <script>
-  // بيانات تجريبية (يمكن ربطها بـ Firebase لاحقًا)
-  const students = [
-    { name: "Ahmed Ali", email: "ahmed@mail.com", result: "", note: "" },
-    { name: "Sara Mohamed", email: "sara@mail.com", result: "", note: "" }
-  ];
+let students=[
+{name:"Ahmed Ali",email:"ahmed@mail.com",result:70,note:"Good"},
+{name:"Sara Mohamed",email:"sara@mail.com",result:40,note:"Needs practice"}
+];
 
-  const table = document.getElementById("studentsTable");
-  const search = document.getElementById("search");
-  const filter = document.getElementById("filter");
+const table=document.getElementById("table");
 
-  function render() {
-    table.innerHTML = "";
+function render(){
+table.innerHTML="";
+let pass=0,fail=0;
 
-    students
-      .filter(s => s.name.toLowerCase().includes(search.value.toLowerCase()))
-      .filter(s => {
-        if (filter.value === "pass") return s.result >= 50;
-        if (filter.value === "fail") return s.result < 50 && s.result !== "";
-        return true;
-      })
-      .forEach((s, i) => {
-        table.innerHTML += `
-          <tr>
-            <td>${s.name}</td>
-            <td>${s.email}</td>
-            <td><input type="number" value="${s.result}" onchange="students[${i}].result=this.value"></td>
-            <td><input type="text" value="${s.note}" onchange="students[${i}].note=this.value"></td>
-            <td><button onclick="save(${i})">Save</button></td>
-          </tr>
-        `;
-      });
-  }
+students
+.filter(s=>s.name.toLowerCase().includes(search.value.toLowerCase()))
+.filter(s=>{
+if(filter.value=="pass")return s.result>=50;
+if(filter.value=="fail")return s.result<50;
+return true;
+})
+.forEach((s,i)=>{
+if(s.result>=50)pass++; else fail++;
+table.innerHTML+=`
+<tr>
+<td>${s.name}</td>
+<td>${s.email}</td>
+<td><input type="number" value="${s.result}" onchange="students[${i}].result=this.value"></td>
+<td><input value="${s.note}" onchange="students[${i}].note=this.value"></td>
+<td>
+<button onclick="details(${i})">View</button>
+<button onclick="save(${i})">Save</button>
+</td>
+</tr>`;
+});
 
-  function save(i) {
-    alert("Saved for " + students[i].name);
-  }
+total.textContent=students.length;
+passed.textContent=pass;
+failed.textContent=fail;
+}
 
-  search.oninput = render;
-  filter.onchange = render;
+function save(i){
+alert("Saved for "+students[i].name);
+}
 
-  render();
+function details(i){
+modal.style.display="flex";
+mName.textContent=students[i].name;
+mEmail.textContent=students[i].email;
+mResult.textContent="Result: "+students[i].result;
+mNote.textContent="Note: "+students[i].note;
+}
+
+function closeModal(){modal.style.display="none"}
+
+function toggleDark(){document.body.classList.toggle("dark")}
+
+function exportExcel(){
+let csv="Name,Email,Result,Note\n";
+students.forEach(s=>{
+csv+=`${s.name},${s.email},${s.result},${s.note}\n`;
+});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+a.download="results.csv";
+a.click();
+}
+
+search.oninput=render;
+filter.onchange=render;
+render();
 </script>
 
 </body>

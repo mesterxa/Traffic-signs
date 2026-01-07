@@ -180,8 +180,8 @@ footer {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config (UNCHANGED) */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -191,11 +191,9 @@ const firebaseConfig = {
   appId: "1:746457575630:web:3219b85b64e2307126609f"
 };
 
-/* 👨‍🏫 Teacher Email */
-const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 window.login = async () => {
   const email = document.getElementById("email").value.trim();
@@ -212,15 +210,25 @@ window.login = async () => {
   try {
     const cred = await signInWithEmailAndPassword(auth, email, password);
 
-    /* ✅ Correct redirect */
-    if (cred.user.email === TEACHER_EMAIL) {
+    /* 🔐 قراءة الدور من Firestore */
+    const snap = await getDoc(doc(db, "users", cred.user.uid));
+
+    if (!snap.exists()) {
+      error.textContent = "User data not found";
+      return;
+    }
+
+    const role = snap.data().role;
+
+    /* 🚦 توجيه حسب الدور */
+    if (role === "teacher") {
       location.href = "teacher.html";
     } else {
       location.href = "signs.html";
     }
 
   } catch (err) {
-    error.textContent = err.message;
+    error.textContent = "Invalid email or password";
   }
 };
 

@@ -1,136 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Quizzes - DriveLearn</title>
-<link rel="stylesheet" href="style.css">
-
-<style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  background: #f7f8fa;
-  color: #2c2c2c;
-  transition: background 0.5s, color 0.5s;
-}
-body.dark { background: #1a1a1a; color: #eee; }
-.rtl { direction: rtl; text-align: right; }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1565c0;
-  padding: 12px 20px;
-  color: #fff;
-}
-body.dark .navbar { background: #0d47a1; }
-.navbar a { color: #fff; text-decoration: none; margin-left: 15px; font-weight: 500; }
-.navbar a:hover { text-decoration: underline; }
-.logo-img { height: 40px; }
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  max-width: 1000px;
-  margin: 40px auto;
+<link rel="stylesheet" href="style.css"><style>
+@media (prefers-color-scheme: dark) {
+  body { background:#0f172a; color:#e5e7eb; }
+  .game, .leaderboard { background:#111827; }
 }
 
-.quiz-box, .leaderboard-box {
-  background: #fff;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  transition: background 0.5s, color 0.5s, transform 0.3s, opacity 0.5s;
-}
-body.dark .quiz-box, body.dark .leaderboard-box { background: #2c2c2c; color: #eee; }
-
-.quiz-box { flex: 2; margin-right: 20px; position: relative; }
-.leaderboard-box { flex: 1; max-width: 250px; }
-
-h2 { text-align: center; }
-
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #1565c0;
-  color: #fff;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-button:hover { background: #0d47a1; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-button.correct { background: #34c759 !important; }
-button.wrong { background: #ff3b30 !important; }
-button:active { transform: scale(0.95); }
-
-.ios-toast {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.96);
-  color: #000;
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  transition: all 0.45s cubic-bezier(.25,.8,.25,1);
-  z-index: 9999;
-}
-.ios-toast.show { top: 25px; }
-.ios-toast.success { border-left: 5px solid #34c759; }
-.ios-toast.error { border-left: 5px solid #ff3b30; }
-
-ul { list-style: none; padding: 0; }
-li { margin-bottom: 8px; }
-img.sign { width: 120px; display: block; margin: 0 auto 15px auto; }
-.timer { font-weight: bold; margin-bottom: 10px; text-align: center; font-size: 18px; }
-
-.fade-out { opacity: 0; transform: translateY(-20px); }
-.fade-in { opacity: 1; transform: translateY(0); transition: all 0.5s; }
-
-.point-animation {
-  position: absolute;
-  font-size: 20px;
-  font-weight: bold;
-  color: #34c759;
-  animation: pointUp 1s forwards;
-}
-@keyframes pointUp {
-  0% { opacity: 1; transform: translateY(0);}
-  100% { opacity: 0; transform: translateY(-40px);}
+.container{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:25px;
+  max-width:1100px;
+  margin:60px auto;
 }
 
-.level-up {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffd700;
-  color: #000;
-  padding: 15px 25px;
-  font-size: 24px;
-  font-weight: bold;
-  border-radius: 12px;
-  animation: fadeLevel 1.2s forwards;
-  z-index: 1000;
+.game, .leaderboard{
+  background:#fff;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,.12);
 }
-@keyframes fadeLevel {
-  0% { opacity: 0; transform: translate(-50%, -20px);}
-  50% { opacity: 1; transform: translate(-50%, 0);}
-  100% { opacity: 0; transform: translate(-50%, -20px);}
-}
-</style>
 
-<script type="module">
+.sign{
+  font-size:80px;
+  margin:20px 0;
+}
+
+.options button{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:.2s;
+}
+.options button:hover{ transform:scale(1.02); }
+
+.progress{ margin-top:15px; font-weight:600; }
+
+.leaderboard h3{ margin-bottom:10px; }
+
+.leaderboard ul{ list-style:none; padding:0; }
+.leaderboard li{ padding:8px 0; border-bottom:1px solid #e5e7eb; }
+
+.ios-toast{
+  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
+  background:#fff;padding:14px 22px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  transition:.4s;z-index:9999;
+}
+.ios-toast.show{ top:25px; }
+</style><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
@@ -145,140 +74,97 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let userEmail = "";
-let userFullname = "";
-let userScore = 0;
-let currentLevel = 1;
-let timerInterval;
-
-const correctSound = new Audio('sounds/correct.mp3');
-const wrongSound = new Audio('sounds/wrong.mp3');
-
-const quizData = [
-  { sign: "images/red_light.png", options: ["Stop", "Go", "Yield"], correct: 0 },
-  { sign: "images/stop_sign.png", options: ["Go", "Stop", "Caution"], correct: 1 },
-  { sign: "images/yield.png", options: ["Stop", "Yield", "Go"], correct: 1 },
-  { sign: "images/pedestrian.png", options: ["No Pedestrians", "School Zone", "Pedestrian Crossing"], correct: 2 },
-  { sign: "images/traffic_info.png", options: ["Stop", "Info", "Yield"], correct: 1 }
+const questions = [
+  { sign:"🛑", correct:"Stop", options:["Stop","No entry","Yield"] },
+  { sign:"🚸", correct:"Pedestrians", options:["School","Pedestrians","Children"] },
+  { sign:"⛔", correct:"No entry", options:["Stop","No entry","Danger"] }
 ];
 
+let index = 0;
+let score = 0;
+let currentUser = null;
+
 onAuthStateChanged(auth, async user => {
-  if(!user) { window.location.href = "login.html"; return; }
-  userEmail = user.email;
-  const userDoc = await getDoc(doc(db, "users", userEmail));
-  if(userDoc.exists()) userFullname = userDoc.data().fullname || "Student";
+  if(!user) return location.href="login.html";
+  currentUser = user;
+
+  const userDoc = await getDoc(doc(db,"users",user.uid));
+  const u = userDoc.data();
+
+  await setDoc(doc(db,"scores",user.uid),{
+    uid:user.uid,
+    firstName:u.firstName,
+    lastName:u.lastName,
+    points:0,
+    updatedAt:new Date()
+  });
+
   loadQuestion();
-  updateLeaderboard();
+  loadLeaderboard();
 });
 
-function loadQuestion() {
-  clearInterval(timerInterval);
-  const quizBox = document.getElementById("quiz-box");
-  const question = quizData[Math.floor(Math.random()*quizData.length)];
-  let timeLeft = 15;
-
-  quizBox.classList.add("fade-out");
-  setTimeout(() => {
-    quizBox.innerHTML = `
-      <h2>Level ${currentLevel}</h2>
-      <div class="timer" id="timer">Time: ${timeLeft}s</div>
-      <img src="${question.sign}" class="sign">
-      ${question.options.map((opt, idx)=> `<button onclick="checkAnswer(this, ${idx}, ${question.correct})">${opt}</button>`).join('')}
-      <p>Score: <strong id="score">${userScore}</strong></p>
-    `;
-    quizBox.classList.remove("fade-out");
-    quizBox.classList.add("fade-in");
-  },300);
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
-    if(timeLeft<=0){ clearInterval(timerInterval); showToast("Time's up ❌","error"); nextQuestion(); }
-  },1000);
+function loadQuestion(){
+  const q = questions[index];
+  document.getElementById("sign").innerText = q.sign;
+  const opts = document.getElementById("options");
+  opts.innerHTML="";
+  q.options.forEach(o=>{
+    const b=document.createElement("button");
+    b.innerText=o;
+    b.onclick=()=>answer(o);
+    opts.appendChild(b);
+  });
+  document.getElementById("progress").innerText = `Question ${index+1}/${questions.length} | Score: ${score}`;
 }
 
-async function checkAnswer(button, selected, correct){
-  clearInterval(timerInterval);
-  const points = 10 * currentLevel;
-  const quizBox = document.getElementById("quiz-box");
+async function answer(choice){
+  const q = questions[index];
+  if(choice===q.correct){ score+=10; toast("Correct ✅"); }
+  else toast("Wrong ❌");
 
-  if(selected === correct){
-    userScore += points;
-    button.classList.add("correct");
-    correctSound.play();
-    showToast("Correct ✅","success");
+  await setDoc(doc(db,"scores",currentUser.uid),{
+    points:score,
+    updatedAt:new Date()
+  },{merge:true});
 
-    const pointAnim = document.createElement("div");
-    pointAnim.className="point-animation";
-    pointAnim.innerText = `+${points}`;
-    button.appendChild(pointAnim);
-    setTimeout(()=>pointAnim.remove(),1000);
-  } else {
-    button.classList.add("wrong");
-    wrongSound.play();
-    showToast("Wrong ❌","error");
-  }
+  index++;
+  if(index<questions.length) loadQuestion();
+  else toast("Quiz Finished 🎉");
 
-  await setDoc(doc(db,"results",userEmail), { result:userScore, fullname:userFullname });
-  setTimeout(nextQuestion,1200);
+  loadLeaderboard();
 }
 
-function nextQuestion(){
-  currentLevel++;
-  showLevelUp(currentLevel);
-  loadQuestion();
-  updateLeaderboard();
-  document.body.style.background = `hsl(${(currentLevel*50)%360}, 60%, 90%)`;
+async function loadLeaderboard(){
+  const q = query(collection(db,"scores"), orderBy("points","desc"));
+  const snap = await getDocs(q);
+  const list = document.getElementById("leader");
+  list.innerHTML="";
+  snap.forEach(d=>{
+    const s=d.data();
+    list.innerHTML+=`<li>${s.firstName} ${s.lastName} — ${s.points}</li>`;
+  });
 }
 
-function showLevelUp(level){
-  const quizBox = document.getElementById("quiz-box");
-  const lvlDiv = document.createElement("div");
-  lvlDiv.className="level-up";
-  lvlDiv.innerText = `Level ${level}`;
-  quizBox.appendChild(lvlDiv);
-  setTimeout(()=>lvlDiv.remove(),1200);
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2000);
 }
-
-async function updateLeaderboard(){
-  const lbContainer = document.getElementById("leaderboard");
-  const snapshot = await getDocs(collection(db,"results"));
-  const leaderboard=[];
-  snapshot.forEach(doc=>{ const data=doc.data(); leaderboard.push({name:data.fullname||doc.id, score:data.result||0}); });
-  leaderboard.sort((a,b)=>b.score-a.score);
-
-  lbContainer.innerHTML="<h3>Leaderboard</h3><ul>"+
-    leaderboard.slice(0,5).map(u=>`<li>${u.name} - ${u.score}</li>`).join('')+"</ul>";
-}
-
-function showToast(message,type="success"){
-  const toast=document.getElementById("ios-toast");
-  toast.textContent=message;
-  toast.className=`ios-toast show ${type}`;
-  setTimeout(()=>toast.classList.remove("show"),2000);
-}
-
-if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
-  document.body.classList.add('dark');
-}
-</script>
-</head>
-
-<body>
+</script></head><body>
 <div class="navbar">
-  <img src="logo.png" class="logo-img" alt="DriveLearn">
-  <div>
-    <a href="index.html">Home</a>
-    <a href="quizzes.html">Quizzes</a>
-    <a href="result.html">Results</a>
+  <img src="logo.png" class="logo">
+  <a href="index.html">Home</a>
+</div><div class="container">
+  <div class="game">
+    <h2>Traffic Quiz</h2>
+    <div id="sign" class="sign">🚦</div>
+    <div id="options" class="options"></div>
+    <div id="progress" class="progress"></div>
+  </div>  <div class="leaderboard">
+    <h3>Leaderboard</h3>
+    <ul id="leader"></ul>
   </div>
-</div>
-
-<div class="container">
-  <div class="quiz-box" id="quiz-box">Loading quiz...</div>
-  <div class="leaderboard-box" id="leaderboard">Loading leaderboard...</div>
-</div>
-
-<div id="ios-toast" class="ios-toast"></div>
+</div><div id="toast" class="ios-toast"></div>
 </body>
 </html>

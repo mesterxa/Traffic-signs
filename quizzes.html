@@ -6,7 +6,7 @@
 <title>DriveLearn – Traffic Quiz</title>
 
 <style>
-:root {
+:root{
   --primary:#2563eb;
   --primary-dark:#1e40af;
   --bg-light:#ffffff;
@@ -64,15 +64,8 @@ body.dark .navbar{background:var(--card-dark)}
   color:white;
 }
 
-.hero h1{
-  font-size:34px;
-  margin-bottom:10px;
-}
-
-.hero p{
-  font-size:18px;
-  opacity:.9;
-}
+.hero h1{font-size:34px;margin-bottom:10px}
+.hero p{font-size:18px;opacity:.9}
 
 /* Quiz Card */
 .container{
@@ -90,12 +83,13 @@ body.dark .navbar{background:var(--card-dark)}
 }
 body.dark .card{background:var(--card-dark)}
 
-.card img{
-  width:140px;
+.emoji{
+  font-size:90px;
   margin-bottom:20px;
 }
 
-.options button{
+.options button,
+#resultBtn{
   width:100%;
   margin:10px 0;
   padding:14px;
@@ -109,7 +103,8 @@ body.dark .card{background:var(--card-dark)}
   transition:.25s;
 }
 
-.options button:hover{
+.options button:hover,
+#resultBtn:hover{
   background:var(--primary-dark);
   transform:translateY(-2px);
 }
@@ -118,6 +113,11 @@ body.dark .card{background:var(--card-dark)}
   margin-top:15px;
   font-size:14px;
   opacity:.8;
+}
+
+#resultBtn{
+  display:none;
+  margin-top:20px;
 }
 
 /* Footer */
@@ -151,9 +151,11 @@ footer{
 <!-- Quiz -->
 <div class="container">
   <div class="card">
-    <img id="signImg">
+    <div id="signEmoji" class="emoji"></div>
     <div class="options" id="options"></div>
     <div class="info" id="info"></div>
+
+    <button id="resultBtn" onclick="showResult()">View Result</button>
   </div>
 </div>
 
@@ -167,20 +169,20 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   document.body.classList.add("dark");
 }
 
-/* Quiz logic */
+/* Quiz data (EMOJIS) */
 const questions = [
   {
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Stop_sign.svg/512px-Stop_sign.svg.png",
+    emoji:"🛑",
     options:["Stop","No entry","Parking"],
     answer:"Stop"
   },
   {
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/No_entry.svg/512px-No_entry.svg.png",
+    emoji:"⛔",
     options:["Stop","No entry","Danger"],
     answer:"No entry"
   },
   {
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Children_crossing.svg/512px-Children_crossing.svg.png",
+    emoji:"🚸",
     options:["Children","Parking","Speed"],
     answer:"Children"
   }
@@ -189,13 +191,14 @@ const questions = [
 let index = 0;
 let score = 0;
 
-const signImg = document.getElementById("signImg");
+const signEmoji = document.getElementById("signEmoji");
 const optionsBox = document.getElementById("options");
 const info = document.getElementById("info");
+const resultBtn = document.getElementById("resultBtn");
 
 function loadQuestion(){
   const q = questions[index];
-  signImg.src = q.img;
+  signEmoji.textContent = q.emoji;
   optionsBox.innerHTML = "";
   info.textContent = `Question ${index+1} / ${questions.length}`;
 
@@ -217,8 +220,14 @@ function check(answer){
   if(index < questions.length){
     loadQuestion();
   }else{
-    location.href = "result.html?score=" + score;
+    optionsBox.innerHTML = "";
+    info.textContent = `Quiz finished – Score: ${score}`;
+    resultBtn.style.display = "block";
   }
+}
+
+function showResult(){
+  location.href = "result.html?score=" + score;
 }
 
 loadQuestion();

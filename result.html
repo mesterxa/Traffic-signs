@@ -11,6 +11,7 @@
 ===================== */
 :root {
   --primary: #2563eb;
+  --primary-dark: #1e40af;
   --bg-light: #f8fafc;
   --bg-dark: #0f172a;
   --card-light: #ffffff;
@@ -18,7 +19,7 @@
   --text-light: #e5e7eb;
   --success: #16a34a;
   --danger: #dc2626;
-  --radius: 16px;
+  --radius: 18px;
 }
 
 /* =====================
@@ -29,18 +30,23 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg-light);
   color: #111827;
+  min-height: 100vh;
 }
 
 /* =====================
    Navbar
 ===================== */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 14px 24px;
   background: var(--primary);
   color: white;
+  box-shadow: 0 6px 20px rgba(0,0,0,.18);
 }
 
 .navbar a {
@@ -58,16 +64,27 @@ body {
 ===================== */
 .box {
   max-width: 900px;
-  margin: 90px auto;
+  margin: 80px auto;
   background: var(--card-light);
   padding: 32px;
   border-radius: var(--radius);
   box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  animation: fadeUp .6s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+p {
+  line-height: 1.6;
+  opacity: .9;
 }
 
 /* =====================
@@ -75,12 +92,12 @@ h2 {
 ===================== */
 .good {
   color: var(--success);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .bad {
   color: var(--danger);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 /* =====================
@@ -89,7 +106,9 @@ h2 {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 24px;
+  margin-top: 26px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 th, td {
@@ -104,12 +123,17 @@ th {
 }
 
 /* =====================
-   Form Controls
+   Teacher Controls
 ===================== */
+.controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
 input, select, button {
-  width: 100%;
   padding: 12px;
-  margin-top: 10px;
   border-radius: 10px;
   font-size: 15px;
 }
@@ -128,11 +152,12 @@ button {
 }
 
 button:hover {
-  opacity: .9;
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 /* =====================
-   Toast
+   iOS Toast
 ===================== */
 .ios-toast {
   position: fixed;
@@ -146,10 +171,25 @@ button:hover {
   box-shadow: 0 12px 35px rgba(0,0,0,.18);
   transition: .4s cubic-bezier(.25,.8,.25,1);
   z-index: 9999;
+  backdrop-filter: blur(10px);
 }
 
 .ios-toast.show {
   top: 25px;
+}
+
+/* =====================
+   Responsive
+===================== */
+@media (max-width: 700px) {
+  .box {
+    margin: 40px 16px;
+    padding: 24px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =====================
@@ -228,12 +268,14 @@ onAuthStateChanged(auth, async user => {
     box.innerHTML = `
       <h2>Teacher Panel</h2>
 
-      <input id="email" placeholder="Student Email">
-      <select id="result">
-        <option value="Passed">Passed</option>
-        <option value="Failed">Failed</option>
-      </select>
-      <button onclick="saveResult()">Save Result</button>
+      <div class="controls">
+        <input id="email" placeholder="Student Email">
+        <select id="result">
+          <option value="Passed">Passed</option>
+          <option value="Failed">Failed</option>
+        </select>
+        <button onclick="saveResult()">Save</button>
+      </div>
 
       <table>
         <tr>
@@ -296,13 +338,11 @@ function toast(msg) {
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
   <img src="logo.png" class="logo">
   <a href="index.html">Home</a>
 </div>
 
-<!-- Content -->
 <div class="box" id="content">Loading...</div>
 
 <div id="toast" class="ios-toast"></div>

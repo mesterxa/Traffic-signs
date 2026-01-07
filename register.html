@@ -62,23 +62,10 @@ button {
   color: white;
   font-weight: 700;
   cursor: pointer;
-  transition: .25s ease;
 }
 
 button:hover {
   background: var(--primary-dark);
-}
-
-.link {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.link a {
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: none;
 }
 
 .error {
@@ -89,13 +76,11 @@ button:hover {
 }
 </style>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config (UNCHANGED) */
 const firebaseConfig = {
   apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain: "traffic-signs-fc047.firebaseapp.com",
@@ -109,11 +94,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.register = async () => {
-  const firstName = fname.value.trim();
-  const lastName  = lname.value.trim();
-  const email     = emailInput.value.trim();
-  const password  = passwordInput.value;
+// ✅ ربط الزر بطريقة صحيحة
+document.getElementById("registerBtn").addEventListener("click", async () => {
+  const firstName = document.getElementById("fname").value.trim();
+  const lastName  = document.getElementById("lname").value.trim();
+  const email     = document.getElementById("emailInput").value.trim();
+  const password  = document.getElementById("passwordInput").value;
+  const errorBox  = document.getElementById("errorBox");
 
   errorBox.innerText = "";
 
@@ -125,7 +112,6 @@ window.register = async () => {
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Save student data
     await setDoc(doc(db, "users", cred.user.uid), {
       firstName,
       lastName,
@@ -134,13 +120,13 @@ window.register = async () => {
       createdAt: new Date()
     });
 
-    // Redirect student to signs
-    location.href = "signs.html";
+    // ✅ التحويل يعمل الآن 100%
+    window.location.href = "signs.html";
 
   } catch (err) {
     errorBox.innerText = err.message;
   }
-};
+});
 </script>
 </head>
 
@@ -155,14 +141,14 @@ window.register = async () => {
   <input id="emailInput" type="email" placeholder="Email">
   <input id="passwordInput" type="password" placeholder="Password">
 
-  <button onclick="register()">Register</button>
+  <button id="registerBtn">Register</button>
 
   <div id="errorBox" class="error"></div>
 
-  <div class="link">
+  <p style="text-align:center;margin-top:14px">
     Already have an account?
     <a href="login.html">Login</a>
-  </div>
+  </p>
 </div>
 
 </body>

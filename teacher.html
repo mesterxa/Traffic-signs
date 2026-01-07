@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Panel – DriveLearn</title>
+
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #ffffff;
+  --bg-dark: #0f172a;
+  --card-light: #ffffff;
+  --card-dark: #111827;
+  --text-dark: #111827;
+  --text-light: #e5e7eb;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* Navbar */
+.navbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--card-light);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+body.dark .navbar { background: var(--card-dark); }
+
+.navbar a {
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: 14px;
+  font-size: 14px;
+}
+
+.logo { height: 32px; }
+
+/* Hero */
+.hero {
+  padding: 70px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+}
+
+.hero h1 {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: .9;
+}
+
+/* Content */
+.container {
+  max-width: 1100px;
+  margin: -50px auto 0;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--card-light);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 14px 35px rgba(0,0,0,.12);
+}
+
+body.dark .card { background: var(--card-dark); }
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+body.dark th,
+body.dark td {
+  border-bottom: 1px solid #374151;
+}
+
+th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+body.dark th { background: #1f2937; }
+
+select, input, button {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+input, select {
+  border: 1px solid #cbd5f5;
+  width: 100%;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .25s;
+}
+
+button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.pass { color: var(--success); font-weight: 700; }
+.fail { color: var(--danger); font-weight: 700; }
+
+.note {
+  font-size: 13px;
+  opacity: .8;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 25px;
+  margin-top: 80px;
+  font-size: 14px;
+  opacity: .8;
+}
+</style>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
+  authDomain: "traffic-signs-fc047.firebaseapp.com",
+  projectId: "traffic-signs-fc047",
+  storageBucket: "traffic-signs-fc047.appspot.com",
+  messagingSenderId: "746457575630",
+  appId: "1:746457575630:web:3219b85b64e2307126609f"
+};
+
+const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async user => {
+  if (!user || user.email !== TEACHER_EMAIL) {
+    location.href = "login.html";
+    return;
+  }
+
+  const tbody = document.getElementById("students");
+
+  const snap = await getDocs(collection(db, "users"));
+  tbody.innerHTML = "";
+
+  snap.forEach(docSnap => {
+    const u = docSnap.data();
+    if (u.role !== "student") return;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.firstName} ${u.lastName}</td>
+      <td>${u.email}</td>
+      <td>
+        <select id="res-${docSnap.id}">
+          <option value="">—</option>
+          <option value="Passed">Passed</option>
+          <option value="Failed">Failed</option>
+        </select>
+      </td>
+      <td>
+        <input id="note-${docSnap.id}" placeholder="Teacher note">
+      </td>
+      <td>
+        <button onclick="save('${docSnap.id}')">Save</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+});
+
+window.save = async (id) => {
+  const result = document.getElementById("res-"+id).value;
+  const note = document.getElementById("note-"+id).value;
+
+  await updateDoc(doc(db, "users", id), {
+    result,
+    note
+  });
+
+  alert("Saved successfully ✅");
+};
+</script>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <img src="logo.png" class="logo">
+  <div>
+    <a href="index.html">Home</a>
+    <a href="login.html">Logout</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>Teacher Dashboard</h1>
+  <p>Follow students and manage their results</p>
+</section>
+
+<!-- Content -->
+<div class="container">
+  <div class="card">
+    <table>
+      <tr>
+        <th>Student</th>
+        <th>Email</th>
+        <th>Result</th>
+        <th>Note</th>
+        <th>Action</th>
+      </tr>
+      <tbody id="students"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  © 2026 DriveLearn – Teacher Panel
+</footer>
+
+<script>
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>

@@ -2,34 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login – DriveLearn</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
 /* =====================
-   CSS Variables
+   Variables
 ===================== */
 :root {
-  --primary: #1565c0;
-  --primary-dark: #0d47a1;
-  --bg-light: #f7f8fa;
-  --bg-dark: #1a1a1a;
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --bg-light: #f8fafc;
+  --bg-dark: #0f172a;
   --card-light: #ffffff;
-  --card-dark: #2c2c2c;
-  --text-light: #eee;
-  --text-dark: #2c2c2c;
+  --card-dark: #111827;
+  --text-dark: #111827;
+  --text-light: #e5e7eb;
   --radius: 16px;
 }
 
 /* =====================
    Base
 ===================== */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg-light);
   color: var(--text-dark);
-  transition: .3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 body.dark {
@@ -46,32 +53,27 @@ body.dark {
    Navbar
 ===================== */
 .navbar {
+  height: 56px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
+  justify-content: space-between;
+  padding: 0 18px;
   background: var(--primary);
   color: white;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
 }
 
-body.dark .navbar {
-  background: var(--primary-dark);
-}
-
-.navbar a {
+.navbar a,
+#lang-switch {
   color: white;
   text-decoration: none;
-  margin-left: 16px;
   font-weight: 500;
+  margin-left: 14px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.navbar a:hover {
-  text-decoration: underline;
-}
-
-.logo-img {
-  height: 40px;
+.logo {
+  height: 32px;
 }
 
 /* =====================
@@ -79,13 +81,13 @@ body.dark .navbar {
 ===================== */
 .auth-box {
   max-width: 420px;
-  margin: 90px auto;
+  width: 100%;
+  margin: 40px auto;
   background: var(--card-light);
   padding: 32px;
   border-radius: var(--radius);
-  box-shadow: 0 14px 40px rgba(0,0,0,.12);
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
   text-align: center;
-  transition: .3s ease;
 }
 
 body.dark .auth-box {
@@ -99,28 +101,33 @@ body.dark .auth-box {
 .auth-box button {
   width: 100%;
   padding: 13px;
-  margin-top: 16px;
+  margin-top: 14px;
   border-radius: 10px;
   font-size: 15px;
 }
 
 .auth-box input {
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5f5;
+  outline: none;
+}
+
+.auth-box input:focus {
+  border-color: var(--primary);
 }
 
 body.dark .auth-box input {
-  background: #1f1f1f;
+  background: #1f2933;
   color: var(--text-light);
-  border: 1px solid #555;
+  border: 1px solid #374151;
 }
 
 .auth-box button {
   background: var(--primary);
   color: white;
   border: none;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
-  transition: .3s ease;
+  transition: .25s ease;
 }
 
 .auth-box button:hover {
@@ -131,17 +138,18 @@ body.dark .auth-box input {
    Footer Text
 ===================== */
 .auth-box p {
-  margin-top: 20px;
+  margin-top: 16px;
   font-size: 14px;
 }
 
 .auth-box a {
   color: var(--primary);
   font-weight: 600;
+  text-decoration: none;
 }
 
 /* =====================
-   iOS Toast
+   Toast
 ===================== */
 .ios-toast {
   position: fixed;
@@ -152,23 +160,28 @@ body.dark .auth-box input {
   color: #000;
   padding: 14px 22px;
   border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   box-shadow: 0 12px 35px rgba(0,0,0,.18);
-  transition: all .45s cubic-bezier(.25,.8,.25,1);
+  transition: .4s cubic-bezier(.25,.8,.25,1);
   z-index: 9999;
 }
 
-.ios-toast.show {
-  top: 25px;
-}
+.ios-toast.show { top: 25px; }
+.ios-toast.success { border-left: 5px solid #22c55e; }
+.ios-toast.error { border-left: 5px solid #ef4444; }
 
-.ios-toast.success {
-  border-left: 5px solid #34c759;
-}
+/* =====================
+   Mobile
+===================== */
+@media (max-width: 600px) {
+  .auth-box {
+    margin: 24px 16px;
+    padding: 24px;
+  }
 
-.ios-toast.error {
-  border-left: 5px solid #ff3b30;
+  .logo {
+    height: 28px;
+  }
 }
 </style>
 
@@ -191,43 +204,38 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.loginUser = function () {
+window.loginUser = () => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-pass").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      showToast(arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋", "success", true);
-    })
-    .catch(error => {
-      showToast(error.message, "error");
-    });
+    .then(() => showToast(arabic ? "تم تسجيل الدخول بنجاح 👋" : "Login successful 👋", "success", true))
+    .catch(err => showToast(err.message, "error"));
 };
 </script>
 </head>
 
 <body>
 
-<div id="ios-toast" class="ios-toast"></div>
+<div id="toast" class="ios-toast"></div>
 
 <!-- Navbar -->
 <div class="navbar">
-  <img src="logo.png" alt="DriveLearn" class="logo-img">
+  <img src="logo.png" class="logo" alt="DriveLearn">
   <div>
     <a href="index.html">Home</a>
     <a href="register.html">Register</a>
-    <a href="quizzes.html">Quizzes</a>
-    <span id="lang-switch" style="cursor:pointer;font-weight:bold;">AR</span>
+    <span id="lang-switch">AR</span>
   </div>
 </div>
 
-<!-- Login Box -->
+<!-- Login Card -->
 <div class="auth-box">
-  <h2 id="auth-title">Login</h2>
+  <h2 id="title">Login</h2>
   <input type="email" id="login-email" placeholder="Email">
   <input type="password" id="login-pass" placeholder="Password">
-  <button onclick="loginUser()" id="auth-btn">Login</button>
-  <p id="auth-footer">
+  <button onclick="loginUser()" id="login-btn">Login</button>
+  <p id="footer-text">
     Don't have an account? <a href="register.html">Register</a>
   </p>
 </div>
@@ -235,19 +243,19 @@ window.loginUser = function () {
 <script>
 let arabic = false;
 
-/* Language Switch */
-document.getElementById("lang-switch").addEventListener("click", () => {
+/* Language Toggle */
+document.getElementById("lang-switch").onclick = () => {
   arabic = !arabic;
   document.body.classList.toggle("rtl");
 
-  document.getElementById("auth-title").innerText = arabic ? "تسجيل الدخول" : "Login";
+  document.getElementById("title").innerText = arabic ? "تسجيل الدخول" : "Login";
   document.getElementById("login-email").placeholder = arabic ? "البريد الإلكتروني" : "Email";
   document.getElementById("login-pass").placeholder = arabic ? "كلمة المرور" : "Password";
-  document.getElementById("auth-btn").innerText = arabic ? "تسجيل الدخول" : "Login";
-  document.getElementById("auth-footer").innerHTML = arabic
+  document.getElementById("login-btn").innerText = arabic ? "دخول" : "Login";
+  document.getElementById("footer-text").innerHTML = arabic
     ? 'ليس لديك حساب؟ <a href="register.html">سجل الآن</a>'
     : 'Don\'t have an account? <a href="register.html">Register</a>';
-});
+};
 
 /* Auto Dark Mode */
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -255,14 +263,14 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 }
 
 /* Toast */
-function showToast(message, type="success", redirect=false) {
-  const toast = document.getElementById("ios-toast");
-  toast.textContent = message;
-  toast.className = `ios-toast show ${type}`;
+function showToast(msg, type="success", redirect=false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `ios-toast show ${type}`;
 
   setTimeout(() => {
-    toast.classList.remove("show");
-    if (redirect) window.location.href = "result.html";
+    t.classList.remove("show");
+    if (redirect) location.href = "result.html";
   }, 2000);
 }
 </script>

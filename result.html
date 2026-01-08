@@ -6,7 +6,6 @@
 <title>DriveLearn – Result</title>
 
 <style>
-/* ======= DESIGN (لم يُمس) ======= */
 :root {
   --primary:#2563eb;
   --primary-dark:#1e40af;
@@ -95,11 +94,19 @@ footer{
 }
 </style>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
 /* Firebase config */
 const firebaseConfig = {
@@ -113,7 +120,6 @@ const firebaseConfig = {
 
 const TEACHER_EMAIL = "aymenmed25071999@gmail.com";
 
-/* Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -123,39 +129,68 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   document.body.classList.add("dark");
 }
 
-/* Auth */
 onAuthStateChanged(auth, async user => {
-  if (!user) return location.href = "login.html";
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
 
   const cards = document.getElementById("cards");
+
+  /* Check blocked */
+  const userSnap = await getDoc(doc(db,"users",user.uid));
+  if (userSnap.exists() && userSnap.data().blocked) {
+    cards.innerHTML = `
+      <div class="card">
+        <h3 class="bad">Account Blocked</h3>
+        <p>Please contact your teacher</p>
+      </div>
+    `;
+    return;
+  }
 
   const params = new URLSearchParams(location.search);
   const score = Number(params.get("score"));
   const result = score >= 20 ? "Passed" : "Failed";
 
-  /* حفظ النتيجة (مرة واحدة فقط) */
+  /* Save result only once */
   if (score) {
-    await addDoc(collection(db,"results"), {
-      userId: user.uid,
-      email: user.email,
-      score,
-      result,
-      createdAt: Date.now()
-    });
+    const qCheck = query(
+      collection(db,"results"),
+      where("userId","==",user.uid)
+    );
+    const snapCheck = await getDocs(qCheck);
+
+    if (snapCheck.empty) {
+      await addDoc(collection(db,"results"), {
+        userId:user.uid,
+        email:user.email,
+        score,
+        result,
+        createdAt:Date.now()
+      });
+    }
   }
 
-  /* 👨‍🏫 الأستاذ */
+  /* Teacher view */
   if (user.email === TEACHER_EMAIL) {
     const snap = await getDocs(collection(db,"results"));
-    let html = "";
+    let stats = {};
 
-    snap.forEach(doc=>{
-      const r = doc.data();
+    snap.forEach(d=>{
+      const r = d.data();
+      if(!stats[r.email]) stats[r.email]={count:0,last:r};
+      stats[r.email].count++;
+    });
+
+    let html = "";
+    Object.values(stats).forEach(r=>{
       html += `
         <div class="card">
-          <h3>${r.email}</h3>
-          <p class="${r.result==="Passed"?"good":"bad"}">${r.result}</p>
-          <p>Score: ${r.score}</p>
+          <h3>${r.last.email}</h3>
+          <p class="${r.last.result==="Passed"?"good":"bad"}">${r.last.result}</p>
+          <p>Score: ${r.last.score}</p>
+          <p>Attempts: ${r.count}</p>
         </div>
       `;
     });
@@ -163,13 +198,12 @@ onAuthStateChanged(auth, async user => {
     cards.innerHTML = html || "<p>No results yet</p>";
   }
 
-  /* 👨‍🎓 الطالب */
+  /* Student view */
   else {
     const q = query(
       collection(db,"results"),
       where("userId","==",user.uid)
     );
-
     const snap = await getDocs(q);
 
     if (snap.empty) {

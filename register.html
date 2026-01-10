@@ -6,117 +6,95 @@
 <title>Create Account – DriveLearn</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI";
+/* نفس CSS login.html تمامًا */
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --radius:16px;
 }
+
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  min-height:100vh;
-  background:#f1f5f9;
+  font-family:system-ui,"Segoe UI",sans-serif;
+  background:var(--bg);
 }
 
-/* Header */
-.header{
-  background:linear-gradient(135deg,#2563eb,#1e40af);
-  color:white;
-  padding:80px 20px 120px;
-  text-align:center;
-}
+a{text-decoration:none;color:inherit}
 
-.header h1{
-  margin:0;
-  font-size:32px;
-}
-
-.header p{
-  margin-top:10px;
-  opacity:.9;
-}
-
-/* Card */
-.card{
-  max-width:420px;
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
   background:white;
-  margin:-80px auto 0;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+}
+
+.hero{
+  padding:80px 20px;
+  text-align:center;
+  color:white;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+}
+
+.container{
+  max-width:420px;
+  margin:-60px auto 0;
+  padding:0 20px;
+}
+.card{
+  background:var(--card);
   padding:32px;
-  border-radius:18px;
-  box-shadow:0 25px 50px rgba(0,0,0,.15);
+  border-radius:var(--radius);
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
+
+input,button{
+  width:100%;
+  padding:14px;
+  margin-top:14px;
+  border-radius:12px;
+  font-size:15px;
 }
 
 input{
-  width:100%;
-  padding:14px 16px;
-  margin-top:14px;
-  border-radius:12px;
   border:1px solid #e5e7eb;
-  font-size:15px;
 }
 
 input:focus{
   outline:none;
-  border-color:#2563eb;
+  border-color:var(--primary);
 }
 
 button{
-  width:100%;
-  margin-top:20px;
-  padding:14px;
   border:none;
-  border-radius:14px;
-  background:#2563eb;
+  background:var(--primary);
   color:white;
-  font-size:16px;
   font-weight:700;
   cursor:pointer;
 }
 
-button:hover{
-  background:#1e40af;
-}
+button:hover{background:var(--primary-dark)}
 
 .error{
   margin-top:14px;
-  font-size:14px;
   color:#dc2626;
   text-align:center;
 }
 
-/* Success Modal */
-.success-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.success-box{
-  background:white;
-  padding:30px 26px;
-  border-radius:18px;
-  text-align:center;
-  width:280px;
-  animation:scaleIn .3s ease;
-}
-
-.success-icon{
-  font-size:48px;
-  color:#16a34a;
-}
-
-@keyframes scaleIn{
-  from{transform:scale(.8);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-/* Footer */
 .footer{
   text-align:center;
-  margin-top:40px;
+  margin:40px 0;
   color:#6b7280;
   font-size:14px;
 }
@@ -125,29 +103,27 @@ button:hover{
 
 <body>
 
-<div class="header">
-  <h1>Create Account</h1>
-  <p>Start your driving education journey</p>
+<div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="signs.html">Signs</a>
 </div>
 
-<div class="card">
-  <input id="email" type="email" placeholder="Email address">
-  <input id="password" type="password" placeholder="Password (min 6 characters)">
-  <button onclick="register()">Register</button>
-  <div id="error" class="error"></div>
+<section class="hero">
+  <h1>Create Account</h1>
+  <p>Start your driving education journey</p>
+</section>
+
+<div class="container">
+  <div class="card">
+    <input id="email" type="email" placeholder="Email address">
+    <input id="password" type="password" placeholder="Password (min 6 characters)">
+    <button onclick="register()">Register</button>
+    <div id="error" class="error"></div>
+  </div>
 </div>
 
 <div class="footer">
   © 2026 DriveLearn – Traffic Awareness Platform
-</div>
-
-<!-- Success Modal -->
-<div class="success-overlay" id="success">
-  <div class="success-box">
-    <div class="success-icon">✔</div>
-    <h3>Registration Successful</h3>
-    <p>Your account has been created</p>
-  </div>
 </div>
 
 <script type="module">
@@ -155,41 +131,37 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config */
 const firebaseConfig={
   apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain:"traffic-signs-fc047.firebaseapp.com",
-  projectId:"traffic-signs-fc047",
-  storageBucket:"traffic-signs-fc047.appspot.com",
-  messagingSenderId:"746457575630",
-  appId:"1:746457575630:web:3219b85b64e2307126609f"
+  projectId:"traffic-signs-fc047"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const errorBox = document.getElementById("error");
+const emailInput=document.getElementById("email");
+const passwordInput=document.getElementById("password");
+const errorBox=document.getElementById("error");
 
-window.register = async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+window.register=async()=>{
+  const email=emailInput.value.trim();
+  const password=passwordInput.value;
   errorBox.textContent="";
 
-  if(!email || !password){
+  if(!email||!password){
     errorBox.textContent="Please fill in all fields";
     return;
   }
 
-  if(password.length < 6){
+  if(password.length<6){
     errorBox.textContent="Password must be at least 6 characters";
     return;
   }
 
   try{
-    const cred = await createUserWithEmailAndPassword(auth,email,password);
+    const cred=await createUserWithEmailAndPassword(auth,email,password);
 
     await setDoc(doc(db,"users",cred.user.uid),{
       email:cred.user.email,
@@ -198,14 +170,10 @@ window.register = async () => {
       createdAt:new Date()
     });
 
-    document.getElementById("success").style.display="flex";
-
-    setTimeout(()=>{
-      location.href="result.html";
-    },2000);
+    setTimeout(()=>location.href="login.html",1000);
 
   }catch(e){
-    errorBox.textContent="Registration failed: " + e.message;
+    errorBox.textContent="Registration failed: "+e.message;
   }
 };
 </script>

@@ -6,65 +6,65 @@
 <title>Login – DriveLearn</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI";
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --radius:16px;
 }
+
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  min-height:100vh;
-  background:#f1f5f9;
+  font-family:system-ui,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:#111827;
 }
 
-/* Header */
-.header{
-  background:linear-gradient(135deg,#2563eb,#1e40af);
-  color:white;
-  padding:80px 20px 140px;
+a{text-decoration:none;color:inherit}
+
+/* Navbar */
+.navbar{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  background:white;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+.navbar a{
+  color:var(--primary);
+  font-weight:600;
+  margin-left:14px;
+}
+
+/* Hero */
+.hero{
+  padding:80px 20px;
   text-align:center;
-}
-
-.header h1{
-  margin:0;
-  font-size:32px;
-}
-
-.header p{
-  margin-top:10px;
-  opacity:.9;
-}
-
-/* Dance */
-.dancer{
-  font-size:70px;
-  margin-top:20px;
-  display:inline-block;
-  animation:dance 1s infinite ease-in-out;
-}
-
-/* Dance animation */
-@keyframes dance{
-  0%{transform:rotate(0deg) translateY(0)}
-  25%{transform:rotate(-10deg) translateY(-5px)}
-  50%{transform:rotate(0deg) translateY(0)}
-  75%{transform:rotate(10deg) translateY(-5px)}
-  100%{transform:rotate(0deg) translateY(0)}
+  color:white;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
 }
 
 /* Card */
-.card{
+.container{
   max-width:420px;
-  background:white;
-  margin:-100px auto 0;
+  margin:-60px auto 0;
+  padding:0 20px;
+}
+.card{
+  background:var(--card);
   padding:32px;
-  border-radius:18px;
-  box-shadow:0 25px 50px rgba(0,0,0,.15);
+  border-radius:var(--radius);
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
 }
 
 input{
   width:100%;
-  padding:14px 16px;
+  padding:14px;
   margin-top:14px;
   border-radius:12px;
   border:1px solid #e5e7eb;
@@ -73,7 +73,7 @@ input{
 
 input:focus{
   outline:none;
-  border-color:#2563eb;
+  border-color:var(--primary);
 }
 
 button{
@@ -82,34 +82,32 @@ button{
   padding:14px;
   border:none;
   border-radius:14px;
-  background:#2563eb;
+  background:var(--primary);
   color:white;
   font-size:16px;
   font-weight:700;
   cursor:pointer;
 }
 
-button:hover{
-  background:#1e40af;
-}
+button:hover{background:var(--primary-dark)}
 
 .error{
   margin-top:14px;
-  font-size:14px;
   color:#dc2626;
   text-align:center;
+  font-size:14px;
 }
 
 .success{
   margin-top:14px;
-  font-size:14px;
   color:#16a34a;
   text-align:center;
+  font-size:14px;
 }
 
 .footer{
   text-align:center;
-  margin-top:40px;
+  margin:40px 0;
   color:#6b7280;
   font-size:14px;
 }
@@ -118,20 +116,23 @@ button:hover{
 
 <body>
 
-<div class="header">
-  <h1>Welcome Back</h1>
-  <p>Log in to continue your learning journey</p>
-
-  <!-- Dancing character -->
-  <div class="dancer">🕺</div>
+<div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="signs.html">Signs</a>
 </div>
 
-<div class="card">
-  <input id="email" type="email" placeholder="Email address">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+<section class="hero">
+  <h1>Welcome Back</h1>
+  <p>Login to continue your learning journey</p>
+</section>
 
-  <div id="message" class="error"></div>
+<div class="container">
+  <div class="card">
+    <input id="email" type="email" placeholder="Email address">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div id="message" class="error"></div>
+  </div>
 </div>
 
 <div class="footer">
@@ -143,16 +144,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-/* Firebase config */
 const firebaseConfig={
   apiKey:"AIzaSyAukmQBNFxX_AhpxYOQfDVtGux07OkzN6Q",
   authDomain:"traffic-signs-fc047.firebaseapp.com",
   projectId:"traffic-signs-fc047"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
 const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
@@ -183,11 +183,11 @@ window.login=async()=>{
     }
 
     messageBox.className="success";
-    messageBox.textContent="Login successful 🎉";
+    messageBox.textContent="Login successful";
 
     setTimeout(()=>location.href="index.html",1500);
 
-  }catch(e){
+  }catch{
     messageBox.className="error";
     messageBox.textContent="Login failed: incorrect email or password";
   }

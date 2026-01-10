@@ -6,7 +6,6 @@
 <title>Create Account – DriveLearn</title>
 
 <style>
-/* نفس CSS login.html تمامًا */
 :root{
   --primary:#2563eb;
   --primary-dark:#1e40af;
@@ -145,35 +144,36 @@ const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
 const errorBox=document.getElementById("error");
 
-window.register=async()=>{
-  const email=emailInput.value.trim();
-  const password=passwordInput.value;
-  errorBox.textContent="";
+window.register = async () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  errorBox.textContent = "";
 
-  if(!email||!password){
-    errorBox.textContent="Please fill in all fields";
+  if (!email || !password) {
+    errorBox.textContent = "Please fill in all fields";
     return;
   }
 
-  if(password.length<6){
-    errorBox.textContent="Password must be at least 6 characters";
+  if (password.length < 6) {
+    errorBox.textContent = "Password must be at least 6 characters";
     return;
   }
 
-  try{
-    const cred=await createUserWithEmailAndPassword(auth,email,password);
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    await setDoc(doc(db,"users",cred.user.uid),{
-      email:cred.user.email,
-      role:"student",
-      blocked:false,
-      createdAt:new Date()
+    await setDoc(doc(db, "users", cred.user.uid), {
+      email: cred.user.email,
+      role: "student",
+      blocked: false,
+      createdAt: new Date()
     });
 
-    setTimeout(()=>location.href="login.html",1000);
+    // ✅ التحويل الصحيح بعد نجاح التسجيل
+    window.location.href = "result.html";
 
-  }catch(e){
-    errorBox.textContent="Registration failed: "+e.message;
+  } catch (e) {
+    errorBox.textContent = "Registration failed: " + e.message;
   }
 };
 </script>
